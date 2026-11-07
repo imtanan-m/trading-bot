@@ -50,6 +50,18 @@ class Base:
     def exit_signal(self, row, pos):
         return False
 
+    def explain(self, row):
+        """List of entry conditions for the dashboard 'signal radar'."""
+        return []
+
+
+def _pct(a, b):
+    return round((a / b - 1) * 100, 2) if _ok(a, b) and b else None
+
+
+def _cond(label, ok, value, hint=""):
+    return {"label": label, "ok": bool(ok), "value": value, "hint": hint}
+
 
 class TrendBreakout(Base):
     """Breakout to a new N-candle high inside an established uptrend, ATR trailing stop.
@@ -86,6 +98,16 @@ class TrendBreakout(Base):
     def exit_signal(self, r, pos):
         return bool(_ok(r.ema_slow) and r.close < r.ema_slow)
 
+    def explain(self, r):
+        if not _ok(r.hh, r.ema_slow, r.adx):
+            return []
+        return [
+            _cond(f"Price EMA-{self.es} se upar", r.close > r.ema_slow, _pct(r.close, r.ema_slow), "bara trend"),
+            _cond(f"EMA-{self.ef} > EMA-{self.es}", r.ema_fast > r.ema_slow, _pct(r.ema_fast, r.ema_slow), "trend ki tasdeeq"),
+            _cond(f"{self.lb} candles ka high toota", r.close > r.hh, _pct(r.close, r.hh), "breakout"),
+            _cond(f"ADX {self.adx_min:g}+ (trend mein jaan)", r.adx >= self.adx_min, round(float(r.adx), 1), ""),
+        ]
+
 
 class DailyMomentum(Base):
     """Hold a coin while its daily trend is up (close > SMA and N-day return > 0).
@@ -113,6 +135,14 @@ class DailyMomentum(Base):
     def exit_signal(self, r, pos):
         return bool(_ok(r.sma, r.mom) and (r.close < r.sma or r.mom < 0))
 
+    def explain(self, r):
+        if not _ok(r.sma, r.mom):
+            return []
+        return [
+            _cond(f"Price {self.sma}-din average se upar", r.close > r.sma, _pct(r.close, r.sma), ""),
+            _cond(f"{self.lb} din ka return positive", r.mom > 0, round(float(r.mom) * 100, 2), ""),
+        ]
+
 
 class RSI2Scalper(Base):
     """Fast day-trading: buy short dips (RSI-2 < 10) inside an uptrend, sell on the bounce
@@ -138,6 +168,14 @@ class RSI2Scalper(Base):
 
     def exit_signal(self, r, pos):
         return bool(r.close > r.ema_x or pos["bars"] >= self.max_bars)
+
+    def explain(self, r):
+        if not _ok(r.ema_t, r.rsi):
+            return []
+        return [
+            _cond(f"Price EMA-{self.et} se upar", r.close > r.ema_t, _pct(r.close, r.ema_t), "uptrend"),
+            _cond(f"RSI-{self.rn} {self.rb:g} se neeche (dip)", r.rsi < self.rb, round(float(r.rsi), 1), ""),
+        ]
 
 
 class BuyHold(Base):

@@ -1,222 +1,597 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trading Bots</title>
-<meta name="theme-color" content="#0b0f17">
+<title>Paper Desk · Trading Bots</title>
+<meta name="description" content="Aap ke paper trading bots ki live progress">
+<meta name="theme-color" content="#F4F6F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F2340" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Paper Desk">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
 <script src="vendor/chart.umd.min.js"></script>
 <script src="vendor/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
-  :root{--bg:#0b0f17;--card:#121826;--card2:#0f1521;--line:#1f2a3d;--text:#e6ebf5;--mute:#8b97ad;
-        --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#4f8cff}
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif}
-  body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px}
-  h1{font-size:20px;margin:0;letter-spacing:.2px}
-  .sub{color:var(--mute);font-size:12.5px}
-  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--mute)}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #22c55e22}
-  .dot.stale{background:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
-  .dot.err{background:var(--red);box-shadow:0 0 0 3px #ef444422}
-  .banner{background:#1a1408;border:1px solid #3d2c0b;color:#f5d38a;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
-  .banner.err{background:#1d0c0c;border-color:#4a1616;color:#fca5a5}
-  .ticker{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}
-  .ticker .pill{white-space:nowrap;color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:12px}
-  .card{min-width:0;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:border-color .15s,transform .15s}
-  .card:hover{border-color:#2d3b55}
-  .card:active{transform:scale(.995)}
-  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .name{font-weight:650;font-size:15.5px;display:flex;align-items:center;gap:8px}
-  .sw{width:10px;height:10px;border-radius:3px}
-  .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
-  .tag.Growth{color:#9cc0ff;border-color:#24406f}.tag.Safe{color:#86efac;border-color:#1d4d31}
-  .tag.Experiment{color:#fcd34d;border-color:#5a4512}.tag.Warning{color:#fca5a5;border-color:#5a1d1d}
-  .tag.Benchmark{color:#c4b5fd;border-color:#3d3166}
-  .big{font-size:26px;font-weight:700;letter-spacing:-.3px;margin-top:8px}
-  .pos{color:var(--green)}.neg{color:var(--red)}.mute{color:var(--mute)}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-  .kpi{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:7px 8px}
-  .kpi b{display:block;font-size:13.5px}.kpi span{font-size:10.5px;color:var(--mute)}
-  .spark{height:64px;margin-top:10px;position:relative;width:100%}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .chip{font-size:12px;padding:3px 8px;border-radius:8px;background:var(--card2);border:1px solid var(--line)}
-  /* detail */
-  #detail{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:10}
-  #detail.open{display:block}
-  .back{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px;font-size:14px;cursor:pointer}
-  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px}
-  .section h3{margin:0 0 10px;font-size:14px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-  th{color:var(--mute);font-weight:500;font-size:11.5px}
-  .tw{overflow-x:auto}
-  .chartbox{height:260px}
-  .seg{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
-  .seg button{background:none;border:0;color:var(--mute);padding:5px 10px;border-radius:8px;font-size:12.5px;cursor:pointer}
-  .seg button.on{background:#1f2a3d;color:var(--text)}
-  .about{color:#c9d2e3;font-size:14px}
-  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .foot{color:var(--mute);font-size:12px;text-align:center;margin:24px 0 8px}
-  .empty{color:var(--mute);font-size:13px;padding:6px 0}
-  @media (max-width:420px){.kpis{grid-template-columns:repeat(2,1fr)}.big{font-size:24px}}
+/* ---------- tokens ---------- */
+:root{
+  --paper:#F4F6F1; --sheet:#FBFCF9; --grid:#DFE6DC; --grid2:#CCD6C8; --ink:#1D2B44; --mute:#66728A;
+  --up:#12805C; --down:#C0322B; --mark:#F5DE4D; --markInk:#1D2B44; --focus:#2F6FDE;
+  --rad:6px; --shadow:0 1px 0 #1d2b4414;
+}
+@media (prefers-color-scheme: dark){ :root[data-theme="auto"]{
+  --paper:#0F2340; --sheet:#132A4C; --grid:#1C3A63; --grid2:#25497A; --ink:#E8F0FB; --mute:#8FA7C7;
+  --up:#5BE3A6; --down:#FF7A6B; --mark:#FFD84D; --markInk:#0F2340; --focus:#8BB8FF; --shadow:none;}}
+:root[data-theme="dark"]{
+  --paper:#0F2340; --sheet:#132A4C; --grid:#1C3A63; --grid2:#25497A; --ink:#E8F0FB; --mute:#8FA7C7;
+  --up:#5BE3A6; --down:#FF7A6B; --mark:#FFD84D; --markInk:#0F2340; --focus:#8BB8FF; --shadow:none;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:"Archivo",system-ui,sans-serif;font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.graph{background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+                   linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px);
+  background-size:16px 16px,16px 16px,80px 80px,80px 80px;background-position:-1px -1px}
+.up{color:var(--up)} .down{color:var(--down)} .mute{color:var(--mute)}
+.wide{font-stretch:118%} .narrow{font-stretch:80%}
+.mark{background:linear-gradient(transparent 50%,var(--mark) 50%,var(--mark) 94%,transparent 94%);color:var(--ink);padding:0 3px}
+:root[data-theme="dark"] .mark{background:var(--mark);color:var(--markInk);border-radius:3px}
+@media (prefers-color-scheme: dark){:root[data-theme="auto"] .mark{background:var(--mark);color:var(--markInk);border-radius:3px}}
+/* ---------- shell ---------- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--grid2);padding:calc(10px + env(safe-area-inset-top)) 16px 10px}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:750;font-stretch:115%;font-size:17px;letter-spacing:-.2px}
+.brand svg{width:26px;height:26px}
+.sync{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mute);background:none;border:1px solid var(--grid2);
+  border-radius:99px;padding:4px 10px 4px 5px;cursor:pointer}
+.sync svg{width:20px;height:20px}
+.ring-bg{stroke:var(--grid2)} .ring{stroke:var(--up);transition:stroke-dashoffset .6s}
+.sync.stale .ring{stroke:var(--mark)} .sync.err .ring{stroke:var(--down)}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.view{display:none} .view.on{display:block}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--sheet);border-top:1px solid var(--grid2);
+  display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;
+  color:var(--mute);padding:5px 0;cursor:pointer;border-radius:8px}
+nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-current="page"]{color:var(--ink);font-weight:650}
+nav.tabs button[aria-current="page"] svg{stroke-width:2.2}
+@media (min-width:960px){
+  body{padding-bottom:0;padding-left:92px}
+  nav.tabs{top:0;bottom:0;right:auto;width:92px;flex-direction:column;justify-content:flex-start;gap:6px;padding:84px 8px 16px;border-top:0;border-right:1px solid var(--grid2)}
+  nav.tabs button{flex:0;padding:10px 0}
+  .top{margin-left:-92px;padding-left:108px}
+}
+/* ---------- type ---------- */
+h2{font-size:13.5px;font-weight:650;color:var(--mute);margin:26px 0 10px;letter-spacing:.1px}
+.headline{font-size:clamp(22px,5.4vw,34px);line-height:1.18;font-weight:720;font-stretch:112%;letter-spacing:-.4px;margin:6px 0 4px;max-width:28ch}
+.lede{color:var(--mute);margin:0 0 14px;max-width:62ch}
+.fig{font-weight:740;font-stretch:116%;letter-spacing:-.3px}
+/* ---------- panels ---------- */
+.panel{background:var(--sheet);border:1px solid var(--grid2);border-radius:var(--rad);box-shadow:var(--shadow)}
+.pad{padding:14px}
+.race{position:relative;border:1px solid var(--grid2);border-radius:var(--rad);overflow:hidden}
+.race .bar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;background:color-mix(in srgb,var(--sheet) 82%,transparent);border-bottom:1px solid var(--grid2);flex-wrap:wrap}
+.chart{position:relative;height:300px;padding:8px 4px 4px}
+@media (min-width:960px){.chart{height:380px}}
+.seg{display:inline-flex;border:1px solid var(--grid2);border-radius:8px;overflow:hidden;background:var(--sheet)}
+.seg button{background:none;border:0;padding:5px 11px;font-size:13px;cursor:pointer;color:var(--mute)}
+.seg button+button{border-left:1px solid var(--grid2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);font-weight:600}
+.cols{display:grid;gap:16px}
+@media (min-width:960px){.cols{grid-template-columns:1.25fr 1fr}}
+/* ruled list (leaderboard etc.) */
+.ruled{list-style:none;margin:0;padding:0;border-top:1px solid var(--grid2)}
+.ruled>li{border-bottom:1px solid var(--grid2)}
+.lb{display:grid;grid-template-columns:28px 1fr auto 84px;align-items:center;gap:10px;padding:11px 6px;cursor:pointer;background:none;border:0;width:100%;text-align:left}
+.lb:hover{background:color-mix(in srgb,var(--mark) 14%,transparent)}
+.rank{font-weight:750;font-stretch:120%;color:var(--mute);font-size:15px;text-align:center}
+.pen{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:7px}
+.lb .nm{font-weight:650}
+.lb .st{font-size:12.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb .ret{font-weight:740;font-stretch:112%;text-align:right;font-size:16px}
+.lb .ret small{display:block;font-weight:500;font-stretch:100%;font-size:11.5px;color:var(--mute)}
+.lb canvas{width:84px!important;height:30px!important}
+@media (max-width:400px){.lb{grid-template-columns:22px 1fr auto}.lb canvas{display:none!important}}
+.tagx{font-size:11px;border:1px solid var(--grid2);border-radius:4px;padding:0 5px;color:var(--mute);margin-left:6px;font-weight:500}
+/* feed (a real timeline) */
+.feed{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--grid2)}
+.feed li{position:relative;padding:0 0 14px 6px}
+.feed li::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--sheet);border:2px solid var(--mute)}
+.feed li.buy::before{border-color:var(--up);background:var(--up)}
+.feed li.win::before{border-color:var(--up)} .feed li.loss::before{border-color:var(--down)}
+.feed li.wait::before{border-style:dashed} .feed li.block::before{border-color:var(--down);border-style:dashed}
+.feed .t{font-size:12px;color:var(--mute)}
+.empty{color:var(--mute);padding:14px 4px;font-size:14px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--grid2);border-left:1px solid var(--grid2)}
+@media (min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stats div{padding:10px 12px;border-right:1px solid var(--grid2);border-bottom:1px solid var(--grid2)}
+.stats b{display:block;font-size:17px;font-weight:720;font-stretch:112%}
+.stats span{font-size:12px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--grid2);white-space:nowrap}
+th{font-weight:600;color:var(--mute);font-size:12px}
+td.r,th.r{text-align:right}
+.tw{overflow-x:auto}
+/* detail sheet */
+.sheet{position:fixed;inset:0;z-index:40;background:var(--paper);overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.7,.2,1);visibility:hidden}
+.sheet.open{transform:none;visibility:visible}
+@media (min-width:960px){.sheet{left:auto;width:min(780px,100%);border-left:1px solid var(--grid2);box-shadow:-12px 0 40px #0002}}
+.sheet-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:var(--paper);border-bottom:1px solid var(--grid2)}
+a.iconbtn{color:var(--ink);text-decoration:none}
+.iconbtn{background:var(--sheet);border:1px solid var(--grid2);border-radius:8px;padding:6px 10px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.subtabs{display:flex;gap:4px;overflow-x:auto;padding:0 14px;border-bottom:1px solid var(--grid2);background:var(--paper);position:sticky;top:57px;z-index:1;scrollbar-width:none}
+.subtabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 10px;cursor:pointer;color:var(--mute);white-space:nowrap}
+.subtabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink);font-weight:650}
+.sheet-body{padding:14px 14px 40px}
+.pos{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--grid2)}
+.meter{grid-column:1/-1;height:6px;background:var(--grid);border-radius:3px;position:relative;margin-top:4px}
+.meter i{position:absolute;top:-3px;width:2px;height:12px;background:var(--ink)}
+.meter em{position:absolute;inset:0 auto 0 0;background:var(--down);opacity:.35;border-radius:3px}
+/* radar */
+.coin{padding:12px 0;border-bottom:1px solid var(--grid2)}
+.conds{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.conds li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;font-size:14px}
+.ck{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;border:1.5px solid var(--grid2);color:var(--mute)}
+.ck.y{background:var(--up);border-color:var(--up);color:var(--paper)}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--mute)}
+.dots i.y{background:var(--up);border-color:var(--up)}
+.badge{display:inline-block;font-size:12px;padding:1px 7px;border-radius:4px;background:var(--mark);color:var(--markInk);font-weight:600}
+.badge.ghost{background:none;border:1px solid var(--grid2);color:var(--mute);font-weight:500}
+/* heatmap */
+.heat{display:grid;grid-template-columns:34px repeat(12,minmax(0,1fr));gap:2px;font-size:10.5px}
+.heat div{text-align:center;padding:6px 0;border-radius:3px}
+.heat .h{color:var(--mute);padding:2px 0}
+/* filters */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chip{border:1px solid var(--grid2);background:var(--sheet);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--mute)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+select.chip{appearance:none;padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+/* market */
+.mk{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 4px;border-bottom:1px solid var(--grid2);align-items:center}
+.mk .px{font-size:19px;font-weight:720;font-stretch:112%}
+.mk canvas{grid-column:1/-1;height:46px!important;width:100%!important}
+.range{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute)}
+.range .meter{flex:1;margin:0}
+.gauge{display:flex;align-items:center;gap:16px}
+.gauge svg{width:170px;height:100px;flex:none}
+.matrix th,.matrix td{text-align:center}.matrix th:first-child,.matrix td:first-child{text-align:left}
+/* more */
+.set{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--grid2)}
+.set p{margin:2px 0 0;font-size:13px;color:var(--mute)}
+details{border-bottom:1px solid var(--grid2);padding:10px 0}
+summary{cursor:pointer;font-weight:600}
+details p,details li{color:var(--mute);font-size:14px}
+dl.gl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0}
+dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:8px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+.banner{border:1px dashed var(--down);color:var(--down);border-radius:var(--rad);padding:10px 12px;margin:0 0 12px;font-size:14px;background:var(--sheet)}
+.foot{color:var(--mute);font-size:12.5px;margin:28px 0 8px;max-width:62ch}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap" id="home">
-  <header>
-    <div>
-      <h1>Trading Bots</h1>
-      <div class="sub">Paper trading: nakli paisa, Binance ki asli prices</div>
-    </div>
-    <span class="pill" id="status"><span class="dot" id="sdot"></span><span id="stext">Loading…</span></span>
-  </header>
-  <div id="banners"></div>
-  <div class="ticker" id="ticker"></div>
-  <div class="grid" id="cards"></div>
-  <div class="foot">Har ~15 minute mein cloud pe update hota hai · Ye financial advice nahi hai</div>
-</div>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="6" fill="var(--sheet)" stroke="var(--grid2)"/><path d="M5 22 L12 15 L17 19 L27 8" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="27" cy="8" r="2.6" fill="var(--up)"/></svg>Paper Desk</div>
+    <button class="sync" id="sync" title="Abhi refresh karein" aria-label="Data refresh karein">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle class="ring-bg" cx="10" cy="10" r="7.5" fill="none" stroke-width="2.4"/><circle class="ring" id="ring" cx="10" cy="10" r="7.5" fill="none" stroke-width="2.4" stroke-dasharray="47.1" stroke-dashoffset="0" transform="rotate(-90 10 10)" stroke-linecap="round"/></svg>
+      <span id="synctext">Load ho raha hai</span>
+    </button>
+  </div>
+</header>
 
-<div id="detail"><div class="wrap" id="dwrap"></div></div>
+<main>
+  <div id="banners"></div>
+
+  <!-- DESK -->
+  <section class="view on" id="v-desk" aria-label="Desk">
+    <p class="headline" id="headline">&nbsp;</p>
+    <p class="lede" id="lede"></p>
+    <div class="race graph">
+      <div class="bar">
+        <div class="seg" role="group" aria-label="Waqt"><button data-range="7">7 din</button><button data-range="30">30 din</button><button data-range="0" aria-pressed="true">Shuru se</button></div>
+        <div class="seg" role="group" aria-label="Unit"><button data-unit="pct" aria-pressed="true">%</button><button data-unit="money" id="unitMoney">$</button></div>
+      </div>
+      <div class="chart"><canvas id="raceChart" aria-label="Saare bots ki race chart"></canvas></div>
+    </div>
+    <div class="cols">
+      <div><h2>Kaun aage hai</h2><ol class="ruled" id="board"></ol></div>
+      <div><h2>Abhi kya ho raha hai</h2><ul class="feed" id="feed"></ul></div>
+    </div>
+  </section>
+
+  <!-- BOTS -->
+  <section class="view" id="v-bots" aria-label="Bots">
+    <p class="headline">Har bot ka apna tareeqa hai</p>
+    <p class="lede">Kisi bot pe tap karein: chart, positions, wo kya dhoondh raha hai, backtest aur settings.</p>
+    <ol class="ruled" id="botlist"></ol>
+  </section>
+
+  <!-- TRADES -->
+  <section class="view" id="v-trades" aria-label="Trades">
+    <p class="headline" id="tradesHead">Trades</p>
+    <p class="lede" id="tradesLede"></p>
+    <div class="filters" id="tfilters"></div>
+    <div class="panel"><div class="tw"><table id="ttable"></table></div></div>
+  </section>
+
+  <!-- MARKET -->
+  <section class="view" id="v-market" aria-label="Market">
+    <p class="headline" id="mkHead">Market</p>
+    <div class="cols">
+      <div><h2>Coins (7 din)</h2><div id="coins"></div></div>
+      <div>
+        <h2>Fear &amp; Greed index</h2>
+        <div class="panel pad gauge" id="gauge"></div>
+        <h2>Bot radar: kaun khareedne ke qareeb hai</h2>
+        <div class="panel"><div class="tw"><table class="matrix" id="matrix"></table></div></div>
+        <p class="foot">Har dot ek shart hai. Saare dot bhar jayen to bot agli candle pe khareedta hai. <span class="badge">Hold</span> matlab bot ke paas ye coin pehle se hai.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MORE -->
+  <section class="view" id="v-more" aria-label="More">
+    <p class="headline">Settings aur madad</p>
+    <div class="panel pad">
+      <div class="set"><div><b>Currency</b><p id="fxnote">Rupee mein dekhne ke liye PKR chunein.</p></div>
+        <div class="seg" role="group" aria-label="Currency"><button data-cur="USD">USD</button><button data-cur="PKR">PKR</button></div></div>
+      <div class="set"><div><b>Theme</b><p>Paper (din) ya Blueprint (raat).</p></div>
+        <div class="seg" role="group" aria-label="Theme"><button data-theme="auto">Auto</button><button data-theme="light">Paper</button><button data-theme="dark">Blueprint</button></div></div>
+      <div class="set"><div><b>Telegram alerts</b><p id="tgnote"></p></div><span class="badge ghost" id="tgbadge">Band</span></div>
+      <div class="set"><div><b>Bot update</b><p id="runnote"></p></div><a class="iconbtn" id="ghlink" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+    <h2>Madad</h2>
+    <div class="panel pad">
+      <details open><summary>Ye app kya hai?</summary>
+        <p>5 trading bots GitHub ke cloud pe har ~15 minute mein chalte hain, chahe aap ka PC band ho. Sab <b>paper trading</b> karte hain: har bot ke paas $1000 nakli paisa hai, lekin prices Binance ki asli live prices hain. Yahan aap dekh sakte hain kaun si strategy asal mein kaam karti hai, bina asli paisa lagaye.</p></details>
+      <details><summary>Bot trade kyun nahi kar raha?</summary>
+        <p>Zyada tar bots sirf uptrend mein khareedte hain. Market neeche ho to wo cash mein rehte hain, aur yahi unki hifazat hai. Market tab mein "Bot radar" dekhein: wahan dikhta hai ke har bot ki kitni sharten poori hain.</p></details>
+      <details><summary>Telegram pe alerts kaise on karein?</summary>
+        <ol><li>Telegram mein <b>@BotFather</b> ko <code>/newbot</code> bhejein, naam dein, aur jo <b>token</b> mile wo copy karein.</li>
+        <li>Apne naye bot ko koi bhi message bhejein. Phir <b>@userinfobot</b> se apna <b>chat id</b> lein.</li>
+        <li>GitHub repo → Settings → Secrets and variables → Actions → <b>New repository secret</b>: <code>TELEGRAM_TOKEN</code> aur <code>TELEGRAM_CHAT_ID</code>.</li>
+        <li>Bas. Har khareed/farokht pe phone pe message aayega.</li></ol></details>
+      <details><summary>Settings ya naya bot?</summary><p>Claude ko batayein ke kya chahiye (naya coin, nayi strategy, risk kam/zyada). Wo code aur ye app dono update kar dega.</p></details>
+      <details><summary>Alfaaz ka matlab</summary>
+        <dl class="gl">
+          <dt>Return</dt><dd>Shuru ke $1000 se ab tak kitna faida ya nuqsan.</dd>
+          <dt>Max giraav</dt><dd>Sab se oonchi value se sab se bari girawat (drawdown). Ye risk ka asli paimana hai.</dd>
+          <dt>Stop-loss</dt><dd>Wo price jahan bot nuqsan rokne ke liye khud bech deta hai.</dd>
+          <dt>Win rate</dt><dd>Kitni trades faide mein band huin. Trend bots ka win rate kam hota hai, lekin jeet bari hoti hai.</dd>
+          <dt>Profit factor</dt><dd>Kul faida ÷ kul nuqsan. 1 se upar matlab faida.</dd>
+          <dt>Backtest</dt><dd>Strategy ko purane data pe chala ke dekhna. Future ki guarantee nahi.</dd>
+          <dt>Kill switch</dt><dd>Bot bohot zyada gir jaye to sab bech ke khud band ho jata hai.</dd>
+          <dt>Candle</dt><dd>Ek waqt ka hissa (1 ghanta, 4 ghante, 1 din). Bot har band candle pe faisla karta hai.</dd>
+        </dl></details>
+    </div>
+    <p class="foot">Ye financial advice nahi hai. Paper trading ke results asli trading se behtar ho sakte hain (asli mein slippage aur jazbaat dono hote hain).</p>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Main">
+  <button data-view="desk" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg>Desk</button>
+  <button data-view="bots"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></svg>Bots</button>
+  <button data-view="trades"><svg viewBox="0 0 24 24"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Trades</button>
+  <button data-view="market"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Market</button>
+  <button data-view="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>More</button>
+</nav>
+
+<aside class="sheet" id="sheet" aria-modal="true" role="dialog" aria-labelledby="sheetTitle">
+  <div class="sheet-top"><button class="iconbtn" id="sheetClose" aria-label="Wapas">‹ Wapas</button><b id="sheetTitle"></b><span id="sheetTag" style="margin-left:auto"></span></div>
+  <div class="subtabs" role="tablist" id="subtabs"></div>
+  <div class="sheet-body" id="sheetBody"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-const fmt$ = v => (v<0?'-$':'$') + Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtP = (v,d=2) => v==null ? '–' : (v>0?'+':'') + v.toFixed(d) + '%';
-const cls = v => v>0 ? 'pos' : v<0 ? 'neg' : 'mute';
-const px = v => v>=100 ? v.toLocaleString(undefined,{maximumFractionDigits:2}) : v.toLocaleString(undefined,{maximumFractionDigits:4});
-const ago = iso => { const m=(Date.now()-new Date(iso))/6e4; if(m<1) return 'abhi'; if(m<60) return Math.round(m)+' min pehle';
-  const h=m/60; if(h<48) return Math.round(h)+' ghante pehle'; return Math.round(h/24)+' din pehle'; };
-const dt = iso => new Date(iso).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const TF = {'1h':'1 ghanta','4h':'4 ghante','1d':'1 din'};
-const REASON = {'stop-loss':'Stop-loss','signal exit':'Signal exit','KILL SWITCH':'Kill switch'};
-let DATA=null, BT=null, charts=[];
+/* ================= state & prefs ================= */
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('pd_'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('pd_'+k,JSON.stringify(v))}catch(e){}}};
+let DATA=null, BT=null, charts={}, raceRange=store.get('range',0), raceUnit=store.get('unit','pct'), CUR=store.get('cur','USD');
+let tFilter={bot:'all',coin:'all',res:'all'}, openBot=null, openTab='overview';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function applyTheme(t){document.documentElement.dataset.theme=t==='light'?'light':t==='dark'?'dark':'auto';store.set('theme',t);
+  $$('[data-theme]').forEach(b=>b.tagName==='BUTTON'&&b.setAttribute('aria-pressed',b.dataset.theme===t));}
+applyTheme(store.get('theme','auto'));
+if(window.Chart){Chart.defaults.font.family='Archivo, system-ui, -apple-system, Segoe UI, sans-serif';Chart.defaults.color='#66728A';}
+/* pen colours for bot lines, tuned per theme */
+const PENS={light:['#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
+const isDark=()=>css('--paper').toLowerCase()==='#0f2340';
+const ORDER=['momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
+const pen=id=>{const i=ORDER.indexOf(id);return PENS[isDark()?'dark':'light'][i<0?0:i]};
 
-async function load(){
+/* ================= formatting ================= */
+const rate=()=>CUR==='PKR'&&DATA?.usd_pkr?DATA.usd_pkr:1;
+function money(v,dec=2){if(v==null)return'–';const r=rate();const x=v*r;
+  if(CUR==='PKR'&&DATA?.usd_pkr)return(x<0?'-':'')+'Rs '+Math.abs(x).toLocaleString('en-IN',{maximumFractionDigits:0});
+  return(x<0?'-$':'$')+Math.abs(x).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+const pct=(v,d=2)=>v==null?'–':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(d)+'%';
+const tone=v=>v>0?'up':v<0?'down':'mute';
+const price=v=>v==null?'–':'$'+(v>=100?v.toLocaleString('en-US',{maximumFractionDigits:2}):v>=1?v.toFixed(2):v.toFixed(5));
+const coin=s=>s.split('/')[0];
+function ago(iso){const m=(Date.now()-new Date(iso))/6e4;if(m<1)return'abhi';if(m<60)return Math.round(m)+' min pehle';const h=m/60;if(h<36)return Math.round(h)+' ghante pehle';return Math.round(h/24)+' din pehle';}
+const when=iso=>new Date(iso).toLocaleString(undefined,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const TF={'1h':'1 ghante','4h':'4 ghante','1d':'1 din'};
+const REASON={'stop-loss':'Stop-loss','signal exit':'Signal pe becha','KILL SWITCH':'Kill switch'};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
+
+/* ================= data ================= */
+async function load(manual){
   try{
-    const [s,b] = await Promise.all([
-      fetch('data/summary.json?t='+Date.now()).then(r=>r.ok?r.json():null),
-      BT ? Promise.resolve(BT) : fetch('data/backtest.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
-    ]);
-    BT = b; if(!s) throw new Error('no data yet');
-    DATA = s; render();
-    const open = location.hash.slice(1); if(open) showDetail(open, false);
+    const s=await fetch('data/summary.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
+    if(!BT)BT=await fetch('data/backtest.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
+    const changed=!DATA||DATA.updated!==s.updated; DATA=s;
+    if(changed||manual)renderAll();
+    if(manual)toast(changed?'Naya data aa gaya':'Data pehle se taaza hai');
   }catch(e){
-    document.getElementById('stext').textContent='Data abhi nahi aaya';
-    document.getElementById('sdot').className='dot err';
-    document.getElementById('cards').innerHTML='<div class="empty">Bot ka pehla run abhi hona hai. Thodi der baad refresh karein.</div>';
+    $('#synctext').textContent='Data nahi mila';$('#sync').className='sync err';
+    if(!DATA)$('#headline').textContent='Bots ka pehla run abhi hona hai. Thodi der baad refresh karein.';
   }
 }
+function syncUI(){if(!DATA)return;const mins=(Date.now()-new Date(DATA.updated))/6e4, iv=DATA.interval_min||15;
+  const left=Math.max(0,iv-mins); $('#ring').style.strokeDashoffset=47.1*(Math.min(mins,iv)/iv);
+  $('#sync').className='sync'+(DATA.errors?.length?' err':mins>iv*4?' stale':'');
+  $('#synctext').textContent=mins>iv*1.5?('Update: '+ago(DATA.updated)):(left<1?'Update aane wala hai':'Agla update ~'+Math.ceil(left)+' min');
+  let b='';if(mins>90)b+=`<div class="banner">Bots ka aakhri update ${ago(DATA.updated)} hua tha. GitHub ka cloud runner shayad ruka hua hai. Claude ko batayein.</div>`;
+  if(DATA.errors?.length)b+=`<div class="banner">Masla: ${DATA.errors.map(esc).join('; ')}</div>`;$('#banners').innerHTML=b;}
 
-function status(){
-  const mins=(Date.now()-new Date(DATA.updated))/6e4;
-  document.getElementById('stext').textContent='Update: '+ago(DATA.updated);
-  document.getElementById('sdot').className='dot'+(DATA.errors?.length?' err':mins>60?' stale':'');
-  let h='';
-  if(mins>90) h+=`<div class="banner">Bot ka aakhri update ${ago(DATA.updated)} hua tha. Cloud runner shayad ruka hua hai.</div>`;
-  if(DATA.errors?.length) h+=`<div class="banner err">Kuch bots mein masla: ${DATA.errors.map(esc).join(' · ')}</div>`;
-  document.getElementById('banners').innerHTML=h;
-  const fg=DATA.fear_greed;
-  let t=Object.entries(DATA.prices||{}).map(([s,v])=>`<span class="pill"><b>${s.split('/')[0]}</b> $${px(v)}</span>`).join('');
-  if(fg!=null) t+=`<span class="pill">Fear &amp; Greed <b>${fg}</b></span>`;
-  document.getElementById('ticker').innerHTML=t;
+/* ================= helpers ================= */
+function kill(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function killPrefix(p){Object.keys(charts).filter(k=>k.startsWith(p)).forEach(kill);}
+function curveOf(b){const c=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).map(p=>[new Date(p[0]),p[1]]);c.push([new Date(DATA.updated),b.equity]);return c;}
+function status(b){
+  if(b.killed)return'Kill switch se band';
+  if(b.positions.length)return b.positions.map(p=>coin(p.symbol)+' '+pct(p.pnl_pct,1)).join(', ');
+  if(b.pending.length)return'Agli candle pe khareedega: '+b.pending.map(coin).join(', ');
+  return'Cash mein, signal ka intezar';}
+function spark(canvas,vals,color,base){return new Chart(canvas,{type:'line',data:{labels:vals.map((_,i)=>i),datasets:[{data:vals,borderColor:color,borderWidth:1.6,pointRadius:0,tension:.3,
+  fill:base!=null?{target:{value:base},above:color+'22',below:css('--down')+'22'}:false}]},options:{responsive:false,animation:false,events:[],plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}});}
+const gridColor=()=>css('--grid2'), inkColor=()=>css('--ink'), muteColor=()=>css('--mute');
+function axisOpts(money){return{x:{type:'time',grid:{display:false},border:{color:gridColor()},ticks:{color:muteColor(),maxTicksLimit:6}},
+  y:{grid:{color:ctx=>ctx.tick.value===0&&!money?inkColor():'transparent',lineWidth:ctx=>ctx.tick.value===0?1.4:0},border:{display:false},
+     ticks:{color:muteColor(),callback:v=>money?money_(v):(v>0?'+':'')+v+'%'}}};}
+const money_=v=>money(v,0);
+
+/* end-of-line labels for the race chart */
+const endLabels={id:'endLabels',afterDatasetsDraw(ch){const {ctx,chartArea}=ch;const items=[];
+  ch.data.datasets.forEach((d,i)=>{const m=ch.getDatasetMeta(i);if(m.hidden||!m.data.length)return;const p=m.data[m.data.length-1];items.push({y:p.y,x:p.x,d});});
+  items.sort((a,b)=>a.y-b.y);for(let i=1;i<items.length;i++)if(items[i].y-items[i-1].y<15)items[i].y=items[i-1].y+15;
+  ctx.save();ctx.font='600 11.5px Archivo, system-ui, sans-serif';ctx.textBaseline='middle';
+  items.forEach(it=>{const t=it.d.short+'  '+it.d.tail;const w=ctx.measureText(t).width;const x=Math.min(it.x+6,chartArea.right-w-4);
+    ctx.fillStyle=css('--sheet');ctx.globalAlpha=.85;ctx.fillRect(x-3,it.y-8,w+6,16);ctx.globalAlpha=1;ctx.fillStyle=it.d.borderColor;ctx.fillText(t,x,it.y);});ctx.restore();}};
+
+/* ================= DESK ================= */
+function renderDesk(){
+  const bots=DATA.bots, lead=bots.filter(b=>b.id!=='hold')[0], hold=bots.find(b=>b.id==='hold');
+  const total=bots.reduce((s,b)=>s+b.equity,0), cap=bots.reduce((s,b)=>s+b.capital,0);
+  const inTrade=bots.filter(b=>b.positions.length&&b.id!=='hold').length;
+  const started=bots.map(b=>b.started).filter(Boolean).sort()[0];
+  if(lead){$('#headline').innerHTML=`${esc(lead.name)} <span class="mark">${pct(lead.return_pct,1)}</span> ke saath aage hai`;}
+  let l=`${bots.length} bots ki kul value ${money(total)} hai (shuru ${money(cap,0)}). `;
+  l+=inTrade?`${inTrade} bot abhi trade mein hain.`:'Abhi koi strategy bot trade mein nahi, sab signal ka intezar kar rahe hain.';
+  if(hold&&lead)l+=lead.return_pct>=hold.return_pct?' Buy & hold se aage.':' Abhi buy & hold aage hai.';
+  if(started)l+=` Shuru: ${when(started)}.`;
+  $('#lede').textContent=l;
+  // board
+  killPrefix('sp_');
+  $('#board').innerHTML=bots.map((b,i)=>`<li><button class="lb" data-bot="${b.id}" aria-label="${esc(b.name)} kholein">
+    <span class="rank">${i+1}</span>
+    <span style="min-width:0"><span class="nm"><span class="pen" style="background:${pen(b.id)}"></span>${esc(b.name)}</span><span class="st" style="display:block">${esc(status(b))}</span></span>
+    <span class="ret ${tone(b.return_pct)}">${pct(b.return_pct)}<small>${money(b.equity)}</small></span>
+    <canvas id="sp_${b.id}" width="84" height="30"></canvas></button></li>`).join('');
+  bots.forEach(b=>{const v=curveOf(b).map(p=>p[1]);charts['sp_'+b.id]=spark($('#sp_'+b.id),v.length>1?v:[b.capital,b.equity],pen(b.id),b.capital);});
+  renderFeed(); renderRace();
 }
-
-function killCharts(){ charts.forEach(c=>c.destroy()); charts=[]; }
-
-function render(){
-  status(); killCharts();
-  const el=document.getElementById('cards');
-  el.innerHTML = DATA.bots.map(b=>{
-    const st=b.stats||{};
-    const pos = b.positions.length ? b.positions.map(p=>`<span class="chip">${p.symbol.split('/')[0]} <span class="${cls(p.pnl_pct)}">${fmtP(p.pnl_pct,1)}</span></span>`).join('')
-              : `<span class="chip mute">${b.pending.length?'Khareedne wala: '+b.pending.map(s=>s.split('/')[0]).join(', '):'Cash mein (koi trade nahi)'}</span>`;
-    return `<div class="card" onclick="showDetail('${b.id}')">
-      <div class="row"><div class="name"><span class="sw" style="background:${b.color}"></span>${esc(b.name)}</div><span class="tag ${b.tag}">${esc(b.tag)}</span></div>
-      <div class="row"><div class="big ${cls(b.return_pct)}">${fmtP(b.return_pct)}</div><div style="text-align:right"><div>${fmt$(b.equity)}</div><div class="sub">$${b.capital} se shuru</div></div></div>
-      <div class="kpis">
-        <div class="kpi"><b class="${cls(b.change_24h)}">${fmtP(b.change_24h)}</b><span>24 ghante</span></div>
-        <div class="kpi"><b class="${cls(b.change_7d)}">${fmtP(b.change_7d)}</b><span>7 din</span></div>
-        <div class="kpi"><b>${st.trades??0}</b><span>Trades</span></div>
-        <div class="kpi"><b class="neg">${fmtP(st.max_dd,1)}</b><span>Max giraav</span></div>
-      </div>
-      <div class="spark"><canvas id="sp_${b.id}"></canvas></div>
-      <div class="chips">${pos}${b.killed?'<span class="chip neg">Kill switch: band</span>':''}</div>
-    </div>`;}).join('');
+function renderFeed(){
+  const ev=[];
   DATA.bots.forEach(b=>{
-    const pts=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).concat([[DATA.updated,b.equity]]);
-    charts.push(new Chart(document.getElementById('sp_'+b.id),{type:'line',
-      data:{datasets:[{data:pts.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0,fill:{target:{value:b.capital},above:b.color+'22',below:'#ef444422'},tension:.25}]},
-      options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
-        scales:{x:{type:'time',display:false},y:{display:false}}}}));
+    b.trades.slice(0,15).forEach(t=>ev.push({t:t.exit_time,cls:t.pnl>0?'win':'loss',h:`<b>${esc(b.name)}</b> ne ${coin(t.symbol)} becha <span class="${tone(t.pnl)}">${pct(t.ret_pct)} (${money(t.pnl)})</span>`,s:REASON[t.reason]||t.reason}));
+    b.positions.forEach(p=>ev.push({t:p.since,cls:'buy',h:`<b>${esc(b.name)}</b> ne ${coin(p.symbol)} khareeda @ ${price(p.entry)}`,s:`Abhi ${pct(p.pnl_pct)}`+(p.stop?`, stop ${price(p.stop)}`:'')}));
+    b.pending.forEach(s=>ev.push({t:DATA.updated,cls:'wait',h:`<b>${esc(b.name)}</b> ${coin(s)} khareedne wala hai`,s:'Agli candle khulte hi'}));
+    (b.events||[]).slice(0,5).forEach(e=>ev.push({t:e.t,cls:'block',h:`<b>${esc(b.name)}</b>: news filter ne khareed roki`,s:e.msg}));
   });
+  ev.sort((a,b)=>new Date(b.t)-new Date(a.t));
+  $('#feed').innerHTML=ev.length?ev.slice(0,14).map(e=>`<li class="${e.cls}"><div>${e.h}</div><div class="t">${ago(e.t)}${e.s?' · '+esc(e.s):''}</div></li>`).join('')
+    :'<li class="wait"><div>Abhi koi trade nahi hui</div><div class="t">Bots market pe nazar rakh rahe hain. Market tab mein dekhein ke kaun qareeb hai.</div></li>';
+}
+function renderRace(){
+  kill('race');const from=raceRange?Date.now()-raceRange*864e5:0;
+  const sets=DATA.bots.map(b=>{let c=curveOf(b).filter(p=>+p[0]>=from);if(!c.length)c=curveOf(b).slice(-1);
+    const base=c[0][1];const data=c.map(p=>({x:p[0],y:raceUnit==='pct'?+((p[1]/(raceRange?base:b.capital)-1)*100).toFixed(2):p[1]}));
+    const last=data[data.length-1].y;
+    return{label:b.name,short:b.name.split(' (')[0],tail:raceUnit==='pct'?pct(last,1):money(last,0),data,borderColor:pen(b.id),borderWidth:b.id==='hold'?1.6:2.4,borderDash:b.id==='hold'?[5,4]:[],pointRadius:0,tension:.15};});
+  charts.race=new Chart($('#raceChart'),{type:'line',data:{datasets:sets},plugins:[endLabels],
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{right:120,top:10}},
+      animation:matchMedia('(prefers-reduced-motion: reduce)').matches?false:{duration:900,easing:'easeOutCubic'},
+      interaction:{mode:'nearest',axis:'x',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:css('--sheet'),titleColor:inkColor(),bodyColor:inkColor(),borderColor:gridColor(),borderWidth:1,
+        callbacks:{label:c=>' '+c.dataset.label+': '+(raceUnit==='pct'?pct(c.parsed.y):money(c.parsed.y))}}},
+      scales:axisOpts(raceUnit!=='pct')}});
 }
 
-function equityChart(canvas, datasets, logScale){
-  return new Chart(canvas,{type:'line',data:{datasets},
-    options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:datasets.length>1,labels:{color:'#8b97ad',boxWidth:10}},
-        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fmt$(c.parsed.y)}}},
-      scales:{x:{type:'time',grid:{color:'#1f2a3d'},ticks:{color:'#8b97ad',maxTicksLimit:6}},
-              y:{type:logScale?'logarithmic':'linear',grid:{color:'#1f2a3d'},ticks:{color:'#8b97ad',callback:v=>'$'+Number(v).toLocaleString()}}}}});
+/* ================= BOTS ================= */
+function renderBots(){
+  $('#botlist').innerHTML=DATA.bots.map(b=>`<li><button class="lb" data-bot="${b.id}" style="grid-template-columns:1fr auto">
+    <span style="min-width:0"><span class="nm"><span class="pen" style="background:${pen(b.id)}"></span>${esc(b.name)}<span class="tagx">${esc(b.tag)}</span></span>
+    <span class="st" style="display:block">${b.symbols.map(coin).join(', ')}, ${TF[b.timeframe]} candle. ${esc(status(b))}</span></span>
+    <span class="ret ${tone(b.return_pct)}">${pct(b.return_pct)}<small>${b.stats.trades} trades</small></span></button></li>`).join('');
 }
-
-function showDetail(id, push=true){
-  const b=DATA.bots.find(x=>x.id===id); if(!b) return;
-  if(push) history.pushState(null,'','#'+id);
-  killCharts();
-  const st=b.stats||{}, bt=BT?.bots?.[id]?.stats;
-  const posRows=b.positions.map(p=>`<tr><td><b>${p.symbol}</b></td><td>${px(p.entry)}</td><td>${px(p.price)}</td><td class="${cls(p.pnl_pct)}">${fmtP(p.pnl_pct)}</td><td>${p.stop?px(p.stop):'–'}</td><td>${fmt$(p.value)}</td><td class="mute">${dt(p.since)}</td></tr>`).join('');
-  const trRows=b.trades.map(t=>`<tr><td><b>${t.symbol.split('/')[0]}</b></td><td class="${cls(t.pnl)}">${fmtP(t.ret_pct)}</td><td class="${cls(t.pnl)}">${fmt$(t.pnl)}</td><td>${px(t.entry)} → ${px(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${dt(t.exit_time)}</td></tr>`).join('');
-  const ev=(b.events||[]).map(e=>`<tr><td class="mute">${dt(e.t)}</td><td>${esc(e.msg)}</td></tr>`).join('');
-  const yr = bt?.yearly ? Object.entries(bt.yearly).map(([y,v])=>`<span class="chip">${y}: <span class="${cls(v)}">${fmtP(v,1)}</span></span>`).join('') : '';
-  document.getElementById('dwrap').innerHTML=`
-    <header><button class="back" onclick="closeDetail()">← Wapas</button><span class="tag ${b.tag}">${esc(b.tag)}</span></header>
-    <div class="name" style="font-size:20px"><span class="sw" style="background:${b.color}"></span>${esc(b.name)}</div>
-    <div class="row"><div class="big ${cls(b.return_pct)}">${fmtP(b.return_pct)}</div><div style="text-align:right"><div style="font-size:18px">${fmt$(b.equity)}</div><div class="sub">Cash ${fmt$(b.cash)}</div></div></div>
-    <div class="sub">${b.symbols.join(', ')} · Candle: ${TF[b.timeframe]||b.timeframe} · Shuru: ${b.started?dt(b.started):'–'}</div>
-    <div class="kpis">
-      <div class="kpi"><b class="${cls(b.change_24h)}">${fmtP(b.change_24h)}</b><span>24 ghante</span></div>
-      <div class="kpi"><b class="${cls(b.change_7d)}">${fmtP(b.change_7d)}</b><span>7 din</span></div>
-      <div class="kpi"><b>${st.trades??0}${st.win_rate!=null?' · '+st.win_rate+'%':''}</b><span>Trades · jeet</span></div>
-      <div class="kpi"><b class="neg">${fmtP(st.max_dd,1)}</b><span>Max giraav</span></div>
-    </div>
-    <div class="section"><h3>Live progress</h3><div class="chartbox"><canvas id="live"></canvas></div></div>
-    <div class="section"><h3>Khuli positions</h3>${posRows?`<div class="tw"><table><tr><th>Coin</th><th>Entry</th><th>Abhi</th><th>P/L</th><th>Stop</th><th>Value</th><th>Kab se</th></tr>${posRows}</table></div>`:`<div class="empty">${b.pending.length?'Agli candle pe khareedega: '+b.pending.join(', '):'Abhi koi position nahi. Bot signal ka intezar kar raha hai.'}</div>`}</div>
-    <div class="section"><h3>Trades (aakhri 30)</h3>${trRows?`<div class="tw"><table><tr><th>Coin</th><th>%</th><th>P/L</th><th>Price</th><th>Wajah</th><th>Kab</th></tr>${trRows}</table></div>`:'<div class="empty">Abhi koi trade band nahi hui.</div>'}</div>
-    ${ev?`<div class="section"><h3>News filter ne roka</h3><div class="tw"><table>${ev}</table></div></div>`:''}
-    <div class="section"><h3>Ye bot kya karta hai</h3><div class="about">${esc(b.about)}</div></div>
-    ${bt?`<div class="section"><h3>Backtest (${BT.start.slice(0,7)} se ab tak, $${b.capital})</h3>
-      <div class="kpis">
-        <div class="kpi"><b class="${cls(bt.return_pct)}">${fmtP(bt.return_pct,0)}</b><span>Kul return</span></div>
-        <div class="kpi"><b class="${cls(bt.cagr)}">${fmtP(bt.cagr,1)}</b><span>Saalana</span></div>
-        <div class="kpi"><b class="neg">${fmtP(bt.max_dd,1)}</b><span>Max giraav</span></div>
-        <div class="kpi"><b>${bt.trades}${bt.win_rate!=null?' · '+bt.win_rate+'%':''}</b><span>Trades · jeet</span></div>
-      </div>
-      <div class="chips">${yr}</div>
-      <div class="chartbox" style="margin-top:10px"><canvas id="bt"></canvas></div>
-      <div class="sub" style="margin-top:8px">Backtest purane data pe hai. Future mein aisa hi ho, iski koi guarantee nahi.</div></div>`:''}
-  `;
-  document.getElementById('detail').classList.add('open'); window.scrollTo(0,0); document.getElementById('detail').scrollTo(0,0);
-  const pts=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).concat([[DATA.updated,b.equity]]);
-  charts.push(equityChart(document.getElementById('live'),[{label:b.name,data:pts.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0,tension:.2}]));
-  if(bt){
-    const sets=[{label:b.name,data:BT.bots[id].curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0}];
-    if(id!=='hold' && BT.bots.hold) sets.push({label:'Buy & Hold',data:BT.bots.hold.curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:'#a78bfa88',borderWidth:1.5,pointRadius:0,borderDash:[4,3]});
-    charts.push(equityChart(document.getElementById('bt'),sets,true));
+const SUBTABS=[['overview','Overview'],['radar','Radar'],['trades','Trades'],['backtest','Backtest'],['settings','Settings']];
+function openSheet(id,tab){openBot=id;openTab=tab||'overview';const b=DATA.bots.find(x=>x.id===id);if(!b)return;
+  $('#sheetTitle').innerHTML=`<span class="pen" style="background:${pen(id)}"></span>${esc(b.name)}`;$('#sheetTag').innerHTML=`<span class="badge ghost">${esc(b.tag)}</span>`;
+  $('#subtabs').innerHTML=SUBTABS.map(([k,l])=>`<button role="tab" data-sub="${k}" aria-selected="${k===openTab}">${l}</button>`).join('');
+  renderSheet();$('#sheet').classList.add('open');$('#sheet').scrollTop=0;if(!location.hash.startsWith('#bot/'+id))history.pushState(null,'','#bot/'+id);setTimeout(()=>$('#sheetClose').focus(),50);}
+function closeSheet(push=true){$('#sheet').classList.remove('open');killPrefix('d_');openBot=null;if(push&&location.hash.startsWith('#bot'))history.back();}
+function renderSheet(){
+  const b=DATA.bots.find(x=>x.id===openBot);if(!b)return;killPrefix('d_');
+  $$('#subtabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.sub===openTab));
+  const st=b.stats, el=$('#sheetBody'); let h='';
+  if(openTab==='overview'){
+    h=`<div class="fig ${tone(b.return_pct)}" style="font-size:34px">${pct(b.return_pct)}</div>
+      <div class="mute">${money(b.equity)} value · cash ${money(b.cash)} · ${b.symbols.map(coin).join(', ')} · ${TF[b.timeframe]} candle</div>
+      <h2>Value ka safar</h2><div class="panel graph" style="height:240px;padding:6px"><canvas id="d_eq"></canvas></div>
+      <h2>Giraav (peak se kitna neeche)</h2><div class="panel" style="height:110px;padding:6px"><canvas id="d_dd"></canvas></div>
+      <h2>Numbers</h2><div class="stats">
+        <div><b class="${tone(b.change_24h)}">${pct(b.change_24h)}</b><span>24 ghante</span></div>
+        <div><b class="${tone(b.change_7d)}">${pct(b.change_7d)}</b><span>7 din</span></div>
+        <div><b>${st.trades}</b><span>Band trades</span></div>
+        <div><b>${st.win_rate!=null?st.win_rate+'%':'–'}</b><span>Win rate</span></div>
+        <div><b class="down">${pct(st.max_dd,1)}</b><span>Max giraav</span></div>
+        <div><b>${st.profit_factor??'–'}</b><span>Profit factor</span></div>
+        <div><b class="up">${pct(st.avg_win)}</b><span>Average jeet</span></div>
+        <div><b class="down">${pct(st.avg_loss)}</b><span>Average haar</span></div>
+        <div><b class="up">${pct(st.best_trade)}</b><span>Sab se achhi trade</span></div>
+        <div><b class="down">${pct(st.worst_trade)}</b><span>Sab se buri trade</span></div>
+        <div><b class="${tone(st.realized_pnl)}">${money(st.realized_pnl)}</b><span>Band trades ka P/L</span></div>
+        <div><b>${b.started?ago(b.started).replace(' pehle',''):'–'}</b><span>Kab se chal raha</span></div></div>
+      <h2>Khuli positions</h2>${b.positions.length?b.positions.map(p=>{
+        const span=p.stop?(p.price-p.stop):0, m=p.stop?Math.min(100,Math.max(0,(p.entry-p.stop)/(Math.max(p.price,p.entry)-p.stop)*100)):0;
+        return`<div class="pos"><div><b>${p.symbol}</b> <span class="mute">${p.qty} @ ${price(p.entry)}</span></div><div class="fig ${tone(p.pnl_pct)}">${pct(p.pnl_pct)}</div>
+          <div class="mute" style="font-size:13px">Abhi ${price(p.price)} · value ${money(p.value)} · ${when(p.since)} se</div>
+          <div class="mute" style="font-size:13px;text-align:right">${p.stop?'Stop '+price(p.stop)+' ('+pct(p.stop_dist,1)+')':'Koi stop nahi'}</div>
+          ${p.stop?`<div class="meter" title="Stop se entry tak"><em style="width:${m}%"></em><i style="left:${m}%"></i></div>`:''}</div>`}).join('')
+        :`<div class="empty">${b.pending.length?'Agli candle khulte hi khareedega: '+b.pending.join(', '):'Koi position nahi. Radar tab mein dekhein ke bot kis cheez ka intezar kar raha hai.'}</div>`}
+      <h2>Ye bot kya karta hai</h2><p style="max-width:62ch">${esc(b.about)}</p>`;
+  }else if(openTab==='radar'){
+    h=`<p class="lede">Aakhri band candle pe har coin ki sharten. Sab ✓ hon to bot agli candle pe khareedta hai.${b.news_filter?' Is ke ilawa news filter bhi check hota hai.':''}</p>`+
+      (b.kind==='hold'?'<div class="empty">Buy & Hold koi shart nahi dekhta, bas khareed ke rakhta hai.</div>':
+      Object.entries(b.radar||{}).map(([s,r])=>{const held=b.positions.some(p=>p.symbol===s),pend=b.pending.includes(s);
+        return`<div class="coin"><div style="display:flex;align-items:center;gap:8px"><b style="font-size:17px">${s}</b><span class="mute">${price(r.close)}</span>
+          <span style="margin-left:auto">${held?'<span class="badge">Hold</span>':pend?'<span class="badge">Khareedega</span>':`<span class="badge ghost">${r.met}/${r.total} sharten</span>`}</span></div>
+          <ul class="conds">${r.conditions.map(c=>`<li><span class="ck ${c.ok?'y':''}" aria-label="${c.ok?'poori':'abhi nahi'}">${c.ok?'✓':''}</span><span>${esc(c.label)}</span><span class="mute">${c.value==null?'':(typeof c.value==='number'&&!/ADX|RSI/.test(c.label)?pct(c.value):c.value)}</span></li>`).join('')}</ul>
+          <div class="mute" style="font-size:12px;margin-top:6px">Candle: ${when(r.candle)}</div></div>`}).join(''));
+  }else if(openTab==='trades'){
+    h=b.trades.length?`<div class="panel"><div class="tw"><table><tr><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Khareed → farokht</th><th>Wajah</th><th>Kab</th></tr>${b.trades.map(t=>`<tr><td><b>${coin(t.symbol)}</b></td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join('')}</table></div></div>`:'<div class="empty">Abhi koi trade band nahi hui.</div>';
+  }else if(openTab==='backtest'){
+    const bt=BT?.bots?.[b.id]?.stats;
+    if(!bt){h='<div class="empty">Backtest data nahi mila.</div>';}else{
+      const mon=bt.monthly||{}, years=[...new Set(Object.keys(mon).map(k=>k.slice(0,4)))];
+      const cell=v=>{if(v==null)return'<div></div>';const a=Math.min(1,Math.abs(v)/25);const c=v>=0?css('--up'):css('--down');return`<div style="background:color-mix(in srgb,${c} ${Math.round(12+a*70)}%,transparent);color:${a>.55?css('--paper'):css('--ink')}" title="${v}%">${Math.round(v)}</div>`;};
+      h=`<p class="lede">${BT.start.slice(0,7)} se ab tak, $${b.capital} se, fees ke saath. Purane data pe hai, future ki guarantee nahi.</p>
+        <div class="stats"><div><b class="${tone(bt.return_pct)}">${pct(bt.return_pct,0)}</b><span>Kul return</span></div><div><b class="${tone(bt.cagr)}">${pct(bt.cagr,1)}</b><span>Saalana</span></div>
+        <div><b class="down">${pct(bt.max_dd,1)}</b><span>Max giraav</span></div><div><b>${bt.trades}${bt.win_rate!=null?' · '+bt.win_rate+'%':''}</b><span>Trades · win rate</span></div></div>
+        <h2>Equity vs Buy &amp; Hold (log scale)</h2><div class="panel graph" style="height:260px;padding:6px"><canvas id="d_bt"></canvas></div>
+        <h2>Har mahine ka return (%)</h2><div class="panel pad tw"><div class="heat"><div class="h"></div>${['J','F','M','A','M','J','J','A','S','O','N','D'].map(m=>`<div class="h">${m}</div>`).join('')}
+        ${years.map(y=>`<div class="h" style="text-align:left">${y}</div>`+Array.from({length:12},(_,i)=>cell(mon[`${y}-${String(i+1).padStart(2,'0')}`])).join('')).join('')}</div></div>
+        <h2>Saal ba saal</h2><div class="stats">${Object.entries(bt.yearly||{}).map(([y,v])=>`<div><b class="${tone(v)}">${pct(v,1)}</b><span>${y}</span></div>`).join('')}</div>`;}
+  }else if(openTab==='settings'){
+    const NAMES={sma:'Average (din)',lookback:'Return dekhne ke din',n_coins:'Coins',ema_fast:'Chhota EMA',ema_slow:'Bara EMA',breakout_lookback:'Breakout candles',adx_min:'Min ADX',initial_stop_atr:'Pehla stop (ATR)',trail_stop_atr:'Trailing stop (ATR)',ema_trend:'Trend EMA',rsi_buy:'RSI khareed level',exit_ema:'Exit EMA',max_bars:'Max candles rakhna',stop_atr:'Stop (ATR)',
+      risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
+    const row=(k,v)=>`<tr><td>${esc(NAMES[k]||k)}</td><td class="r"><b>${esc(v)}</b></td></tr>`;
+    h=`<p class="lede">Ye bot in settings pe chal raha hai. Tabdeeli chahiye to Claude ko batayein, wo cloud bot aur ye app dono update kar dega.</p>
+      <h2>Strategy</h2><div class="panel"><table>${row('Candle',TF[b.timeframe])}${row('Coins',b.symbols.map(coin).join(', '))}${Object.entries(b.params||{}).map(([k,v])=>row(k,v)).join('')}${row('News filter',b.news_filter?'On':'Off')}</table></div>
+      <h2>Risk</h2><div class="panel"><table>${row('Shuru ka paisa','$'+b.capital)}${Object.entries(b.risk||{}).map(([k,v])=>row(k,v)).join('')}</table></div>`;
   }
+  el.innerHTML=h;
+  if(openTab==='overview'){const c=curveOf(b);
+    charts.d_eq=new Chart($('#d_eq'),{type:'line',data:{datasets:[{data:c.map(p=>({x:p[0],y:p[1]})),borderColor:pen(b.id),borderWidth:2.2,pointRadius:0,tension:.15,fill:{target:{value:b.capital},above:pen(b.id)+'22',below:css('--down')+'22'}}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>' '+money(x.parsed.y)}}},scales:axisOpts(true)}});
+    let pk=-1e18;const dd=c.map(p=>{pk=Math.max(pk,p[1]);return{x:p[0],y:+((p[1]/pk-1)*100).toFixed(2)}});
+    charts.d_dd=new Chart($('#d_dd'),{type:'line',data:{datasets:[{data:dd,borderColor:css('--down'),borderWidth:1.4,pointRadius:0,fill:{target:'origin',below:css('--down')+'30'}}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>' '+pct(x.parsed.y)}}},scales:axisOpts(false)}});}
+  if(openTab==='backtest'&&BT?.bots?.[b.id]){const sets=[{label:b.name,data:BT.bots[b.id].curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:pen(b.id),borderWidth:2,pointRadius:0}];
+    if(b.id!=='hold'&&BT.bots.hold)sets.push({label:'Buy & Hold',data:BT.bots.hold.curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:pen('hold'),borderWidth:1.4,borderDash:[5,4],pointRadius:0});
+    const ax=axisOpts(true);ax.y.type='logarithmic';ax.y.grid={display:false};ax.y.ticks.callback=v=>[200,500,1000,2000,5000,10000].includes(v)?'$'+v.toLocaleString():'';
+    charts.d_bt=new Chart($('#d_bt'),{type:'line',data:{datasets:sets},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:muteColor(),boxWidth:14}},tooltip:{callbacks:{label:x=>' '+x.dataset.label+': $'+Math.round(x.parsed.y).toLocaleString()}}},scales:ax}});}
 }
-function closeDetail(push=true){ document.getElementById('detail').classList.remove('open'); if(push) history.pushState(null,'',location.pathname); render(); }
-window.addEventListener('popstate',()=>{ const id=location.hash.slice(1); id?showDetail(id,false):closeDetail(false); });
-load(); setInterval(()=>{ if(!document.getElementById('detail').classList.contains('open')) load(); else status(); }, 120000);
+
+/* ================= TRADES ================= */
+function renderTrades(){
+  const all=DATA.bots.flatMap(b=>b.trades.map(t=>({...t,bot:b})));
+  const coins=[...new Set(DATA.bots.flatMap(b=>b.symbols))];
+  $('#tfilters').innerHTML=`<select class="chip" id="fbot" aria-label="Bot"><option value="all">Saare bots</option>${DATA.bots.map(b=>`<option value="${b.id}" ${tFilter.bot===b.id?'selected':''}>${esc(b.name)}</option>`).join('')}</select>
+    ${['all',...coins].map(c=>`<button class="chip" data-fcoin="${c}" aria-pressed="${tFilter.coin===c}">${c==='all'?'Saare coins':coin(c)}</button>`).join('')}
+    ${[['all','Sab'],['win','Jeet'],['loss','Haar']].map(([k,l])=>`<button class="chip" data-fres="${k}" aria-pressed="${tFilter.res===k}">${l}</button>`).join('')}`;
+  const list=all.filter(t=>(tFilter.bot==='all'||t.bot.id===tFilter.bot)&&(tFilter.coin==='all'||t.symbol===tFilter.coin)&&(tFilter.res==='all'||(tFilter.res==='win'?t.pnl>0:t.pnl<=0)))
+    .sort((a,b)=>new Date(b.exit_time)-new Date(a.exit_time));
+  const net=list.reduce((s,t)=>s+t.pnl,0), wins=list.filter(t=>t.pnl>0).length;
+  $('#tradesHead').innerHTML=list.length?`${list.length} trades, net <span class="${tone(net)}">${money(net)}</span>`:'Abhi koi trade nahi';
+  $('#tradesLede').textContent=list.length?`${wins} jeet, ${list.length-wins} haar (win rate ${Math.round(wins/list.length*100)}%). Trend bots kam jeet-te hain lekin bara jeet-te hain, is liye win rate se zyada net P/L dekhein.`:'Bots jab koi trade band karenge to yahan dikhegi. Filter badal ke bhi dekh sakte hain.';
+  $('#ttable').innerHTML=list.length?`<tr><th>Bot</th><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Price</th><th>Wajah</th><th>Kab</th></tr>`+list.slice(0,300).map(t=>`<tr><td><span class="pen" style="background:${pen(t.bot.id)}"></span>${esc(t.bot.name.split(' (')[0])}</td><td><b>${coin(t.symbol)}</b></td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join(''):'<tr><td class="empty">Koi trade nahi.</td></tr>';
+}
+
+/* ================= MARKET ================= */
+function renderMarket(){
+  const cs=DATA.coins||{}, fg=DATA.fear_greed;
+  const up=Object.values(cs).filter(c=>c.change_7d>0).length, n=Object.keys(cs).length;
+  $('#mkHead').textContent=n?(up===n?'Saare coins is hafte upar hain':up===0?'Saare coins is hafte neeche hain':`${up} coins upar, ${n-up} neeche (7 din)`):'Market';
+  killPrefix('mk_');
+  $('#coins').innerHTML=Object.entries(cs).map(([s,c])=>{const pos=c.high_7d>c.low_7d?((c.price-c.low_7d)/(c.high_7d-c.low_7d)*100):50;
+    return`<div class="mk"><div><b>${coin(s)}</b> <span class="mute">${s}</span></div><div class="px">${price(c.price)}</div>
+      <div><span class="${tone(c.change_24h)}">${pct(c.change_24h)}</span> <span class="mute">24 ghante</span></div><div><span class="${tone(c.change_7d)}">${pct(c.change_7d)}</span> <span class="mute">7 din</span></div>
+      <canvas id="mk_${coin(s)}" height="46"></canvas>
+      <div class="range"><span>${price(c.low_7d)}</span><div class="meter"><i style="left:${pos}%"></i></div><span>${price(c.high_7d)}</span></div></div>`}).join('')||'<div class="empty">Market data abhi nahi aaya.</div>';
+  Object.entries(cs).forEach(([s,c])=>{const cv=$('#mk_'+coin(s));cv.width=cv.parentElement.clientWidth;charts['mk_'+coin(s)]=spark(cv,c.spark,c.change_7d>=0?css('--up'):css('--down'),c.spark[0]);});
+  // gauge
+  if(fg!=null){const a=Math.PI*(1-fg/100),cx=85,cy=88,r=70,x=cx+r*Math.cos(a)*.86,y=cy-r*Math.sin(a)*.86;
+    const lab=fg<25?'Bohot zyada dar':fg<45?'Dar':fg<55?'Normal':fg<75?'Laalach':'Bohot zyada laalach';
+    const arc=(f0,f1,c)=>{const a0=Math.PI*(1-f0),a1=Math.PI*(1-f1);return`<path d="M${cx+r*Math.cos(a0)} ${cy-r*Math.sin(a0)} A${r} ${r} 0 0 1 ${cx+r*Math.cos(a1)} ${cy-r*Math.sin(a1)}" stroke="${c}" stroke-width="12" fill="none"/>`};
+    $('#gauge').innerHTML=`<svg viewBox="0 0 170 100" role="img" aria-label="Fear and greed ${fg}">${arc(0,.25,css('--down'))}${arc(.255,.45,'color-mix(in srgb,'+css('--down')+' 45%,'+css('--grid2')+')')}${arc(.455,.545,css('--grid2'))}${arc(.55,.745,'color-mix(in srgb,'+css('--up')+' 45%,'+css('--grid2')+')')}${arc(.75,1,css('--up'))}
+      <line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${css('--ink')}" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="5" fill="${css('--ink')}"/></svg>
+      <div><div class="fig" style="font-size:38px;line-height:1">${fg}</div><div><b>${lab}</b></div><div class="mute" style="font-size:13px">0 = sab dare hue, 100 = sab laalach mein. 90 se upar bots khareedna rok dete hain.</div></div>`;}
+  else $('#gauge').innerHTML='<div class="empty">Index abhi nahi mila.</div>';
+  // matrix
+  const bots=DATA.bots.filter(b=>b.kind!=='hold'), syms=Object.keys(cs);
+  $('#matrix').innerHTML=`<tr><th>Coin</th>${bots.map(b=>`<th title="${esc(b.name)}"><span class="pen" style="background:${pen(b.id)};margin:0"></span><div style="font-size:11px">${esc(b.name.split(' ')[0])} ${b.timeframe}</div></th>`).join('')}</tr>`+
+    syms.map(s=>`<tr><td><b>${coin(s)}</b></td>${bots.map(b=>{const r=b.radar?.[s];if(!r)return'<td class="mute">–</td>';
+      if(b.positions.some(p=>p.symbol===s))return'<td><span class="badge">Hold</span></td>';if(b.pending.includes(s))return'<td><span class="badge">Buy</span></td>';
+      return`<td><span class="dots" aria-label="${r.met} of ${r.total}">${r.conditions.map(c=>`<i class="${c.ok?'y':''}"></i>`).join('')}</span></td>`}).join('')}</tr>`).join('');
+}
+
+/* ================= MORE ================= */
+function renderMore(){
+  $$('[data-cur]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cur===CUR));
+  $('#fxnote').textContent=DATA.usd_pkr?`Aaj ka rate: 1 USD = Rs ${DATA.usd_pkr}. Bots ka paisa USD (USDT) mein hai.`:'PKR rate abhi nahi mila, sab USD mein dikh raha hai.';
+  $('#tgnote').textContent=DATA.telegram?'On hai. Har khareed/farokht pe Telegram message aata hai.':'Phone pe trade alerts ke liye neeche "Telegram pe alerts" dekhein.';
+  $('#tgbadge').textContent=DATA.telegram?'On':'Band';$('#tgbadge').className=DATA.telegram?'badge':'badge ghost';
+  $('#runnote').textContent=`Cloud pe har ~${DATA.interval_min||15} min. Aakhri update ${ago(DATA.updated)} (${when(DATA.updated)}).`;
+  const repo=location.hostname.endsWith('github.io')?`https://github.com/${location.hostname.split('.')[0]}/${location.pathname.split('/')[1]}/actions`:'#';$('#ghlink').href=repo;
+}
+
+/* ================= wiring ================= */
+function renderAll(){syncUI();renderDesk();renderBots();renderTrades();renderMarket();renderMore();if(openBot)renderSheet();
+  $$('[data-range]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.range===raceRange));$$('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.unit===raceUnit));
+  $('#unitMoney').textContent=CUR==='PKR'&&DATA.usd_pkr?'Rs':'$';}
+function show(v,push=true){$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$$('nav.tabs button').forEach(b=>b.dataset.view===v?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  store.set('view',v);if(push)history.replaceState(null,'','#'+v);window.scrollTo(0,0);
+  if(DATA&&v==='market')renderMarket();if(DATA&&v==='desk')renderRace();}
+document.addEventListener('click',e=>{const t=e.target.closest('button,select');if(!t)return;
+  if(t.dataset.view)show(t.dataset.view);
+  else if(t.dataset.bot)openSheet(t.dataset.bot);
+  else if(t.dataset.sub){openTab=t.dataset.sub;renderSheet();$('#sheet').scrollTop=0;}
+  else if(t.dataset.range!=null&&t.closest('.race')){raceRange=+t.dataset.range;store.set('range',raceRange);renderAll();}
+  else if(t.dataset.unit){raceUnit=t.dataset.unit;store.set('unit',raceUnit);renderAll();}
+  else if(t.dataset.cur){CUR=t.dataset.cur;store.set('cur',CUR);renderAll();toast(CUR==='PKR'?'Ab rupee mein':'Ab dollar mein');}
+  else if(t.dataset.theme&&t.tagName==='BUTTON'){applyTheme(t.dataset.theme);renderAll();}
+  else if(t.dataset.fcoin){tFilter.coin=t.dataset.fcoin;renderTrades();}
+  else if(t.dataset.fres){tFilter.res=t.dataset.fres;renderTrades();}
+  else if(t.id==='sheetClose')closeSheet();
+  else if(t.id==='sync')load(true);});
+document.addEventListener('change',e=>{if(e.target.id==='fbot'){tFilter.bot=e.target.value;renderTrades();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openBot)closeSheet();});
+window.addEventListener('popstate',()=>{if(!location.hash.startsWith('#bot/')&&openBot)closeSheet(false);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>DATA&&renderAll());
+const startHash=location.hash.slice(1);
+show(['desk','bots','trades','market','more'].includes(startHash)?startHash:store.get('view','desk'),false);
+load().then(()=>{if(startHash.startsWith('bot/')){const [,id,tab]=startHash.split('/');openSheet(id,tab);}});
+setInterval(syncUI,30000); setInterval(()=>load(false),120000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(false);});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

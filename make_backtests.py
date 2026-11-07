@@ -12,7 +12,7 @@ import yaml
 
 from engine import market
 from engine.portfolio import Portfolio, run_series
-from engine.report import downsample, equity_series, stats
+from engine.report import downsample, equity_series, monthly, stats
 from engine.strategies import build
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -58,6 +58,7 @@ def main():
             yr[str(t.year)] = round((v / prev - 1) * 100, 1)
             prev = v
         st["yearly"] = yr
+        st["monthly"] = monthly(eq, float(b["capital"]))
         out["bots"][b["id"]] = {"stats": st, "curve": downsample(eq, 250)}
         print(f"{b['name']:<28} return {st['return_pct']:>8}%  CAGR {st.get('cagr')}%  DD {st['max_dd']}%  "
               f"trades {st['trades']}  {yr}")

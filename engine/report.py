@@ -36,7 +36,22 @@ def stats(st, capital):
         m = eq.resample("ME").last().pct_change().dropna()
         if len(m):
             out["pos_months"] = round(float((m > 0).mean() * 100))
+    if trades:
+        rets = [t["ret_pct"] for t in trades]
+        out["best_trade"], out["worst_trade"] = max(rets), min(rets)
+        out["avg_win"] = round(sum(t["ret_pct"] for t in wins) / len(wins), 2) if wins else None
+        losses = [t["ret_pct"] for t in trades if t["pnl"] <= 0]
+        out["avg_loss"] = round(sum(losses) / len(losses), 2) if losses else None
     gross_w = sum(t["pnl"] for t in wins)
     gross_l = -sum(t["pnl"] for t in trades if t["pnl"] <= 0)
     out["profit_factor"] = round(gross_w / gross_l, 2) if gross_l > 0 else None
+    return out
+
+
+def monthly(eq: pd.Series, capital):
+    m = eq.resample("ME").last()
+    prev, out = capital, {}
+    for t, v in m.items():
+        out[t.strftime("%Y-%m")] = round((v / prev - 1) * 100, 1)
+        prev = v
     return out

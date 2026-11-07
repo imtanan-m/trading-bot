@@ -69,3 +69,12 @@ def history(symbol, timeframe, start="2022-01-01"):
     df = df[df.close_time.astype("int64") < int(time.time() * 1000)]
     df["ts"] = pd.to_datetime(df.ts.astype("int64"), unit="ms", utc=True)
     return df.drop(columns="close_time").set_index("ts").astype(float)
+
+
+def usd_pkr():
+    """USD -> PKR rate (free, no key). None if unavailable."""
+    try:
+        r = requests.get("https://open.er-api.com/v6/latest/USD", timeout=10)
+        return round(float(r.json()["rates"]["PKR"]), 2)
+    except Exception:  # noqa: BLE001
+        return None

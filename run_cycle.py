@@ -16,7 +16,9 @@ from datetime import datetime, timezone
 import pandas as pd
 import yaml
 
-from engine import market
+import copy
+
+from engine import market, notify
 from engine.news import NewsGuard
 from engine.portfolio import Portfolio, run_series
 from engine.report import downsample, equity_series, stats
@@ -69,9 +71,17 @@ def run_bot(b, cfg, news, cache):
         log.info(f"{b['id']}: new bot, starting at {start}")
     flt = news.check if b.get("news_filter") else None
     n_before = len(p.st["trades"])
+    before = copy.deepcopy({"positions": p.st["positions"], "trades": p.st["trades"], "killed": p.st["killed"]})
     run_series(p, prepared, start=start, entry_filter_last=flt)
     p.st["events"] = p.st.get("events", [])[-50:]
     save_json(path, p.st)
+    p.alerts = [] if state is None else notify.diff_messages(b["name"], before, p.st)
+    p.radar = {}
+    for sym, df in prepared.items():
+        r = df.iloc[-1]
+        conds = strat.explain(r)
+        p.radar[sym] = {"candle": r.name.isoformat(), "close": round(float(r.close), 4), "conditions": conds,
+                        "met": sum(c["ok"] for c in conds), "total": len(conds)}
     log.info(f"{b['id']}: equity {p.equity():.2f}, open {list(p.st['positions'])}, "
              f"new trades {len(p.st['trades']) - n_before}")
     return p
@@ -84,7 +94,8 @@ def bot_summary(b, p, live):
     for sym, pos in st["positions"].items():
         px = live.get(sym, st["last_close"].get(sym, pos["entry"]))
         live_eq += pos["qty"] * px
-        positions.append({"symbol": sym, "qty": round(pos["qty"], 6), "entry": round(pos["entry"], 4),
+        stop_dist = round((pos["stop"] / px - 1) * 100, 2) if pos["stop"] else None
+        positions.append({"stop_dist": stop_dist, "symbol": sym, "qty": round(pos["qty"], 6), "entry": round(pos["entry"], 4),
                           "price": round(px, 4), "stop": round(pos["stop"], 4) if pos["stop"] else None,
                           "value": round(pos["qty"] * px, 2), "pnl_pct": round((px / pos["entry"] - 1) * 100, 2),
                           "since": pos["time"]})
@@ -105,8 +116,10 @@ def bot_summary(b, p, live):
         "change_24h": change_since(day_ago), "change_7d": change_since(week_ago),
         "started": st.get("created"), "killed": st.get("killed"),
         "positions": positions, "pending": list(st["pend_entry"]),
-        "trades": st["trades"][-30:][::-1], "events": st.get("events", [])[-10:][::-1],
-        "stats": stats(st, cap), "curve": downsample(eq, 300),
+        "trades": st["trades"][-200:][::-1], "events": st.get("events", [])[-10:][::-1],
+        "stats": stats(st, cap), "curve": downsample(eq, 400),
+        "radar": getattr(p, "radar", {}), "params": b.get("params", {}), "risk": b.get("risk", {}),
+        "kind": b["kind"], "news_filter": bool(b.get("news_filter")),
     }
 
 
@@ -123,6 +136,25 @@ def main():
             log.error(f"{b['id']} failed: {e}\n{traceback.format_exc()}")
             errors.append(f"{b['name']}: {e}")
     live = market.prices(all_syms) if bots_out else {}
+    coins = {}
+    for sym in all_syms:
+        try:
+            h = cache.get((sym, "1h"))
+            if h is None:
+                h = cache[(sym, "1h")] = market.klines(sym, "1h", 200)
+            last = live.get(sym, float(h.close.iloc[-1]))
+            wk = h.close.iloc[-168:]
+            coins[sym] = {"price": round(last, 4),
+                          "change_24h": round((last / float(h.close.iloc[-25]) - 1) * 100, 2) if len(h) > 25 else None,
+                          "change_7d": round((last / float(wk.iloc[0]) - 1) * 100, 2),
+                          "high_7d": round(float(h.high.iloc[-168:].max()), 4),
+                          "low_7d": round(float(h.low.iloc[-168:].min()), 4),
+                          "spark": [round(float(v), 4) for v in wk.iloc[::2]]}
+        except Exception as e:  # noqa: BLE001
+            log.warning(f"market snapshot {sym}: {e}")
+    for b, p in bots_out:
+        for m in getattr(p, "alerts", []):
+            notify.send(m, log)
     try:
         fng = news.fear_greed()
     except Exception:  # noqa: BLE001
@@ -131,6 +163,10 @@ def main():
         "updated": datetime.now(timezone.utc).isoformat(),
         "prices": {s: round(v, 4) for s, v in live.items()},
         "fear_greed": fng,
+        "coins": coins,
+        "usd_pkr": market.usd_pkr(),
+        "telegram": notify.enabled(),
+        "interval_min": 15,
         "errors": errors,
         "bots": sorted([bot_summary(b, p, live) for b, p in bots_out], key=lambda x: -x["return_pct"]),
     }

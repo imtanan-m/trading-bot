@@ -49,7 +49,7 @@ class NoNews:
         return 50
 
 
-market.klines, market.prices = fake_klines, fake_prices
+market.klines, market.prices, market.usd_pkr = fake_klines, fake_prices, lambda: 281.5
 run_cycle.NewsGuard = NoNews
 ok_count = 0
 
@@ -69,7 +69,9 @@ with tempfile.TemporaryDirectory() as d:
         run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
     ok(len(summ["bots"]) == 5 and not summ["errors"], "5 bots ran without errors")
-    need = {"id", "name", "equity", "return_pct", "positions", "trades", "stats", "curve", "change_24h"}
+    need = {"id", "name", "equity", "return_pct", "positions", "trades", "stats", "curve", "change_24h", "radar"}
+    ok(set(summ["coins"]) == {"BTC/USDT", "ETH/USDT", "SOL/USDT"} and summ["usd_pkr"], "market snapshot + PKR rate")
+    ok(all(r["conditions"] for b in summ["bots"] if b["id"] != "hold" for r in b["radar"].values()), "signal radar filled")
     ok(all(need <= set(b) for b in summ["bots"]), "summary has all dashboard fields")
     byid = {b["id"]: b for b in summ["bots"]}
     ok(byid["hold"]["positions"] and len(byid["hold"]["positions"]) == 3, "buy & hold bought all 3 coins")
