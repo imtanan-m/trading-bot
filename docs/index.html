@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trading Bots</title>
+<meta name="theme-color" content="#0b0f17">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+  :root{--bg:#0b0f17;--card:#121826;--card2:#0f1521;--line:#1f2a3d;--text:#e6ebf5;--mute:#8b97ad;
+        --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#4f8cff}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif}
+  body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px}
+  h1{font-size:20px;margin:0;letter-spacing:.2px}
+  .sub{color:var(--mute);font-size:12.5px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--mute)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #22c55e22}
+  .dot.stale{background:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
+  .dot.err{background:var(--red);box-shadow:0 0 0 3px #ef444422}
+  .banner{background:#1a1408;border:1px solid #3d2c0b;color:#f5d38a;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+  .banner.err{background:#1d0c0c;border-color:#4a1616;color:#fca5a5}
+  .ticker{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}
+  .ticker .pill{white-space:nowrap;color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:12px}
+  .card{min-width:0;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:border-color .15s,transform .15s}
+  .card:hover{border-color:#2d3b55}
+  .card:active{transform:scale(.995)}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .name{font-weight:650;font-size:15.5px;display:flex;align-items:center;gap:8px}
+  .sw{width:10px;height:10px;border-radius:3px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
+  .tag.Growth{color:#9cc0ff;border-color:#24406f}.tag.Safe{color:#86efac;border-color:#1d4d31}
+  .tag.Experiment{color:#fcd34d;border-color:#5a4512}.tag.Warning{color:#fca5a5;border-color:#5a1d1d}
+  .tag.Benchmark{color:#c4b5fd;border-color:#3d3166}
+  .big{font-size:26px;font-weight:700;letter-spacing:-.3px;margin-top:8px}
+  .pos{color:var(--green)}.neg{color:var(--red)}.mute{color:var(--mute)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+  .kpi{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:7px 8px}
+  .kpi b{display:block;font-size:13.5px}.kpi span{font-size:10.5px;color:var(--mute)}
+  .spark{height:64px;margin-top:10px;position:relative;width:100%}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{font-size:12px;padding:3px 8px;border-radius:8px;background:var(--card2);border:1px solid var(--line)}
+  /* detail */
+  #detail{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:10}
+  #detail.open{display:block}
+  .back{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px;font-size:14px;cursor:pointer}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px}
+  .section h3{margin:0 0 10px;font-size:14px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--mute);font-weight:500;font-size:11.5px}
+  .tw{overflow-x:auto}
+  .chartbox{height:260px}
+  .seg{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+  .seg button{background:none;border:0;color:var(--mute);padding:5px 10px;border-radius:8px;font-size:12.5px;cursor:pointer}
+  .seg button.on{background:#1f2a3d;color:var(--text)}
+  .about{color:#c9d2e3;font-size:14px}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .foot{color:var(--mute);font-size:12px;text-align:center;margin:24px 0 8px}
+  .empty{color:var(--mute);font-size:13px;padding:6px 0}
+  @media (max-width:420px){.kpis{grid-template-columns:repeat(2,1fr)}.big{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="home">
+  <header>
+    <div>
+      <h1>Trading Bots</h1>
+      <div class="sub">Paper trading: nakli paisa, Binance ki asli prices</div>
+    </div>
+    <span class="pill" id="status"><span class="dot" id="sdot"></span><span id="stext">Loading…</span></span>
+  </header>
+  <div id="banners"></div>
+  <div class="ticker" id="ticker"></div>
+  <div class="grid" id="cards"></div>
+  <div class="foot">Har ~15 minute mein cloud pe update hota hai · Ye financial advice nahi hai</div>
+</div>
+
+<div id="detail"><div class="wrap" id="dwrap"></div></div>
+
+<script>
+const fmt$ = v => (v<0?'-$':'$') + Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtP = (v,d=2) => v==null ? '–' : (v>0?'+':'') + v.toFixed(d) + '%';
+const cls = v => v>0 ? 'pos' : v<0 ? 'neg' : 'mute';
+const px = v => v>=100 ? v.toLocaleString(undefined,{maximumFractionDigits:2}) : v.toLocaleString(undefined,{maximumFractionDigits:4});
+const ago = iso => { const m=(Date.now()-new Date(iso))/6e4; if(m<1) return 'abhi'; if(m<60) return Math.round(m)+' min pehle';
+  const h=m/60; if(h<48) return Math.round(h)+' ghante pehle'; return Math.round(h/24)+' din pehle'; };
+const dt = iso => new Date(iso).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TF = {'1h':'1 ghanta','4h':'4 ghante','1d':'1 din'};
+const REASON = {'stop-loss':'Stop-loss','signal exit':'Signal exit','KILL SWITCH':'Kill switch'};
+let DATA=null, BT=null, charts=[];
+
+async function load(){
+  try{
+    const [s,b] = await Promise.all([
+      fetch('data/summary.json?t='+Date.now()).then(r=>r.ok?r.json():null),
+      BT ? Promise.resolve(BT) : fetch('data/backtest.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)
+    ]);
+    BT = b; if(!s) throw new Error('no data yet');
+    DATA = s; render();
+    const open = location.hash.slice(1); if(open) showDetail(open, false);
+  }catch(e){
+    document.getElementById('stext').textContent='Data abhi nahi aaya';
+    document.getElementById('sdot').className='dot err';
+    document.getElementById('cards').innerHTML='<div class="empty">Bot ka pehla run abhi hona hai. Thodi der baad refresh karein.</div>';
+  }
+}
+
+function status(){
+  const mins=(Date.now()-new Date(DATA.updated))/6e4;
+  document.getElementById('stext').textContent='Update: '+ago(DATA.updated);
+  document.getElementById('sdot').className='dot'+(DATA.errors?.length?' err':mins>60?' stale':'');
+  let h='';
+  if(mins>90) h+=`<div class="banner">Bot ka aakhri update ${ago(DATA.updated)} hua tha. Cloud runner shayad ruka hua hai.</div>`;
+  if(DATA.errors?.length) h+=`<div class="banner err">Kuch bots mein masla: ${DATA.errors.map(esc).join(' · ')}</div>`;
+  document.getElementById('banners').innerHTML=h;
+  const fg=DATA.fear_greed;
+  let t=Object.entries(DATA.prices||{}).map(([s,v])=>`<span class="pill"><b>${s.split('/')[0]}</b> $${px(v)}</span>`).join('');
+  if(fg!=null) t+=`<span class="pill">Fear &amp; Greed <b>${fg}</b></span>`;
+  document.getElementById('ticker').innerHTML=t;
+}
+
+function killCharts(){ charts.forEach(c=>c.destroy()); charts=[]; }
+
+function render(){
+  status(); killCharts();
+  const el=document.getElementById('cards');
+  el.innerHTML = DATA.bots.map(b=>{
+    const st=b.stats||{};
+    const pos = b.positions.length ? b.positions.map(p=>`<span class="chip">${p.symbol.split('/')[0]} <span class="${cls(p.pnl_pct)}">${fmtP(p.pnl_pct,1)}</span></span>`).join('')
+              : `<span class="chip mute">${b.pending.length?'Khareedne wala: '+b.pending.map(s=>s.split('/')[0]).join(', '):'Cash mein (koi trade nahi)'}</span>`;
+    return `<div class="card" onclick="showDetail('${b.id}')">
+      <div class="row"><div class="name"><span class="sw" style="background:${b.color}"></span>${esc(b.name)}</div><span class="tag ${b.tag}">${esc(b.tag)}</span></div>
+      <div class="row"><div class="big ${cls(b.return_pct)}">${fmtP(b.return_pct)}</div><div style="text-align:right"><div>${fmt$(b.equity)}</div><div class="sub">$${b.capital} se shuru</div></div></div>
+      <div class="kpis">
+        <div class="kpi"><b class="${cls(b.change_24h)}">${fmtP(b.change_24h)}</b><span>24 ghante</span></div>
+        <div class="kpi"><b class="${cls(b.change_7d)}">${fmtP(b.change_7d)}</b><span>7 din</span></div>
+        <div class="kpi"><b>${st.trades??0}</b><span>Trades</span></div>
+        <div class="kpi"><b class="neg">${fmtP(st.max_dd,1)}</b><span>Max giraav</span></div>
+      </div>
+      <div class="spark"><canvas id="sp_${b.id}"></canvas></div>
+      <div class="chips">${pos}${b.killed?'<span class="chip neg">Kill switch: band</span>':''}</div>
+    </div>`;}).join('');
+  DATA.bots.forEach(b=>{
+    const pts=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).concat([[DATA.updated,b.equity]]);
+    charts.push(new Chart(document.getElementById('sp_'+b.id),{type:'line',
+      data:{datasets:[{data:pts.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0,fill:{target:{value:b.capital},above:b.color+'22',below:'#ef444422'},tension:.25}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
+        scales:{x:{type:'time',display:false},y:{display:false}}}}));
+  });
+}
+
+function equityChart(canvas, datasets, logScale){
+  return new Chart(canvas,{type:'line',data:{datasets},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:datasets.length>1,labels:{color:'#8b97ad',boxWidth:10}},
+        tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fmt$(c.parsed.y)}}},
+      scales:{x:{type:'time',grid:{color:'#1f2a3d'},ticks:{color:'#8b97ad',maxTicksLimit:6}},
+              y:{type:logScale?'logarithmic':'linear',grid:{color:'#1f2a3d'},ticks:{color:'#8b97ad',callback:v=>'$'+Number(v).toLocaleString()}}}}});
+}
+
+function showDetail(id, push=true){
+  const b=DATA.bots.find(x=>x.id===id); if(!b) return;
+  if(push) history.pushState(null,'','#'+id);
+  killCharts();
+  const st=b.stats||{}, bt=BT?.bots?.[id]?.stats;
+  const posRows=b.positions.map(p=>`<tr><td><b>${p.symbol}</b></td><td>${px(p.entry)}</td><td>${px(p.price)}</td><td class="${cls(p.pnl_pct)}">${fmtP(p.pnl_pct)}</td><td>${p.stop?px(p.stop):'–'}</td><td>${fmt$(p.value)}</td><td class="mute">${dt(p.since)}</td></tr>`).join('');
+  const trRows=b.trades.map(t=>`<tr><td><b>${t.symbol.split('/')[0]}</b></td><td class="${cls(t.pnl)}">${fmtP(t.ret_pct)}</td><td class="${cls(t.pnl)}">${fmt$(t.pnl)}</td><td>${px(t.entry)} → ${px(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${dt(t.exit_time)}</td></tr>`).join('');
+  const ev=(b.events||[]).map(e=>`<tr><td class="mute">${dt(e.t)}</td><td>${esc(e.msg)}</td></tr>`).join('');
+  const yr = bt?.yearly ? Object.entries(bt.yearly).map(([y,v])=>`<span class="chip">${y}: <span class="${cls(v)}">${fmtP(v,1)}</span></span>`).join('') : '';
+  document.getElementById('dwrap').innerHTML=`
+    <header><button class="back" onclick="closeDetail()">← Wapas</button><span class="tag ${b.tag}">${esc(b.tag)}</span></header>
+    <div class="name" style="font-size:20px"><span class="sw" style="background:${b.color}"></span>${esc(b.name)}</div>
+    <div class="row"><div class="big ${cls(b.return_pct)}">${fmtP(b.return_pct)}</div><div style="text-align:right"><div style="font-size:18px">${fmt$(b.equity)}</div><div class="sub">Cash ${fmt$(b.cash)}</div></div></div>
+    <div class="sub">${b.symbols.join(', ')} · Candle: ${TF[b.timeframe]||b.timeframe} · Shuru: ${b.started?dt(b.started):'–'}</div>
+    <div class="kpis">
+      <div class="kpi"><b class="${cls(b.change_24h)}">${fmtP(b.change_24h)}</b><span>24 ghante</span></div>
+      <div class="kpi"><b class="${cls(b.change_7d)}">${fmtP(b.change_7d)}</b><span>7 din</span></div>
+      <div class="kpi"><b>${st.trades??0}${st.win_rate!=null?' · '+st.win_rate+'%':''}</b><span>Trades · jeet</span></div>
+      <div class="kpi"><b class="neg">${fmtP(st.max_dd,1)}</b><span>Max giraav</span></div>
+    </div>
+    <div class="section"><h3>Live progress</h3><div class="chartbox"><canvas id="live"></canvas></div></div>
+    <div class="section"><h3>Khuli positions</h3>${posRows?`<div class="tw"><table><tr><th>Coin</th><th>Entry</th><th>Abhi</th><th>P/L</th><th>Stop</th><th>Value</th><th>Kab se</th></tr>${posRows}</table></div>`:`<div class="empty">${b.pending.length?'Agli candle pe khareedega: '+b.pending.join(', '):'Abhi koi position nahi. Bot signal ka intezar kar raha hai.'}</div>`}</div>
+    <div class="section"><h3>Trades (aakhri 30)</h3>${trRows?`<div class="tw"><table><tr><th>Coin</th><th>%</th><th>P/L</th><th>Price</th><th>Wajah</th><th>Kab</th></tr>${trRows}</table></div>`:'<div class="empty">Abhi koi trade band nahi hui.</div>'}</div>
+    ${ev?`<div class="section"><h3>News filter ne roka</h3><div class="tw"><table>${ev}</table></div></div>`:''}
+    <div class="section"><h3>Ye bot kya karta hai</h3><div class="about">${esc(b.about)}</div></div>
+    ${bt?`<div class="section"><h3>Backtest (${BT.start.slice(0,7)} se ab tak, $${b.capital})</h3>
+      <div class="kpis">
+        <div class="kpi"><b class="${cls(bt.return_pct)}">${fmtP(bt.return_pct,0)}</b><span>Kul return</span></div>
+        <div class="kpi"><b class="${cls(bt.cagr)}">${fmtP(bt.cagr,1)}</b><span>Saalana</span></div>
+        <div class="kpi"><b class="neg">${fmtP(bt.max_dd,1)}</b><span>Max giraav</span></div>
+        <div class="kpi"><b>${bt.trades}${bt.win_rate!=null?' · '+bt.win_rate+'%':''}</b><span>Trades · jeet</span></div>
+      </div>
+      <div class="chips">${yr}</div>
+      <div class="chartbox" style="margin-top:10px"><canvas id="bt"></canvas></div>
+      <div class="sub" style="margin-top:8px">Backtest purane data pe hai. Future mein aisa hi ho, iski koi guarantee nahi.</div></div>`:''}
+  `;
+  document.getElementById('detail').classList.add('open'); window.scrollTo(0,0); document.getElementById('detail').scrollTo(0,0);
+  const pts=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).concat([[DATA.updated,b.equity]]);
+  charts.push(equityChart(document.getElementById('live'),[{label:b.name,data:pts.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0,tension:.2}]));
+  if(bt){
+    const sets=[{label:b.name,data:BT.bots[id].curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:b.color,borderWidth:2,pointRadius:0}];
+    if(id!=='hold' && BT.bots.hold) sets.push({label:'Buy & Hold',data:BT.bots.hold.curve.map(p=>({x:new Date(p[0]),y:p[1]})),borderColor:'#a78bfa88',borderWidth:1.5,pointRadius:0,borderDash:[4,3]});
+    charts.push(equityChart(document.getElementById('bt'),sets,true));
+  }
+}
+function closeDetail(push=true){ document.getElementById('detail').classList.remove('open'); if(push) history.pushState(null,'',location.pathname); render(); }
+window.addEventListener('popstate',()=>{ const id=location.hash.slice(1); id?showDetail(id,false):closeDetail(false); });
+load(); setInterval(()=>{ if(!document.getElementById('detail').classList.contains('open')) load(); else status(); }, 120000);
+</script>
+</body>
+</html>
