@@ -5,7 +5,7 @@ on:
     inputs:
       universe_n:
         description: "How many top coins"
-        default: "40"
+        default: "100"
 
 permissions:
   contents: write

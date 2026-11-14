@@ -78,3 +78,32 @@ def usd_pkr():
         return round(float(r.json()["rates"]["PKR"]), 2)
     except Exception:  # noqa: BLE001
         return None
+
+
+STABLE = {"USDC", "FDUSD", "TUSD", "USDP", "DAI", "BUSD", "EUR", "TRY", "BRL", "AEUR", "USDE", "PYUSD", "USD1",
+          "BFUSD", "RLUSD", "EURI", "XUSD", "UST", "USTC", "GBP", "AUD", "JPY", "PAXG", "XAUT", "WBTC", "WBETH",
+          "BETH", "STETH", "WSTETH", "USDS", "U", "BNSOL", "RWUSD"}
+
+
+def is_stock_token(base):
+    """Binance tokenized stocks look like NVDAB, MSTRB, MUB (ticker + 'B')."""
+    return base.endswith("B") and base not in CRYPTO_B and (len(base) >= 4 or base in {"MUB"})
+
+
+CRYPTO_B = {"BNB", "ARB", "SNB", "BOB", "COMB", "WOOB", "SAB", "LAB", "FB", "HB"}
+
+
+def top_coins(n=40):
+    """Top-n USDT spot coins by 24h volume, without stablecoins, leveraged or wrapped tokens."""
+    info = _get("/api/v3/exchangeInfo", {"permissions": "SPOT"})
+    ok = {s["symbol"]: s["baseAsset"] for s in info["symbols"]
+          if s["status"] == "TRADING" and s["quoteAsset"] == "USDT" and s.get("isSpotTradingAllowed", True)}
+    rows = []
+    for t in _get("/api/v3/ticker/24hr", {}):
+        base = ok.get(t["symbol"])
+        if (not base or base in STABLE or base.endswith(("UP", "DOWN", "BULL", "BEAR", "USD"))
+                or is_stock_token(base)):
+            continue
+        rows.append((float(t["quoteVolume"]), f"{base}/USDT"))
+    rows.sort(reverse=True)
+    return [s for _, s in rows[:n]]

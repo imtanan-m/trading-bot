@@ -160,7 +160,7 @@ class Portfolio:
         return self._sig_rows
 
 
-def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, regime=None):
+def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, regime=None, eligible=None):
     """Feed candles (dict sym->prepared df) in time order. Only candles after each symbol's
     last processed timestamp are used, so this works for backtests AND incremental cloud runs."""
     st = portfolio.st
@@ -185,7 +185,8 @@ def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, re
         while i < len(events) and events[i][0] == t:
             _, sym, row = events[i]
             flt = entry_filter_last if (entry_filter_last and t == latest[sym]) else None
-            portfolio.process_bar(sym, t, row, flt, regime(t) if regime else True)
+            ok = (regime(t) if regime else True) and (eligible(t, sym) if eligible else True)
+            portfolio.process_bar(sym, t, row, flt, ok)
             i += 1
         if portfolio._cands:
             portfolio.pick_candidates(t)
@@ -213,4 +214,23 @@ def btc_regime(btc_daily, sma=50):
     def f(t):
         i = idx.searchsorted(t, side="right") - 1
         return bool(vals[i]) if i >= 0 else False
+    return f
+
+
+def volume_universe(daily: dict, top=30, window=30, min_days=120):
+    """Point-in-time universe (no look-ahead): on each day a coin may be BOUGHT only if it was in the
+    top-N by 30-day dollar volume using data known that day, and has >= min_days of history."""
+    import pandas as pd
+    dv = pd.DataFrame({s: (df["close"] * df["volume"]).rolling(window).mean() for s, df in daily.items()})
+    age = pd.DataFrame({s: pd.Series(range(1, len(df) + 1), index=df.index) for s, df in daily.items()}).reindex(dv.index)
+    dv = dv.where(age >= min_days)
+    rank = dv.rank(axis=1, ascending=False)
+    ok = rank <= top
+    ok.index = ok.index + pd.Timedelta(days=1)  # known after the daily candle closes
+    idx = ok.index
+    cols = {c: ok[c].values for c in ok.columns}
+
+    def f(t, sym):
+        i = idx.searchsorted(t, side="right") - 1
+        return bool(cols[sym][i]) if (i >= 0 and sym in cols) else False
     return f
