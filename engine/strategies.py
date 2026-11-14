@@ -31,6 +31,13 @@ class Base:
     sizing = "risk"
     alloc = 0.5
     min_bars = 1
+    cross = False  # True = compare all coins and buy the best-scoring ones
+
+    def take_profit(self, entry, row):
+        return None
+
+    def score(self, row):
+        return 0.0
 
     def __init__(self, **p):
         self.p = p
@@ -68,8 +75,10 @@ class TrendBreakout(Base):
     Research: time-series momentum (Liu & Tsyvinski NBER w24877; Cheah et al. 2022)."""
 
     def __init__(self, ema_fast=50, ema_slow=200, breakout_lookback=20, adx_period=14, adx_min=20,
-                 atr_period=14, initial_stop_atr=2.5, trail_stop_atr=3.5, shock_candle_atr=3.0):
+                 atr_period=14, initial_stop_atr=2.5, trail_stop_atr=3.5, shock_candle_atr=3.0,
+                 take_profit_atr=0.0, rank=False):
         super().__init__()
+        self.tp_atr, self.cross = float(take_profit_atr), bool(rank)
         self.ef, self.es, self.lb = int(ema_fast), int(ema_slow), int(breakout_lookback)
         self.adx_n, self.adx_min, self.atr_n = int(adx_period), float(adx_min), int(atr_period)
         self.k0, self.kt, self.shock = float(initial_stop_atr), float(trail_stop_atr), float(shock_candle_atr)
@@ -81,7 +90,14 @@ class TrendBreakout(Base):
         o["atr"], o["adx"] = atr(o, self.atr_n), adx(o, self.adx_n)
         o["hh"] = o.high.rolling(self.lb).max().shift(1)
         o["shock"] = (o.high - o.low) > self.shock * o["atr"].shift(1) if self.shock > 0 else False
+        o["strength"] = (o.close / o.close.shift(self.lb) - 1) / (o["atr"] / o.close)
         return self._warm(o)
+
+    def score(self, r):
+        return r["strength"] if _ok(r["strength"]) else 0.0
+
+    def take_profit(self, entry, r):
+        return entry + self.tp_atr * r["atr"] if self.tp_atr > 0 else None
 
     def entry_signal(self, r):
         if not r["warm"] or not _ok(r["hh"], r["ema_fast"], r["ema_slow"], r["adx"], r["atr"]):
@@ -193,7 +209,98 @@ class BuyHold(Base):
         return True
 
 
-REGISTRY = {"trend": TrendBreakout, "momentum": DailyMomentum, "rsi2": RSI2Scalper, "hold": BuyHold}
+class Rotation(Base):
+    """Opportunity Hunter (daily): scan many coins, rank by risk-adjusted momentum and hold the
+    top K that are in an uptrend. Cross-sectional momentum is one of the strongest documented
+    crypto factors (Liu, Tsyvinski & Wu 2022, Journal of Finance)."""
+    sizing = "alloc"
+    cross = True
+
+    def __init__(self, lookback=28, sma=20, k=3, take_profit_pct=0.0, stop_pct=0.0):
+        super().__init__()
+        self.lb, self.sma, self.k = int(lookback), int(sma), int(k)
+        self.tp, self.sl = float(take_profit_pct), float(stop_pct)
+        self.alloc = 0.97 / self.k
+        self.min_bars = max(self.lb, self.sma) + 2
+
+    def prepare(self, df):
+        o = df.copy()
+        o["sma"] = o.close.rolling(self.sma).mean()
+        o["mom"] = o.close / o.close.shift(self.lb) - 1
+        vol = o.close.pct_change().rolling(self.lb).std()
+        o["score"] = o["mom"] / (vol * (self.lb ** 0.5))
+        return self._warm(o)
+
+    def entry_signal(self, r):
+        return bool(r["warm"] and _ok(r["sma"], r["mom"], r["score"]) and r["close"] > r["sma"] and r["mom"] > 0)
+
+    def score(self, r):
+        return r["score"]
+
+    def initial_stop(self, entry, r):
+        return entry * (1 - self.sl) if self.sl > 0 else None
+
+    def take_profit(self, entry, r):
+        return entry * (1 + self.tp) if self.tp > 0 else None
+
+    def exit_signal(self, r, pos):
+        return bool(_ok(r["sma"], r["mom"]) and (r["close"] < r["sma"] or r["mom"] < 0))
+
+    def explain(self, r):
+        if not _ok(r["sma"], r["mom"]):
+            return []
+        return [_cond(f"Price {self.sma}-candle average se upar", r["close"] > r["sma"], _pct(r["close"], r["sma"])),
+                _cond(f"{self.lb} candles ka return positive", r["mom"] > 0, round(float(r["mom"]) * 100, 2))]
+
+
+class DipBuyer(Base):
+    """Buy sharp oversold dips (RSI low) and sell quickly at a profit target, with a stop and a
+    time limit. Picks the most oversold coins first."""
+    sizing = "alloc"
+    cross = True
+
+    def __init__(self, rsi_n=14, rsi_buy=30, trend_sma=0, take_profit_pct=0.08, stop_pct=0.08, max_bars=10, k=3):
+        super().__init__()
+        self.rn, self.rb, self.tsma = int(rsi_n), float(rsi_buy), int(trend_sma)
+        self.tp, self.sl, self.max_bars, self.k = float(take_profit_pct), float(stop_pct), int(max_bars), int(k)
+        self.alloc = 0.97 / self.k
+        self.min_bars = max(self.rn * 3, self.tsma) + 2
+
+    def prepare(self, df):
+        o = df.copy()
+        o["rsi"] = rsi(o.close, self.rn)
+        o["tsma"] = o.close.rolling(self.tsma).mean() if self.tsma else 0.0
+        return self._warm(o)
+
+    def entry_signal(self, r):
+        if not (r["warm"] and _ok(r["rsi"])):
+            return False
+        trend_ok = (not self.tsma) or (_ok(r["tsma"]) and r["close"] > r["tsma"])
+        return bool(r["rsi"] < self.rb and trend_ok)
+
+    def score(self, r):
+        return -r["rsi"]
+
+    def initial_stop(self, entry, r):
+        return entry * (1 - self.sl)
+
+    def take_profit(self, entry, r):
+        return entry * (1 + self.tp)
+
+    def exit_signal(self, r, pos):
+        return pos["bars"] >= self.max_bars
+
+    def explain(self, r):
+        if not _ok(r["rsi"]):
+            return []
+        c = [_cond(f"RSI-{self.rn} {self.rb:g} se neeche (oversold)", r["rsi"] < self.rb, round(float(r["rsi"]), 1))]
+        if self.tsma:
+            c.append(_cond(f"Price {self.tsma}-candle average se upar", _ok(r["tsma"]) and r["close"] > r["tsma"], _pct(r["close"], r["tsma"])))
+        return c
+
+
+REGISTRY = {"trend": TrendBreakout, "momentum": DailyMomentum, "rsi2": RSI2Scalper, "hold": BuyHold,
+            "rotation": Rotation, "dip": DipBuyer}
 
 
 def build(kind, params):
