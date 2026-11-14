@@ -62,24 +62,7 @@ class Portfolio:
         day = _iso(t)[:10]
         if st["day"] != day:
             st["day"], st["day_start"] = day, self.equity()
-        # 1) exit decided at previous close -> next open
-        if sym in st["pend_exit"]:
-            st["pend_exit"].remove(sym)
-            if sym in st["positions"]:
-                self._close(sym, bar.open * (1 - self.slip), t, "signal exit")
-        # 2) entry decided at previous close -> next open
-        if sym in st["pend_entry"]:
-            st["pend_entry"].pop(sym)
-            if sym not in st["positions"] and not st["killed"]:
-                entry = bar.open * (1 + self.slip)
-                stop = self.s.initial_stop(entry, self._sig[sym]) if sym in self._sig else None
-                qty = self._size(entry, stop)
-                cost = qty * entry * (1 + self.fee)
-                if qty > 0 and cost >= 5:
-                    st["cash"] -= cost
-                    tp = self.s.take_profit(entry, self._sig[sym]) if sym in self._sig else None
-                    st["positions"][sym] = {"qty": qty, "entry": entry, "stop": stop, "cost": cost,
-                                            "hi": entry, "time": _iso(t), "bars": 0, "tp": tp}
+        self._fill_pending(sym, t, bar.open)
         # 3) intrabar stop
         p = st["positions"].get(sym)
         if p and p["stop"] is not None and bar.low <= p["stop"]:
@@ -111,6 +94,33 @@ class Portfolio:
                 self._sig[sym] = bar
             elif not ok:
                 st.setdefault("events", []).append({"t": _iso(t), "msg": f"{sym}: buy blocked ({why})"})
+
+    def _fill_pending(self, sym, t, open_price):
+        """Orders decided at the previous close fill at this candle's open."""
+        st = self.st
+        if sym in st["pend_exit"]:
+            st["pend_exit"].remove(sym)
+            if sym in st["positions"]:
+                self._close(sym, open_price * (1 - self.slip), t, "signal exit")
+        if sym in st["pend_entry"]:
+            st["pend_entry"].pop(sym)
+            if sym not in st["positions"] and not st["killed"]:
+                entry = open_price * (1 + self.slip)
+                stop = self.s.initial_stop(entry, self._sig[sym]) if sym in self._sig else None
+                qty = self._size(entry, stop)
+                cost = qty * entry * (1 + self.fee)
+                if qty > 0 and cost >= 5:
+                    st["cash"] -= cost
+                    tp = self.s.take_profit(entry, self._sig[sym]) if sym in self._sig else None
+                    st["positions"][sym] = {"qty": qty, "entry": entry, "stop": stop, "cost": cost,
+                                            "hi": entry, "time": _iso(t), "bars": 0, "tp": tp}
+
+    def fill_at_open(self, sym, t, open_price):
+        """Live only: as soon as the next candle has OPENED, fill pending orders at its open price
+        (the exact price a backtest would use), instead of waiting for that candle to close."""
+        if sym in self.st["pend_entry"] or sym in self.st["pend_exit"]:
+            self._fill_pending(sym, t, open_price)
+            self.st["last_close"].setdefault(sym, open_price)
 
     def mark(self, t, record=True):
         st = self.st
@@ -182,6 +192,10 @@ def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, re
     i = 0
     while i < len(events):
         t = events[i][0]
+        j = i
+        while j < len(events) and events[j][0] == t:  # all fills at the open happen before any close
+            portfolio._fill_pending(events[j][1], t, events[j][2]["open"])
+            j += 1
         while i < len(events) and events[i][0] == t:
             _, sym, row = events[i]
             flt = entry_filter_last if (entry_filter_last and t == latest[sym]) else None

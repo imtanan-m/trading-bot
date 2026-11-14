@@ -34,6 +34,15 @@ def fake_klines(sym, tf, limit=1000):
     return df.iloc[-limit:]
 
 
+def fake_forming(sym, tf):
+    key = (sym, tf)
+    if key not in FULL:
+        FULL[key] = make_backtests.load(sym, tf)
+    df = FULL[key]
+    cur = df[(df.index <= NOW["t"]) & (df.index + TF[tf] > NOW["t"])]
+    return (cur.index[-1], float(cur.open.iloc[-1])) if len(cur) else None
+
+
 def fake_prices(symbols):
     return {s: float(fake_klines(s, "1h").close.iloc[-1]) for s in symbols}
 
@@ -51,6 +60,7 @@ class NoNews:
 
 market.klines, market.prices, market.usd_pkr = fake_klines, fake_prices, lambda: 281.5
 market.top_coins = lambda n=40: ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
+market.forming = fake_forming
 run_cycle.NewsGuard = NoNews
 ok_count = 0
 

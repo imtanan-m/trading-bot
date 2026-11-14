@@ -114,6 +114,13 @@ def run_bot(b, cfg, news, cache):
     n_before = len(p.st["trades"])
     before = copy.deepcopy({"positions": p.st["positions"], "trades": p.st["trades"], "killed": p.st["killed"]})
     run_series(p, prepared, start=start, entry_filter_last=flt, regime=regime, eligible=eligible)
+    for sym in list(p.st["pend_entry"]) + list(p.st["pend_exit"]):
+        try:
+            f = market.forming(sym, b["timeframe"])
+            if f and sym in p.st["last_ts"] and f[0] > pd.Timestamp(p.st["last_ts"][sym]):
+                p.fill_at_open(sym, f[0], f[1])
+        except Exception as e:  # noqa: BLE001
+            log.warning(f"{b['id']}: early fill {sym} failed ({e}); will fill at candle close")
     p.st["events"] = p.st.get("events", [])[-50:]
     save_json(path, p.st)
     p.alerts = [] if state is None else notify.diff_messages(b["name"], before, p.st)

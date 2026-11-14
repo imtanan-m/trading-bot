@@ -40,6 +40,14 @@ def klines(symbol, timeframe, limit=1000):
     return df
 
 
+def forming(symbol, timeframe):
+    """(open_time, open_price) of the candle that is still forming right now, or None."""
+    rows = _get("/api/v3/klines", {"symbol": symbol.replace("/", ""), "interval": timeframe, "limit": 1})
+    if not rows or int(rows[-1][6]) < int(time.time() * 1000):
+        return None
+    return pd.to_datetime(int(rows[-1][0]), unit="ms", utc=True), float(rows[-1][1])
+
+
 def prices(symbols):
     out = {}
     for s in symbols:
