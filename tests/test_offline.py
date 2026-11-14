@@ -61,6 +61,13 @@ class NoNews:
 market.klines, market.prices, market.usd_pkr = fake_klines, fake_prices, lambda: 281.5
 market.top_coins = lambda n=40: ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
 market.forming = fake_forming
+
+
+def _no_net(*a, **k):
+    raise RuntimeError("no offline data")
+
+
+market.history = _no_net
 run_cycle.NewsGuard = NoNews
 ok_count = 0
 
@@ -79,7 +86,7 @@ with tempfile.TemporaryDirectory() as d:
         NOW["t"] = start + pd.Timedelta(hours=6 * i)
         run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 7 and not summ["errors"], "7 bots ran without errors")
+    ok(len(summ["bots"]) == 8 and not summ["errors"], "8 bots ran without errors: " + str(summ["errors"]))
     need = {"id", "name", "equity", "return_pct", "positions", "trades", "stats", "curve", "change_24h", "radar"}
     ok(set(summ["coins"]) == {"BTC/USDT", "ETH/USDT", "SOL/USDT"} and summ["usd_pkr"], "market snapshot + PKR rate")
     ok(all(r["conditions"] for b in summ["bots"] if b["id"] != "hold" for r in b["radar"].values()), "signal radar filled")
@@ -121,6 +128,20 @@ with tempfile.TemporaryDirectory() as d:
     ok(abs(p.equity() - st["equity"][-1][1]) < 0.5 and len(p.st["trades"]) == len(st["trades"]),
        f"scanner incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f})")
 
+    # futures bot: trades both sides, uses leverage, survives restarts identically
+    st = json.load(open(os.path.join(run_cycle.STATE_DIR, "futures_scalper.json")))
+    sides = {t["side"] for t in st["trades"]}
+    ok(len(st["trades"]) > 3 and sides <= {"long", "short"}, f"futures bot traded: {len(st['trades'])} trades, sides {sides}")
+    fb = next(x for x in summ["bots"] if x["id"] == "futures_scalper")
+    ok(fb["futures"] and fb["leverage"] == 5, "futures bot reported with 5x leverage")
+    b = next(x for x in cfg["bots"] if x["id"] == "futures_scalper")
+    s = build(b["kind"], b["params"])
+    pr = {sym: s.prepare(fake_klines(sym, "1h", 50000)) for sym in ["BTC/USDT", "ETH/USDT", "SOL/USDT"]}
+    p = Portfolio(s, b["risk"], b["capital"], b["fee_pct"], b["slippage_pct"])
+    run_series(p, pr, start=pd.Timestamp(st["equity"][0][0]))
+    ok(abs(p.equity() - st["equity"][-1][1]) < 1.0 and len(p.st["trades"]) == len(st["trades"]),
+       f"futures incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f})")
+
     # a broken bot must not stop the others
     orig = run_cycle.run_bot
 
@@ -132,6 +153,6 @@ with tempfile.TemporaryDirectory() as d:
     NOW["t"] += pd.Timedelta(hours=6)
     run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 6 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
+    ok(len(summ["bots"]) == 7 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
 
 print(f"\nALL {ok_count} CHECKS PASSED")

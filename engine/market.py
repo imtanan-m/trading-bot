@@ -29,8 +29,15 @@ def _get(path, params):
 
 
 def klines(symbol, timeframe, limit=1000):
-    """Closed candles only, as a DataFrame indexed by UTC open time."""
-    rows = _get("/api/v3/klines", {"symbol": symbol.replace("/", ""), "interval": timeframe, "limit": limit})
+    """Closed candles only, as a DataFrame indexed by UTC open time. limit may exceed 1000
+    (older candles are fetched in extra requests)."""
+    rows = _get("/api/v3/klines", {"symbol": symbol.replace("/", ""), "interval": timeframe, "limit": min(limit, 1000)})
+    while len(rows) < limit and rows:
+        older = _get("/api/v3/klines", {"symbol": symbol.replace("/", ""), "interval": timeframe,
+                                        "endTime": rows[0][0] - 1, "limit": min(1000, limit - len(rows))})
+        if not older:
+            break
+        rows = older + rows
     df = pd.DataFrame([r[:6] + [r[6]] for r in rows],
                       columns=["ts", "open", "high", "low", "close", "volume", "close_time"])
     now_ms = int(time.time() * 1000)

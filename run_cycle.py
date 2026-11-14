@@ -55,9 +55,11 @@ def save_json(path, obj):
 
 def get_klines(cache, sym, tf, limit=1000):
     key = (sym, tf)
-    if key not in cache:
-        cache[key] = market.klines(sym, tf, limit)
-    return cache[key]
+    if key not in cache or len(cache[key]) < min(limit, cache.get(("_max", sym, tf), limit)):
+        df = market.klines(sym, tf, limit)
+        cache[key] = df
+        cache[("_max", sym, tf)] = len(df)  # remember how much history exists for this coin
+    return cache[key] if len(cache[key]) <= limit else cache[key].iloc[-limit:]
 
 
 def coin_pool(n):
@@ -86,12 +88,12 @@ def run_bot(b, cfg, news, cache):
     strat = build(b["kind"], b.get("params"))
     path = os.path.join(STATE_DIR, f"{b['id']}.json")
     state = load_json(path)
-    p = Portfolio(strat, b.get("risk", {}), float(b["capital"]), cfg.get("fee_pct", 0.1),
-                  cfg.get("slippage_pct", 0.05), state)
+    p = Portfolio(strat, b.get("risk", {}), float(b["capital"]), b.get("fee_pct", cfg.get("fee_pct", 0.1)),
+                  b.get("slippage_pct", cfg.get("slippage_pct", 0.05)), state)
     prepared, raw = {}, {}
     for sym in bot_symbols(b, state):
         try:
-            raw[sym] = get_klines(cache, sym, b["timeframe"])
+            raw[sym] = get_klines(cache, sym, b["timeframe"], int(b.get("bars", 1000)))
         except Exception as e:  # noqa: BLE001 - a single delisted/odd coin must not stop the bot
             log.warning(f"{b['id']}: {sym} skipped ({e})")
             continue
@@ -145,12 +147,22 @@ def bot_summary(b, p, live):
     live_eq = st["cash"]
     for sym, pos in st["positions"].items():
         px = live.get(sym, st["last_close"].get(sym, pos["entry"]))
-        live_eq += pos["qty"] * px
-        stop_dist = round((pos["stop"] / px - 1) * 100, 2) if pos["stop"] else None
-        positions.append({"stop_dist": stop_dist, "symbol": sym, "qty": round(pos["qty"], 6), "entry": round(pos["entry"], 4),
-                          "price": round(px, 4), "stop": round(pos["stop"], 4) if pos["stop"] else None,
-                          "value": round(pos["qty"] * px, 2), "pnl_pct": round((px / pos["entry"] - 1) * 100, 2),
-                          "since": pos["time"]})
+        val = Portfolio.pos_value(pos, px)
+        live_eq += val
+        side = pos.get("side", 1)
+        move = side * (px / pos["entry"] - 1) * 100
+        stop_dist = round(side * (pos["stop"] / px - 1) * 100, 2) if pos["stop"] else None
+        row = {"stop_dist": stop_dist, "symbol": sym, "qty": round(pos["qty"], 6), "entry": round(pos["entry"], 6),
+               "price": round(px, 6), "stop": round(pos["stop"], 6) if pos["stop"] else None,
+               "tp": round(pos["tp"], 6) if pos.get("tp") else None,
+               "value": round(val, 2), "pnl_pct": round(move * pos.get("lev", 1), 2), "move_pct": round(move, 2),
+               "since": pos["time"]}
+        if "margin" in pos:
+            lev = pos.get("lev", 1)
+            row.update(side="long" if side > 0 else "short", lev=lev, margin=round(pos["margin"], 2),
+                       notional=round(pos["qty"] * px, 2),
+                       liq=round(pos["entry"] * (1 - side * (1 / lev - 0.005)), 6) if lev > 1 else None)
+        positions.append(row)
     eq = equity_series(st)
     day_ago = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)
     week_ago = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=7)
@@ -175,6 +187,7 @@ def bot_summary(b, p, live):
         "scanner": "universe" in b, "btc_filter": bool(b.get("btc_filter")),
         "market_ok": getattr(p, "regime_now", None),
         "universe": b.get("universe"),
+        "futures": b["kind"] == "scalp", "leverage": b.get("risk", {}).get("leverage", 1),
     }
 
 

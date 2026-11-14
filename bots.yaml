@@ -6,6 +6,30 @@ fee_pct: 0.10        # Binance spot fee har taraf
 slippage_pct: 0.05
 
 bots:
+  - id: futures_scalper
+    name: "Futures Scalper"
+    tag: "Experiment"
+    color: "#4d7c0f"
+    kind: scalp
+    timeframe: 1h
+    bars: 2500
+    symbols: [BTC/USDT, ETH/USDT, SOL/USDT, XRP/USDT, BNB/USDT, DOGE/USDT]
+    capital: 1000
+    news_filter: false
+    fee_pct: 0.05        # Binance USD-M futures taker fee
+    slippage_pct: 0.02
+    params: {mode: trend, min_votes: 5, tp_atr: 4.0, sl_atr: 2.0, max_bars: 24}
+    risk: {leverage: 5, funding_pct_8h: 0.01, risk_per_trade_pct: 0.5, max_position_pct: 100,
+           max_open_positions: 3, min_cash_reserve_pct: 1, daily_loss_limit_pct: 5, max_drawdown_kill_pct: 50}
+    about: >
+      Futures agent (paper): 6 bade coins pe har ghante LONG ya SHORT dhoondta hai, 5x leverage ke saath.
+      Har candle pe 6 angles se vote: EMA 20/50/200, bara trend (EMA-800), MACD, RSI, VWAP aur volume.
+      Trend mazboot ho (ADX 25+), kam se kam 5 votes ek taraf hon, aur price breakout kare, tabhi trade.
+      Har trade pe stop (2 ATR) aur target (4 ATR). +1R pe stop break-even pe aa jata hai, aur 24 ghante
+      ki time limit hai. Har trade mein sirf 0.5% risk. Sach: research mein 54 scalping settings mein se
+      koi bhi fees ke baad profit mein nahi thi. Ye sab se kam buri thi (90 din: +20%, poora backtest: -51%).
+      Isse asli paise pe na chalayein.
+
   - id: hunter_daily
     name: "Opportunity Hunter"
     tag: "High risk"

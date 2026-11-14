@@ -32,11 +32,14 @@ def diff_messages(bot_name, before, after):
     msgs = []
     for sym, p in after["positions"].items():
         if sym not in before.get("positions", {}):
-            msgs.append(f"🟢 <b>{bot_name}</b> ne {sym} khareeda @ ${_px(p['entry'])}"
-                        + (f" (stop ${_px(p['stop'])})" if p.get("stop") else ""))
+            what = (("📈 LONG" if p["side"] > 0 else "📉 SHORT") + f" {p.get('lev', 1):g}x") if "side" in p else "🟢 khareeda"
+            msgs.append(f"{what}: <b>{bot_name}</b> {sym} @ ${_px(p['entry'])}"
+                        + (f", stop ${_px(p['stop'])}" if p.get("stop") else "")
+                        + (f", target ${_px(p['tp'])}" if p.get("tp") else ""))
     for t in after["trades"][len(before.get("trades", [])):]:
         icon = "✅" if t["pnl"] > 0 else "🔴"
-        msgs.append(f"{icon} <b>{bot_name}</b> ne {t['symbol']} becha: {t['ret_pct']:+.2f}% "
+        side = f" {t['side'].upper()}" if t.get("side") else ""
+        msgs.append(f"{icon} <b>{bot_name}</b>{side} {t['symbol']} band: {t['ret_pct']:+.2f}% "
                     f"(${t['pnl']:+.2f}, {t['reason']})")
     if after.get("killed") and not before.get("killed"):
         msgs.append(f"⛔ <b>{bot_name}</b>: kill switch, bot band ho gaya")

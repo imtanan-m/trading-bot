@@ -312,10 +312,11 @@ function applyTheme(t){document.documentElement.dataset.theme=t==='light'?'light
 applyTheme(store.get('theme','auto'));
 if(window.Chart){Chart.defaults.font.family='Archivo, system-ui, -apple-system, Segoe UI, sans-serif';Chart.defaults.color='#66728A';}
 /* pen colours for bot lines, tuned per theme */
-const PENS={light:['#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
+const PENS={light:['#4D7C0F','#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#BEF264','#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
 const isDark=()=>css('--paper').toLowerCase()==='#0f2340';
-const ORDER=['hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
+const ORDER=['futures_scalper','hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
 const pen=id=>{const i=ORDER.indexOf(id);return PENS[isDark()?'dark':'light'][i<0?0:i]};
+const sideTag=x=>x.side?`<span class="badge ${x.side==='short'?'ghost':''}" style="${x.side==='short'?'color:var(--down);border-color:var(--down)':'background:var(--up);color:var(--paper)'}">${x.side==='long'?'LONG':'SHORT'}${x.lev?' '+x.lev+'x':''}</span>`:'';
 const coinsLabel=b=>b.scanner?`Top ${b.universe?.top||30} coins scan`:b.symbols.map(coin).join(', ');
 function ranked(b){return Object.entries(b.radar||{}).map(([s,r])=>({s,r,held:b.positions.some(p=>p.symbol===s),pend:b.pending.includes(s)}))
   .filter(x=>x.held||x.pend||x.r.eligible!==false).sort((a,c)=>(c.held-a.held)||(c.pend-a.pend)||(c.r.met-a.r.met)||((c.r.score??-1e9)-(a.r.score??-1e9)));}
@@ -332,7 +333,7 @@ const coin=s=>s.split('/')[0];
 function ago(iso){const m=(Date.now()-new Date(iso))/6e4;if(m<1)return'abhi';if(m<60)return Math.round(m)+' min pehle';const h=m/60;if(h<36)return Math.round(h)+' ghante pehle';return Math.round(h/24)+' din pehle';}
 const when=iso=>new Date(iso).toLocaleString(undefined,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
 const TF={'1h':'1 ghante','4h':'4 ghante','1d':'1 din'};
-const REASON={'stop-loss':'Stop-loss','signal exit':'Signal pe becha','KILL SWITCH':'Kill switch'};
+const REASON={'stop-loss':'Stop-loss','signal exit':'Signal pe band','take-profit':'Target pe profit','LIQUIDATED':'Liquidation','KILL SWITCH':'Kill switch'};
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
 
 /* ================= data ================= */
@@ -361,7 +362,7 @@ function killPrefix(p){Object.keys(charts).filter(k=>k.startsWith(p)).forEach(ki
 function curveOf(b){const c=(b.curve.length?b.curve:[[b.started||DATA.updated,b.capital]]).map(p=>[new Date(p[0]),p[1]]);c.push([new Date(DATA.updated),b.equity]);return c;}
 function status(b){
   if(b.killed)return'Kill switch se band';
-  if(b.positions.length)return b.positions.map(p=>coin(p.symbol)+' '+pct(p.pnl_pct,1)).join(', ');
+  if(b.positions.length)return b.positions.map(p=>(p.side?(p.side==='long'?'▲ ':'▼ '):'')+coin(p.symbol)+' '+pct(p.pnl_pct,1)).join(', ');
   if(b.pending.length)return'Agli candle pe khareedega: '+b.pending.map(coin).join(', ');
   return'Cash mein, signal ka intezar';}
 function spark(canvas,vals,color,base){return new Chart(canvas,{type:'line',data:{labels:vals.map((_,i)=>i),datasets:[{data:vals,borderColor:color,borderWidth:1.6,pointRadius:0,tension:.3,
@@ -405,8 +406,8 @@ function renderDesk(){
 function renderFeed(){
   const ev=[];
   DATA.bots.forEach(b=>{
-    b.trades.slice(0,15).forEach(t=>ev.push({t:t.exit_time,cls:t.pnl>0?'win':'loss',h:`<b>${esc(b.name)}</b> ne ${coin(t.symbol)} becha <span class="${tone(t.pnl)}">${pct(t.ret_pct)} (${money(t.pnl)})</span>`,s:REASON[t.reason]||t.reason}));
-    b.positions.forEach(p=>ev.push({t:p.since,cls:'buy',h:`<b>${esc(b.name)}</b> ne ${coin(p.symbol)} khareeda @ ${price(p.entry)}`,s:`Abhi ${pct(p.pnl_pct)}`+(p.stop?`, stop ${price(p.stop)}`:'')}));
+    b.trades.slice(0,15).forEach(t=>ev.push({t:t.exit_time,cls:t.pnl>0?'win':'loss',h:`<b>${esc(b.name)}</b> ne ${coin(t.symbol)} ${t.side?sideTag(t)+' band kiya':'becha'} <span class="${tone(t.pnl)}">${pct(t.ret_pct)} (${money(t.pnl)})</span>`,s:REASON[t.reason]||t.reason}));
+    b.positions.forEach(p=>ev.push({t:p.since,cls:'buy',h:p.side?`<b>${esc(b.name)}</b> ne ${coin(p.symbol)} ${sideTag(p)} khola @ ${price(p.entry)}`:`<b>${esc(b.name)}</b> ne ${coin(p.symbol)} khareeda @ ${price(p.entry)}`,s:`Abhi ${pct(p.pnl_pct)}`+(p.stop?`, stop ${price(p.stop)}`:'')+(p.tp?`, target ${price(p.tp)}`:'')}));
     b.pending.forEach(s=>ev.push({t:DATA.updated,cls:'wait',h:`<b>${esc(b.name)}</b> ${coin(s)} khareedne wala hai`,s:'Agli candle khulte hi'}));
     (b.events||[]).slice(0,5).forEach(e=>ev.push({t:e.t,cls:'block',h:`<b>${esc(b.name)}</b>: news filter ne khareed roki`,s:e.msg}));
   });
@@ -466,23 +467,23 @@ function renderSheet(){
         <div><b>${b.started?ago(b.started).replace(' pehle',''):'–'}</b><span>Kab se chal raha</span></div></div>
       <h2>Khuli positions</h2>${b.positions.length?b.positions.map(p=>{
         const span=p.stop?(p.price-p.stop):0, m=p.stop?Math.min(100,Math.max(0,(p.entry-p.stop)/(Math.max(p.price,p.entry)-p.stop)*100)):0;
-        return`<div class="pos"><div><b>${p.symbol}</b> <span class="mute">${p.qty} @ ${price(p.entry)}</span></div><div class="fig ${tone(p.pnl_pct)}">${pct(p.pnl_pct)}</div>
+        return`<div class="pos"><div><b>${p.symbol}</b> ${sideTag(p)} <span class="mute">${p.qty} @ ${price(p.entry)}</span></div><div class="fig ${tone(p.pnl_pct)}">${pct(p.pnl_pct)}</div>${p.side?`<div class="mute" style="font-size:13px;grid-column:1/-1">Price move ${pct(p.move_pct)} × ${p.lev}x leverage. Margin ${money(p.margin)}, position ${money(p.notional)}.${p.tp?' Target '+price(p.tp)+'.':''}${p.liq?' Liquidation '+price(p.liq)+'.':''}</div>`:''}
           <div class="mute" style="font-size:13px">Abhi ${price(p.price)} · value ${money(p.value)} · ${when(p.since)} se</div>
           <div class="mute" style="font-size:13px;text-align:right">${p.stop?'Stop '+price(p.stop)+' ('+pct(p.stop_dist,1)+')':'Koi stop nahi'}</div>
-          ${p.stop?`<div class="meter" title="Stop se entry tak"><em style="width:${m}%"></em><i style="left:${m}%"></i></div>`:''}</div>`}).join('')
+          ${p.stop&&!p.side?`<div class="meter" title="Stop se entry tak"><em style="width:${m}%"></em><i style="left:${m}%"></i></div>`:''}</div>`}).join('')
         :`<div class="empty">${b.pending.length?'Agli candle khulte hi khareedega: '+b.pending.join(', '):'Koi position nahi. Radar tab mein dekhein ke bot kis cheez ka intezar kar raha hai.'}</div>`}
       <h2>Ye bot kya karta hai</h2><p style="max-width:62ch">${esc(b.about)}</p>`;
   }else if(openTab==='radar'){
-    h=`<p class="lede">Aakhri band candle pe har coin ki sharten. Sab ✓ hon to bot agli candle pe khareedta hai.${b.news_filter?' Is ke ilawa news filter bhi check hota hai.':''}</p>`+
+    h=`<p class="lede">Aakhri band candle pe har coin ki sharten. Sab ✓ hon to bot agli candle pe ${b.futures?'LONG ya SHORT trade kholta hai (jis taraf zyada votes hon)':'khareedta hai'}.${b.news_filter?' Is ke ilawa news filter bhi check hota hai.':''}</p>`+
       (b.scanner?`<div class="panel pad" style="margin-bottom:10px">${Object.keys(b.radar||{}).length} coins scan hue. Aaj top-${b.universe?.top||30} volume wale coins mein se sab se behtar ${b.params?.k||3} khareede ja sakte hain.${b.btc_filter?`<br><b>BTC filter:</b> ${b.market_ok?'<span class="up">On, khareed allowed</span>':'<span class="down">BTC apne 50-din average se neeche hai, is liye abhi koi nayi khareed nahi</span>'}`:''}</div><h2>Sab se behtar mauqe</h2>`:'')+
       (b.kind==='hold'?'<div class="empty">Buy & Hold koi shart nahi dekhta, bas khareed ke rakhta hai.</div>':
       (b.scanner?ranked(b).slice(0,12).map(x=>[x.s,x.r]):Object.entries(b.radar||{})).map(([s,r])=>{const held=b.positions.some(p=>p.symbol===s),pend=b.pending.includes(s);
         return`<div class="coin"><div style="display:flex;align-items:center;gap:8px"><b style="font-size:17px">${s}</b><span class="mute">${price(r.close)}</span>
-          <span style="margin-left:auto">${held?'<span class="badge">Hold</span>':pend?'<span class="badge">Khareedega</span>':`<span class="badge ghost">${r.met}/${r.total} sharten</span>`}</span></div>
+          <span style="margin-left:auto">${held?(b.futures?sideTag(b.positions.find(p=>p.symbol===s)):'<span class="badge">Hold</span>'):pend?'<span class="badge">Khareedega</span>':`<span class="badge ghost">${r.met}/${r.total} sharten</span>`}</span></div>
           <ul class="conds">${r.conditions.map(c=>`<li><span class="ck ${c.ok?'y':''}" aria-label="${c.ok?'poori':'abhi nahi'}">${c.ok?'✓':''}</span><span>${esc(c.label)}</span><span class="mute">${c.value==null?'':(typeof c.value==='number'&&!/ADX|RSI/.test(c.label)?pct(c.value):c.value)}</span></li>`).join('')}</ul>
           <div class="mute" style="font-size:12px;margin-top:6px">Candle: ${when(r.candle)}</div></div>`}).join(''));
   }else if(openTab==='trades'){
-    h=b.trades.length?`<div class="panel"><div class="tw"><table><tr><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Khareed → farokht</th><th>Wajah</th><th>Kab</th></tr>${b.trades.map(t=>`<tr><td><b>${coin(t.symbol)}</b></td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join('')}</table></div></div>`:'<div class="empty">Abhi koi trade band nahi hui.</div>';
+    h=b.trades.length?`<div class="panel"><div class="tw"><table><tr><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Khareed → farokht</th><th>Wajah</th><th>Kab</th></tr>${b.trades.map(t=>`<tr><td><b>${coin(t.symbol)}</b> ${sideTag(t)}</td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join('')}</table></div></div>`:'<div class="empty">Abhi koi trade band nahi hui.</div>';
   }else if(openTab==='backtest'){
     const bt=BT?.bots?.[b.id]?.stats;
     if(!bt){h='<div class="empty">Backtest data nahi mila.</div>';}else{
@@ -497,7 +498,7 @@ function renderSheet(){
         <h2>Saal ba saal</h2><div class="stats">${Object.entries(bt.yearly||{}).map(([y,v])=>`<div><b class="${tone(v)}">${pct(v,1)}</b><span>${y}</span></div>`).join('')}</div>`;}
   }else if(openTab==='settings'){
     const NAMES={sma:'Average (din)',lookback:'Return dekhne ke din',n_coins:'Coins',ema_fast:'Chhota EMA',ema_slow:'Bara EMA',breakout_lookback:'Breakout candles',adx_min:'Min ADX',initial_stop_atr:'Pehla stop (ATR)',trail_stop_atr:'Trailing stop (ATR)',ema_trend:'Trend EMA',rsi_buy:'RSI khareed level',exit_ema:'Exit EMA',max_bars:'Max candles rakhna',stop_atr:'Stop (ATR)',
-      lookback:'Momentum ke din',k:'Ek waqt mein coins',take_profit_pct:'Profit target',stop_pct:'Stop-loss',rsi_buy:'RSI khareed level',trend_sma:'Trend filter',rsi_n:'RSI period',risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
+      lookback:'Momentum ke din',mode:'Tareeqa',min_votes:'Kam se kam votes (6 mein se)',adx_trend:'Trend mode ADX',adx_range:'Range mode ADX',sl_atr:'Stop (ATR)',tp_atr:'Target (ATR)',range_sl_atr:'Range stop (ATR)',range_tp_atr:'Range target (ATR)',be_r:'Break-even after (R)',breakout:'Breakout candles',leverage:'Leverage',funding_pct_8h:'Funding fee (% / 8h)',k:'Ek waqt mein coins',take_profit_pct:'Profit target',stop_pct:'Stop-loss',rsi_buy:'RSI khareed level',trend_sma:'Trend filter',rsi_n:'RSI period',risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
     const row=(k,v)=>`<tr><td>${esc(NAMES[k]||k)}</td><td class="r"><b>${esc(['take_profit_pct','stop_pct'].includes(k)?'+'.repeat(k==='take_profit_pct')+(k==='stop_pct'?'−':'')+Math.round(v*100)+'%':(k==='trend_sma'&&!v?'Off':v))}</b></td></tr>`;
     h=`<p class="lede">Ye bot in settings pe chal raha hai. Tabdeeli chahiye to Claude ko batayein, wo cloud bot aur ye app dono update kar dega.</p>
       <h2>Strategy</h2><div class="panel"><table>${row('Candle',TF[b.timeframe])}${row('Coins',coinsLabel(b))}${b.scanner?row('Coins pool','Top '+(b.universe?.pool||100)+' by volume'):''}${b.btc_filter?row('BTC filter','BTC > 50-din average'):''}${Object.entries(b.params||{}).map(([k,v])=>row(k,v)).join('')}${row('News filter',b.news_filter?'On':'Off')}</table></div>
@@ -528,7 +529,7 @@ function renderTrades(){
   const net=list.reduce((s,t)=>s+t.pnl,0), wins=list.filter(t=>t.pnl>0).length;
   $('#tradesHead').innerHTML=list.length?`${list.length} trades, net <span class="${tone(net)}">${money(net)}</span>`:'Abhi koi trade nahi';
   $('#tradesLede').textContent=list.length?`${wins} jeet, ${list.length-wins} haar (win rate ${Math.round(wins/list.length*100)}%). Trend bots kam jeet-te hain lekin bara jeet-te hain, is liye win rate se zyada net P/L dekhein.`:'Bots jab koi trade band karenge to yahan dikhegi. Filter badal ke bhi dekh sakte hain.';
-  $('#ttable').innerHTML=list.length?`<tr><th>Bot</th><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Price</th><th>Wajah</th><th>Kab</th></tr>`+list.slice(0,300).map(t=>`<tr><td><span class="pen" style="background:${pen(t.bot.id)}"></span>${esc(t.bot.name.split(' (')[0])}</td><td><b>${coin(t.symbol)}</b></td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join(''):'<tr><td class="empty">Koi trade nahi.</td></tr>';
+  $('#ttable').innerHTML=list.length?`<tr><th>Bot</th><th>Coin</th><th class="r">Return</th><th class="r">P/L</th><th>Price</th><th>Wajah</th><th>Kab</th></tr>`+list.slice(0,300).map(t=>`<tr><td><span class="pen" style="background:${pen(t.bot.id)}"></span>${esc(t.bot.name.split(' (')[0])}</td><td><b>${coin(t.symbol)}</b> ${sideTag(t)}</td><td class="r ${tone(t.pnl)}">${pct(t.ret_pct)}</td><td class="r ${tone(t.pnl)}">${money(t.pnl)}</td><td>${price(t.entry)} → ${price(t.exit)}</td><td class="mute">${REASON[t.reason]||esc(t.reason)}</td><td class="mute">${when(t.exit_time)}</td></tr>`).join(''):'<tr><td class="empty">Koi trade nahi.</td></tr>';
 }
 
 /* ================= MARKET ================= */

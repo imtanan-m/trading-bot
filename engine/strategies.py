@@ -412,7 +412,9 @@ class FuturesScalper(Base):
                      ("MACD momentum neeche", r["mh"] < 0 and r["mh"] < r["mh1"]), ("RSI 25-45", 25 < r["rsi"] < 45),
                      ("Price VWAP se neeche", c < r["vwap"]), ("Volume 1.2x+", r["vr"] > 1.2),
                      (f"{self.bo} candles ka low toota", c < r["dcl"])]
-        out = [_cond(f"Mood: {mood} (ADX {r['adx']:.0f}), {d} side", r["adx"] >= self.adx_t or r["adx"] < self.adx_r, None)]
+        mood_ok = (r["adx"] >= self.adx_t if self.mode == "trend" else r["adx"] < self.adx_r if self.mode == "range"
+                   else (r["adx"] >= self.adx_t or r["adx"] < self.adx_r))
+        out = [_cond(f"Mood: {mood} (ADX {r['adx']:.0f}), {d} side", mood_ok, None)]
         out += [_cond(lbl, bool(ok), None) for lbl, ok in items]
         return out
 

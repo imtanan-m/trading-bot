@@ -59,7 +59,8 @@ def main():
         eligible = None
         if "universe" in b:
             eligible = volume_universe({k: load(k, "1d") for k in pr}, top=int(b["universe"]["top"]))
-        p = Portfolio(s, b.get("risk", {}), float(b["capital"]), cfg["fee_pct"], cfg["slippage_pct"])
+        p = Portfolio(s, b.get("risk", {}), float(b["capital"]), b.get("fee_pct", cfg["fee_pct"]),
+                      b.get("slippage_pct", cfg["slippage_pct"]))
         run_series(p, pr, start=pd.Timestamp(START, tz="UTC"), regime=regime, eligible=eligible)
         eq = equity_series(p.st)
         st = stats(p.st, float(b["capital"]))
