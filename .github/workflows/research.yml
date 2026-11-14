@@ -6,12 +6,15 @@ on:
       universe_n:
         description: "How many top coins"
         default: "100"
+      script:
+        description: "Research script"
+        default: "run_research.py"
 
 permissions:
   contents: write
 
 concurrency:
-  group: research
+  group: research-${{ inputs.script }}
   cancel-in-progress: true
 
 jobs:
@@ -30,16 +33,18 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: data
-          key: research-data-${{ github.run_id }}
-          restore-keys: research-data-
+          key: research-data-${{ inputs.script }}-${{ github.run_id }}
+          restore-keys: |
+            research-data-${{ inputs.script }}-
+            research-data-
       - name: Backtest
         env:
           UNIVERSE_N: ${{ inputs.universe_n }}
-        run: python research/run_research.py | tee research/log.txt
+        run: python research/${{ inputs.script }} | tee research/log_${{ inputs.script }}.txt
       - name: Save results
         run: |
           git config user.name "trading-bot"
           git config user.email "trading-bot@users.noreply.github.com"
-          git add research/results.json research/log.txt
+          git add research/
           git commit -qm "research results $(date -u +'%Y-%m-%d %H:%M')" || exit 0
           for i in 1 2 3 4 5; do git pull --rebase -q && git push -q && break; sleep 7; done

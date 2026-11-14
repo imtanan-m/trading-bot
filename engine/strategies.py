@@ -299,8 +299,126 @@ class DipBuyer(Base):
         return c
 
 
+class FuturesScalper(Base):
+    """Futures scalping agent (long + short). Every closed candle it looks at the market from 6 angles
+    and votes:  1) EMA 20/50/200 alignment  2) higher-timeframe trend (EMA-800)  3) MACD momentum
+    4) RSI strength  5) price vs rolling VWAP  6) volume surge.
+    Market mood decides the playbook:
+      TREND mode (ADX high): enter WITH the trend on a breakout when enough votes agree.
+      RANGE mode (ADX low): fade extremes (Bollinger band + RSI-7 stretched), quick target.
+    Every trade has a stop-loss and take-profit (ATR based), stop moves to break-even after +1R,
+    and a time limit."""
+    futures = True
+    cross = True  # if several coins signal at once, take the strongest ones
+
+    def __init__(self, mode="both", min_votes=5, adx_trend=25, adx_range=20, sl_atr=1.5, tp_atr=2.5,
+                 range_sl_atr=1.5, range_tp_atr=1.5, be_r=1.0, max_bars=16, breakout=20):
+        super().__init__()
+        self.mode, self.min_votes = mode, int(min_votes)
+        self.adx_t, self.adx_r = float(adx_trend), float(adx_range)
+        self.sl, self.tp, self.rsl, self.rtp = float(sl_atr), float(tp_atr), float(range_sl_atr), float(range_tp_atr)
+        self.be_r, self.max_bars, self.bo = float(be_r), int(max_bars), int(breakout)
+        self.min_bars = 1700
+
+    def prepare(self, df):
+        o = df.copy()
+        c, v = o.close, o.volume
+        for n in (20, 50, 200, 800):
+            o[f"e{n}"] = ema(c, n)
+        m = ema(c, 12) - ema(c, 26)
+        o["mh"] = m - ema(m, 9)
+        o["mh1"] = o["mh"].shift(1)
+        o["rsi"], o["rsi7"] = rsi(c, 14), rsi(c, 7)
+        mid, sd = c.rolling(20).mean(), c.rolling(20).std()
+        o["bbu"], o["bbl"] = mid + 2 * sd, mid - 2 * sd
+        o["adx"], o["atr"] = adx(o, 14), atr(o, 14)
+        o["vwap"] = (c * v).rolling(48).sum() / v.rolling(48).sum().replace(0, float("nan"))
+        o["vr"] = v / v.rolling(20).mean()
+        o["dch"] = o.high.rolling(self.bo).max().shift(1)
+        o["dcl"] = o.low.rolling(self.bo).min().shift(1)
+        up = ((o.e20 > o.e50) & (o.e50 > o.e200)).astype(int) + (c > o.e800).astype(int) \
+            + ((o.mh > 0) & (o.mh > o.mh1)).astype(int) + ((o.rsi > 55) & (o.rsi < 75)).astype(int) \
+            + (c > o.vwap).astype(int) + (o.vr > 1.2).astype(int)
+        dn = ((o.e20 < o.e50) & (o.e50 < o.e200)).astype(int) + (c < o.e800).astype(int) \
+            + ((o.mh < 0) & (o.mh < o.mh1)).astype(int) + ((o.rsi < 45) & (o.rsi > 25)).astype(int) \
+            + (c < o.vwap).astype(int) + (o.vr > 1.2).astype(int)
+        o["vup"], o["vdn"] = up, dn
+        return self._warm(o)
+
+    def _side(self, r):
+        if not r["warm"] or not _ok(r["adx"], r["atr"], r["dch"], r["bbu"], r["vwap"]):
+            return 0
+        if self.mode in ("both", "trend") and r["adx"] >= self.adx_t:
+            if r["vup"] >= self.min_votes and r["close"] > r["dch"]:
+                return 1
+            if r["vdn"] >= self.min_votes and r["close"] < r["dcl"]:
+                return -1
+        if self.mode in ("both", "range") and r["adx"] < self.adx_r:
+            near_htf = abs(r["close"] / r["e800"] - 1) < 0.03
+            if r["close"] < r["bbl"] and r["rsi7"] < 20 and near_htf:
+                return 2   # range long
+            if r["close"] > r["bbu"] and r["rsi7"] > 80 and near_htf:
+                return -2  # range short
+        return 0
+
+    def entry_signal(self, r):
+        s = self._side(r)
+        return 0 if s == 0 else (1 if s > 0 else -1)
+
+    def score(self, r):
+        s = self._side(r)
+        return (r["vup"] if s > 0 else r["vdn"]) + float(r["adx"]) / 100 if s else 0.0
+
+    def initial_stop(self, entry, r, side):
+        k = self.sl if abs(self._side(r)) == 1 else self.rsl
+        return entry - side * k * r["atr"]
+
+    def take_profit(self, entry, r, side):
+        k = self.tp if abs(self._side(r)) == 1 else self.rtp
+        return entry + side * k * r["atr"]
+
+    def trail_stop(self, pos, r):
+        R = pos.get("r")
+        if not R or self.be_r <= 0:
+            return None
+        d = pos["side"]
+        best = pos["hi"] if d > 0 else pos.get("lo", pos["entry"])
+        if (best - pos["entry"]) * d >= self.be_r * R:          # moved +1R in our favour
+            be = pos["entry"] * (1 + d * 0.0015)                 # break-even incl. fees
+            return max(pos["stop"], be) if d > 0 else min(pos["stop"], be)
+        return None
+
+    def exit_signal(self, r, pos):
+        if pos["bars"] >= self.max_bars:
+            return True
+        d = pos["side"]
+        return bool(_ok(r["e20"], r["e50"]) and ((d > 0 and r["e20"] < r["e50"] and r["close"] < r["e50"])
+                                                or (d < 0 and r["e20"] > r["e50"] and r["close"] > r["e50"])))
+
+    def explain(self, r):
+        if not _ok(r["adx"], r["vwap"], r["e800"]):
+            return []
+        long_side = r["vup"] >= r["vdn"]
+        d = "LONG" if long_side else "SHORT"
+        mood = "Trend" if r["adx"] >= self.adx_t else ("Range" if r["adx"] < self.adx_r else "Beech mein")
+        c = r["close"]
+        if long_side:
+            items = [("EMA 20>50>200", r["e20"] > r["e50"] > r["e200"]), ("Bara trend upar (EMA-800)", c > r["e800"]),
+                     ("MACD momentum upar", r["mh"] > 0 and r["mh"] > r["mh1"]), ("RSI 55-75", 55 < r["rsi"] < 75),
+                     ("Price VWAP se upar", c > r["vwap"]), ("Volume 1.2x+", r["vr"] > 1.2),
+                     (f"{self.bo} candles ka high toota", c > r["dch"])]
+        else:
+            items = [("EMA 20<50<200", r["e20"] < r["e50"] < r["e200"]), ("Bara trend neeche (EMA-800)", c < r["e800"]),
+                     ("MACD momentum neeche", r["mh"] < 0 and r["mh"] < r["mh1"]), ("RSI 25-45", 25 < r["rsi"] < 45),
+                     ("Price VWAP se neeche", c < r["vwap"]), ("Volume 1.2x+", r["vr"] > 1.2),
+                     (f"{self.bo} candles ka low toota", c < r["dcl"])]
+        out = [_cond(f"Mood: {mood} (ADX {r['adx']:.0f}), {d} side", r["adx"] >= self.adx_t or r["adx"] < self.adx_r, None)]
+        out += [_cond(lbl, bool(ok), None) for lbl, ok in items]
+        return out
+
+
 REGISTRY = {"trend": TrendBreakout, "momentum": DailyMomentum, "rsi2": RSI2Scalper, "hold": BuyHold,
-            "rotation": Rotation, "dip": DipBuyer}
+            "rotation": Rotation, "dip": DipBuyer, "scalp": FuturesScalper}
 
 
 def build(kind, params):

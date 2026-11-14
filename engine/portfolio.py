@@ -24,6 +24,11 @@ class Portfolio:
         self.reserve = float(risk.get("min_cash_reserve_pct", 2)) / 100
         self.daily_lim = float(risk.get("daily_loss_limit_pct", 3.0)) / 100
         self.kill_dd = float(risk.get("max_drawdown_kill_pct", 25.0)) / 100
+        # futures (USD-M perpetual, isolated margin): long + short, leverage, liquidation, funding
+        self.fut = bool(getattr(strategy, "futures", False))
+        self.lev = float(risk.get("leverage", 1)) if self.fut else 1.0
+        self.mm = 0.005                                                    # maintenance margin
+        self.funding = float(risk.get("funding_pct_8h", 0.01)) / 100 if self.fut else 0.0
         self.st = state or {
             "capital": capital, "cash": capital, "positions": {}, "pend_entry": {}, "pend_exit": [],
             "last_ts": {}, "last_close": {}, "peak": capital, "day": "", "day_start": capital,
@@ -31,29 +36,52 @@ class Portfolio:
         }
 
     # ---------------------------------------------------------------- helpers
+    @staticmethod
+    def pos_value(p, px):
+        if "margin" not in p:  # spot
+            return p["qty"] * px
+        return max(0.0, p["margin"] + p["side"] * p["qty"] * (px - p["entry"]))
+
     def equity(self):
         st = self.st
-        return st["cash"] + sum(p["qty"] * st["last_close"].get(s, p["entry"]) for s, p in st["positions"].items())
+        return st["cash"] + sum(self.pos_value(p, st["last_close"].get(s, p["entry"])) for s, p in st["positions"].items())
 
     def _size(self, entry, stop):
-        eq, cash = self.equity(), self.st["cash"]
-        spendable = max(cash - eq * self.reserve, 0) / (entry * (1 + self.fee))
+        eq, cash, L = self.equity(), self.st["cash"], self.lev
+        free = max(cash - eq * self.reserve, 0)
+        spendable = free / (entry * (1 / L + self.fee))          # margin + entry fee must fit in cash
         if self.s.sizing == "alloc":
-            return max(0.0, min(eq * self.s.alloc / (entry * (1 + self.fee)), spendable))
-        if stop is None or stop >= entry:
+            return max(0.0, min(eq * self.s.alloc * L / entry, spendable))
+        if stop is None or stop == entry:
             return 0.0
-        per_unit = (entry - stop) + entry * self.fee * 2
-        return max(0.0, min(eq * self.risk_pt / per_unit, eq * self.max_pos / entry, spendable))
+        per_unit = abs(entry - stop) + entry * self.fee * 2
+        return max(0.0, min(eq * self.risk_pt / per_unit, eq * self.max_pos * L / entry, spendable))
+
+    def _liq_price(self, p):
+        if "margin" not in p or self.lev <= 1:
+            return None
+        return p["entry"] * (1 - p["side"] * (1 / self.lev - self.mm))
 
     def _close(self, sym, price, t, reason):
         st = self.st
         p = st["positions"].pop(sym)
-        proceeds = p["qty"] * price * (1 - self.fee)
+        if "margin" in p:  # futures
+            hours = max((_ts(t) - _ts(p["time"])).total_seconds() / 3600, 0)
+            gross = p["side"] * p["qty"] * (price - p["entry"])
+            costs = p["qty"] * price * self.fee + p["qty"] * p["entry"] * self.funding * hours / 8
+            proceeds = max(0.0, p["margin"] + gross - costs)
+        else:
+            proceeds = p["qty"] * price * (1 - self.fee)
         st["cash"] += proceeds
-        st["trades"].append({"symbol": sym, "entry_time": p["time"], "exit_time": _iso(t),
-                             "entry": round(p["entry"], 6), "exit": round(price, 6),
-                             "pnl": round(proceeds - p["cost"], 4),
-                             "ret_pct": round((proceeds / p["cost"] - 1) * 100, 3), "reason": reason})
+        tr = {"symbol": sym, "entry_time": p["time"], "exit_time": _iso(t),
+              "entry": round(p["entry"], 6), "exit": round(price, 6),
+              "pnl": round(proceeds - p["cost"], 4),
+              "ret_pct": round((proceeds / p["cost"] - 1) * 100, 3), "reason": reason}
+        if "margin" in p:
+            tr["side"] = "long" if p["side"] > 0 else "short"
+            tr["lev"] = self.lev
+            tr["move_pct"] = round(p["side"] * (price / p["entry"] - 1) * 100, 3)
+        st["trades"].append(tr)
 
     # ---------------------------------------------------------------- core
     def process_bar(self, sym, t, bar, entry_filter=None, regime_ok=True):
@@ -65,11 +93,23 @@ class Portfolio:
         self._fill_pending(sym, t, bar.open)
         # 3) intrabar stop
         p = st["positions"].get(sym)
-        if p and p["stop"] is not None and bar.low <= p["stop"]:
-            self._close(sym, min(bar.open, p["stop"]) * (1 - self.slip), t, "stop-loss")
-            p = None
-        if p and p.get("tp") and bar.high >= p["tp"]:
-            self._close(sym, max(bar.open, p["tp"]) * (1 - self.slip), t, "take-profit")
+        if p:
+            d = p.get("side", 1)
+            adverse = bar.low if d > 0 else bar.high          # worst price inside the candle
+            favour = bar.high if d > 0 else bar.low
+            hit = lambda lvl: lvl is not None and (adverse - lvl) * d <= 0          # noqa: E731
+            worse = lambda a, b: min(a, b) if d > 0 else max(a, b)                   # noqa: E731
+            liq = self._liq_price(p)
+            stop = p["stop"]
+            if liq is not None and hit(liq) and (stop is None or (liq - stop) * d > 0):
+                self._close(sym, liq, t, "LIQUIDATED")
+                p = None
+            elif hit(stop):
+                self._close(sym, worse(bar.open, stop) * (1 - d * self.slip), t, "stop-loss")
+                p = None
+            if p and p.get("tp") and (favour - p["tp"]) * d >= 0:
+                better = max(bar.open, p["tp"]) if d > 0 else min(bar.open, p["tp"])
+                self._close(sym, better * (1 - d * self.slip), t, "take-profit")
         st["last_close"][sym] = float(bar.close)
         st["last_ts"][sym] = _iso(t)
         # 4) decisions at this close
@@ -77,12 +117,14 @@ class Portfolio:
         if p:
             p["bars"] += 1
             p["hi"] = max(p["hi"], float(bar.close))
+            p["lo"] = min(p.get("lo", p["entry"]), float(bar.close))
             ns = self.s.trail_stop(p, bar)
             if ns is not None:
                 p["stop"] = float(ns)
             if self.s.exit_signal(bar, p):
                 st["pend_exit"].append(sym)
-        elif not st["killed"] and regime_ok and self.s.entry_signal(bar):
+        elif not st["killed"] and regime_ok and (sig := self.s.entry_signal(bar)):
+            st.setdefault("pend_side", {})[sym] = -1 if (self.fut and sig is not True and sig < 0) else 1
             if getattr(self.s, "cross", False):  # multi-coin mode: rank all candidates first
                 self._cands.append((float(self.s.score(bar)), sym, bar, entry_filter))
                 return
@@ -104,16 +146,30 @@ class Portfolio:
                 self._close(sym, open_price * (1 - self.slip), t, "signal exit")
         if sym in st["pend_entry"]:
             st["pend_entry"].pop(sym)
+            side = st.get("pend_side", {}).pop(sym, 1)
             if sym not in st["positions"] and not st["killed"]:
-                entry = open_price * (1 + self.slip)
-                stop = self.s.initial_stop(entry, self._sig[sym]) if sym in self._sig else None
+                entry = open_price * (1 + side * self.slip)
+                sig = self._sig.get(sym)
+                if self.fut:
+                    stop = self.s.initial_stop(entry, sig, side) if sig is not None else None
+                    tp = self.s.take_profit(entry, sig, side) if sig is not None else None
+                else:
+                    stop = self.s.initial_stop(entry, sig) if sig is not None else None
+                    tp = self.s.take_profit(entry, sig) if sig is not None else None
                 qty = self._size(entry, stop)
-                cost = qty * entry * (1 + self.fee)
+                if self.fut:
+                    margin = qty * entry / self.lev
+                    cost = margin + qty * entry * self.fee
+                else:
+                    cost = qty * entry * (1 + self.fee)
                 if qty > 0 and cost >= 5:
                     st["cash"] -= cost
-                    tp = self.s.take_profit(entry, self._sig[sym]) if sym in self._sig else None
-                    st["positions"][sym] = {"qty": qty, "entry": entry, "stop": stop, "cost": cost,
-                                            "hi": entry, "time": _iso(t), "bars": 0, "tp": tp}
+                    pos = {"qty": qty, "entry": entry, "stop": stop, "cost": cost,
+                           "hi": entry, "time": _iso(t), "bars": 0, "tp": tp}
+                    if self.fut:
+                        pos.update(margin=margin, side=side, lo=entry, lev=self.lev,
+                                   r=abs(entry - stop) if stop else None)
+                    st["positions"][sym] = pos
 
     def fill_at_open(self, sym, t, open_price):
         """Live only: as soon as the next candle has OPENED, fill pending orders at its open price
@@ -129,7 +185,7 @@ class Portfolio:
         if not st["killed"] and st["peak"] > 0 and eq / st["peak"] - 1 <= -self.kill_dd:
             st["killed"] = _iso(t)
             for sym in list(st["positions"]):
-                self._close(sym, st["last_close"][sym] * (1 - self.slip), t, "KILL SWITCH")
+                self._close(sym, st["last_close"][sym] * (1 - st["positions"][sym].get("side", 1) * self.slip), t, "KILL SWITCH")
             st["pend_entry"].clear()
             eq = self.equity()
         if record:
@@ -210,6 +266,11 @@ def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, re
 
 def _iso(t):
     return t.isoformat() if hasattr(t, "isoformat") else str(t)
+
+
+def _ts(x):
+    import pandas as pd
+    return pd.Timestamp(x)
 
 
 def _now():
