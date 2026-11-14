@@ -236,7 +236,9 @@ dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
       <div>
         <h2>Fear &amp; Greed index</h2>
         <div class="panel pad gauge" id="gauge"></div>
-        <h2>Bot radar: kaun khareedne ke qareeb hai</h2>
+        <h2>Agents: 100 coins mein se top mauqe</h2>
+        <div id="scanner"></div>
+        <h2>Bot radar: BTC, ETH, SOL</h2>
         <div class="panel"><div class="tw"><table class="matrix" id="matrix"></table></div></div>
         <p class="foot">Har dot ek shart hai. Saare dot bhar jayen to bot agli candle pe khareedta hai. <span class="badge">Hold</span> matlab bot ke paas ye coin pehle se hai.</p>
       </div>
@@ -257,7 +259,7 @@ dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
     <h2>Madad</h2>
     <div class="panel pad">
       <details open><summary>Ye app kya hai?</summary>
-        <p>5 trading bots GitHub ke cloud pe har ~15 minute mein chalte hain, chahe aap ka PC band ho. Sab <b>paper trading</b> karte hain: har bot ke paas $1000 nakli paisa hai, lekin prices Binance ki asli live prices hain. Yahan aap dekh sakte hain kaun si strategy asal mein kaam karti hai, bina asli paisa lagaye.</p></details>
+        <p>7 trading bots GitHub ke cloud pe har ~15 minute mein chalte hain (in mein 2 agents hain jo Binance ke top 100 coins scan karte hain), chahe aap ka PC band ho. Sab <b>paper trading</b> karte hain: har bot ke paas $1000 nakli paisa hai, lekin prices Binance ki asli live prices hain. Yahan aap dekh sakte hain kaun si strategy asal mein kaam karti hai, bina asli paisa lagaye.</p></details>
       <details><summary>Bot trade kyun nahi kar raha?</summary>
         <p>Zyada tar bots sirf uptrend mein khareedte hain. Market neeche ho to wo cash mein rehte hain, aur yahi unki hifazat hai. Market tab mein "Bot radar" dekhein: wahan dikhta hai ke har bot ki kitni sharten poori hain.</p></details>
       <details><summary>Telegram pe alerts kaise on karein?</summary>
@@ -310,10 +312,13 @@ function applyTheme(t){document.documentElement.dataset.theme=t==='light'?'light
 applyTheme(store.get('theme','auto'));
 if(window.Chart){Chart.defaults.font.family='Archivo, system-ui, -apple-system, Segoe UI, sans-serif';Chart.defaults.color='#66728A';}
 /* pen colours for bot lines, tuned per theme */
-const PENS={light:['#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
+const PENS={light:['#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
 const isDark=()=>css('--paper').toLowerCase()==='#0f2340';
-const ORDER=['momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
+const ORDER=['hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
 const pen=id=>{const i=ORDER.indexOf(id);return PENS[isDark()?'dark':'light'][i<0?0:i]};
+const coinsLabel=b=>b.scanner?`Top ${b.universe?.top||30} coins scan`:b.symbols.map(coin).join(', ');
+function ranked(b){return Object.entries(b.radar||{}).map(([s,r])=>({s,r,held:b.positions.some(p=>p.symbol===s),pend:b.pending.includes(s)}))
+  .filter(x=>x.held||x.pend||x.r.eligible!==false).sort((a,c)=>(c.held-a.held)||(c.pend-a.pend)||(c.r.met-a.r.met)||((c.r.score??-1e9)-(a.r.score??-1e9)));}
 
 /* ================= formatting ================= */
 const rate=()=>CUR==='PKR'&&DATA?.usd_pkr?DATA.usd_pkr:1;
@@ -428,7 +433,7 @@ function renderRace(){
 function renderBots(){
   $('#botlist').innerHTML=DATA.bots.map(b=>`<li><button class="lb" data-bot="${b.id}" style="grid-template-columns:1fr auto">
     <span style="min-width:0"><span class="nm"><span class="pen" style="background:${pen(b.id)}"></span>${esc(b.name)}<span class="tagx">${esc(b.tag)}</span></span>
-    <span class="st" style="display:block">${b.symbols.map(coin).join(', ')}, ${TF[b.timeframe]} candle. ${esc(status(b))}</span></span>
+    <span class="st" style="display:block">${coinsLabel(b)}, ${TF[b.timeframe]} candle. ${esc(status(b))}</span></span>
     <span class="ret ${tone(b.return_pct)}">${pct(b.return_pct)}<small>${b.stats.trades} trades</small></span></button></li>`).join('');
 }
 const SUBTABS=[['overview','Overview'],['radar','Radar'],['trades','Trades'],['backtest','Backtest'],['settings','Settings']];
@@ -443,7 +448,7 @@ function renderSheet(){
   const st=b.stats, el=$('#sheetBody'); let h='';
   if(openTab==='overview'){
     h=`<div class="fig ${tone(b.return_pct)}" style="font-size:34px">${pct(b.return_pct)}</div>
-      <div class="mute">${money(b.equity)} value · cash ${money(b.cash)} · ${b.symbols.map(coin).join(', ')} · ${TF[b.timeframe]} candle</div>
+      <div class="mute">${money(b.equity)} value, cash ${money(b.cash)}. ${coinsLabel(b)}, ${TF[b.timeframe]} candle.${b.btc_filter?(b.market_ok?' BTC filter: khareed allowed.':' BTC filter: abhi khareed band (BTC kamzor).'):''}</div>
       <h2>Value ka safar</h2><div class="panel graph" style="height:240px;padding:6px"><canvas id="d_eq"></canvas></div>
       <h2>Giraav (peak se kitna neeche)</h2><div class="panel" style="height:110px;padding:6px"><canvas id="d_dd"></canvas></div>
       <h2>Numbers</h2><div class="stats">
@@ -469,8 +474,9 @@ function renderSheet(){
       <h2>Ye bot kya karta hai</h2><p style="max-width:62ch">${esc(b.about)}</p>`;
   }else if(openTab==='radar'){
     h=`<p class="lede">Aakhri band candle pe har coin ki sharten. Sab ✓ hon to bot agli candle pe khareedta hai.${b.news_filter?' Is ke ilawa news filter bhi check hota hai.':''}</p>`+
+      (b.scanner?`<div class="panel pad" style="margin-bottom:10px">${Object.keys(b.radar||{}).length} coins scan hue. Aaj top-${b.universe?.top||30} volume wale coins mein se sab se behtar ${b.params?.k||3} khareede ja sakte hain.${b.btc_filter?`<br><b>BTC filter:</b> ${b.market_ok?'<span class="up">On, khareed allowed</span>':'<span class="down">BTC apne 50-din average se neeche hai, is liye abhi koi nayi khareed nahi</span>'}`:''}</div><h2>Sab se behtar mauqe</h2>`:'')+
       (b.kind==='hold'?'<div class="empty">Buy & Hold koi shart nahi dekhta, bas khareed ke rakhta hai.</div>':
-      Object.entries(b.radar||{}).map(([s,r])=>{const held=b.positions.some(p=>p.symbol===s),pend=b.pending.includes(s);
+      (b.scanner?ranked(b).slice(0,12).map(x=>[x.s,x.r]):Object.entries(b.radar||{})).map(([s,r])=>{const held=b.positions.some(p=>p.symbol===s),pend=b.pending.includes(s);
         return`<div class="coin"><div style="display:flex;align-items:center;gap:8px"><b style="font-size:17px">${s}</b><span class="mute">${price(r.close)}</span>
           <span style="margin-left:auto">${held?'<span class="badge">Hold</span>':pend?'<span class="badge">Khareedega</span>':`<span class="badge ghost">${r.met}/${r.total} sharten</span>`}</span></div>
           <ul class="conds">${r.conditions.map(c=>`<li><span class="ck ${c.ok?'y':''}" aria-label="${c.ok?'poori':'abhi nahi'}">${c.ok?'✓':''}</span><span>${esc(c.label)}</span><span class="mute">${c.value==null?'':(typeof c.value==='number'&&!/ADX|RSI/.test(c.label)?pct(c.value):c.value)}</span></li>`).join('')}</ul>
@@ -491,10 +497,10 @@ function renderSheet(){
         <h2>Saal ba saal</h2><div class="stats">${Object.entries(bt.yearly||{}).map(([y,v])=>`<div><b class="${tone(v)}">${pct(v,1)}</b><span>${y}</span></div>`).join('')}</div>`;}
   }else if(openTab==='settings'){
     const NAMES={sma:'Average (din)',lookback:'Return dekhne ke din',n_coins:'Coins',ema_fast:'Chhota EMA',ema_slow:'Bara EMA',breakout_lookback:'Breakout candles',adx_min:'Min ADX',initial_stop_atr:'Pehla stop (ATR)',trail_stop_atr:'Trailing stop (ATR)',ema_trend:'Trend EMA',rsi_buy:'RSI khareed level',exit_ema:'Exit EMA',max_bars:'Max candles rakhna',stop_atr:'Stop (ATR)',
-      risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
-    const row=(k,v)=>`<tr><td>${esc(NAMES[k]||k)}</td><td class="r"><b>${esc(v)}</b></td></tr>`;
+      lookback:'Momentum ke din',k:'Ek waqt mein coins',take_profit_pct:'Profit target',stop_pct:'Stop-loss',rsi_buy:'RSI khareed level',trend_sma:'Trend filter',rsi_n:'RSI period',risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
+    const row=(k,v)=>`<tr><td>${esc(NAMES[k]||k)}</td><td class="r"><b>${esc(['take_profit_pct','stop_pct'].includes(k)?'+'.repeat(k==='take_profit_pct')+(k==='stop_pct'?'−':'')+Math.round(v*100)+'%':(k==='trend_sma'&&!v?'Off':v))}</b></td></tr>`;
     h=`<p class="lede">Ye bot in settings pe chal raha hai. Tabdeeli chahiye to Claude ko batayein, wo cloud bot aur ye app dono update kar dega.</p>
-      <h2>Strategy</h2><div class="panel"><table>${row('Candle',TF[b.timeframe])}${row('Coins',b.symbols.map(coin).join(', '))}${Object.entries(b.params||{}).map(([k,v])=>row(k,v)).join('')}${row('News filter',b.news_filter?'On':'Off')}</table></div>
+      <h2>Strategy</h2><div class="panel"><table>${row('Candle',TF[b.timeframe])}${row('Coins',coinsLabel(b))}${b.scanner?row('Coins pool','Top '+(b.universe?.pool||100)+' by volume'):''}${b.btc_filter?row('BTC filter','BTC > 50-din average'):''}${Object.entries(b.params||{}).map(([k,v])=>row(k,v)).join('')}${row('News filter',b.news_filter?'On':'Off')}</table></div>
       <h2>Risk</h2><div class="panel"><table>${row('Shuru ka paisa','$'+b.capital)}${Object.entries(b.risk||{}).map(([k,v])=>row(k,v)).join('')}</table></div>`;
   }
   el.innerHTML=h;
@@ -546,11 +552,15 @@ function renderMarket(){
       <div><div class="fig" style="font-size:38px;line-height:1">${fg}</div><div><b>${lab}</b></div><div class="mute" style="font-size:13px">0 = sab dare hue, 100 = sab laalach mein. 90 se upar bots khareedna rok dete hain.</div></div>`;}
   else $('#gauge').innerHTML='<div class="empty">Index abhi nahi mila.</div>';
   // matrix
-  const bots=DATA.bots.filter(b=>b.kind!=='hold'), syms=Object.keys(cs);
+  const bots=DATA.bots.filter(b=>b.kind!=='hold'&&!b.scanner), syms=['BTC/USDT','ETH/USDT','SOL/USDT'].filter(s=>cs[s]);
   $('#matrix').innerHTML=`<tr><th>Coin</th>${bots.map(b=>`<th title="${esc(b.name)}"><span class="pen" style="background:${pen(b.id)};margin:0"></span><div style="font-size:11px">${esc(b.name.split(' ')[0])} ${b.timeframe}</div></th>`).join('')}</tr>`+
     syms.map(s=>`<tr><td><b>${coin(s)}</b></td>${bots.map(b=>{const r=b.radar?.[s];if(!r)return'<td class="mute">–</td>';
       if(b.positions.some(p=>p.symbol===s))return'<td><span class="badge">Hold</span></td>';if(b.pending.includes(s))return'<td><span class="badge">Buy</span></td>';
       return`<td><span class="dots" aria-label="${r.met} of ${r.total}">${r.conditions.map(c=>`<i class="${c.ok?'y':''}"></i>`).join('')}</span></td>`}).join('')}</tr>`).join('');
+  const sc=DATA.bots.filter(b=>b.scanner);
+  $('#scanner').innerHTML=sc.map(b=>`<div class="panel pad" style="margin-bottom:12px"><div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b><span class="pen" style="background:${pen(b.id)}"></span>${esc(b.name)}</b><button class="chip" data-bot="${b.id}">Kholein</button></div>
+    <div class="mute" style="font-size:13px;margin:4px 0 6px">${b.btc_filter&&!b.market_ok?'BTC filter band hai: abhi sirf nazar rakh raha hai.':b.positions.length?'Trade mein: '+b.positions.map(p=>coin(p.symbol)+' '+pct(p.pnl_pct,1)).join(', '):'Mauqe dhoond raha hai.'}</div>
+    <table><tr><th>Coin</th><th>Sharten</th><th class="r">Haal</th></tr>${ranked(b).slice(0,6).map(x=>`<tr><td><b>${coin(x.s)}</b></td><td><span class="dots">${x.r.conditions.map(c=>`<i class="${c.ok?'y':''}"></i>`).join('')}</span> <span class="mute" style="font-size:12px">${x.r.conditions.map(c=>c.value==null?'':(/RSI/.test(c.label)?'RSI '+c.value:/ADX/.test(c.label)?'ADX '+c.value:pct(c.value,1))).join(' / ')}</span></td><td class="r">${x.held?'<span class="badge">Hold</span>':x.pend?'<span class="badge">Buy</span>':`${x.r.met}/${x.r.total}`}</td></tr>`).join('')}</table></div>`).join('')||'<div class="empty">Koi scanner agent nahi.</div>';
 }
 
 /* ================= MORE ================= */

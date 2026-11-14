@@ -50,6 +50,7 @@ class NoNews:
 
 
 market.klines, market.prices, market.usd_pkr = fake_klines, fake_prices, lambda: 281.5
+market.top_coins = lambda n=40: ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
 run_cycle.NewsGuard = NoNews
 ok_count = 0
 
@@ -68,10 +69,11 @@ with tempfile.TemporaryDirectory() as d:
         NOW["t"] = start + pd.Timedelta(hours=6 * i)
         run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 5 and not summ["errors"], "5 bots ran without errors")
+    ok(len(summ["bots"]) == 7 and not summ["errors"], "7 bots ran without errors")
     need = {"id", "name", "equity", "return_pct", "positions", "trades", "stats", "curve", "change_24h", "radar"}
     ok(set(summ["coins"]) == {"BTC/USDT", "ETH/USDT", "SOL/USDT"} and summ["usd_pkr"], "market snapshot + PKR rate")
     ok(all(r["conditions"] for b in summ["bots"] if b["id"] != "hold" for r in b["radar"].values()), "signal radar filled")
+    ok(all("score" in r for b in summ["bots"] if b["scanner"] for r in b["radar"].values()), "scanner bots rank coins")
     ok(all(need <= set(b) for b in summ["bots"]), "summary has all dashboard fields")
     byid = {b["id"]: b for b in summ["bots"]}
     ok(byid["hold"]["positions"] and len(byid["hold"]["positions"]) == 3, "buy & hold bought all 3 coins")
@@ -96,6 +98,19 @@ with tempfile.TemporaryDirectory() as d:
        f"incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f}, "
        f"{len(st['trades'])} trades)")
 
+    # same check for a multi-coin scanner bot (BTC filter + point-in-time universe)
+    from engine.portfolio import btc_regime, volume_universe
+    st = json.load(open(os.path.join(run_cycle.STATE_DIR, "hunter_daily.json")))
+    b = next(x for x in cfg["bots"] if x["id"] == "hunter_daily")
+    s = build(b["kind"], b["params"])
+    syms = ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
+    daily = {sym: fake_klines(sym, "1d", 5000) for sym in syms}
+    p = Portfolio(s, b["risk"], b["capital"], cfg["fee_pct"], cfg["slippage_pct"])
+    run_series(p, {k: s.prepare(v) for k, v in daily.items()}, start=pd.Timestamp(st["equity"][0][0]),
+               regime=btc_regime(daily["BTC/USDT"]), eligible=volume_universe(daily, top=30))
+    ok(abs(p.equity() - st["equity"][-1][1]) < 0.5 and len(p.st["trades"]) == len(st["trades"]),
+       f"scanner incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f})")
+
     # a broken bot must not stop the others
     orig = run_cycle.run_bot
 
@@ -107,6 +122,6 @@ with tempfile.TemporaryDirectory() as d:
     NOW["t"] += pd.Timedelta(hours=6)
     run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 4 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
+    ok(len(summ["bots"]) == 6 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
 
 print(f"\nALL {ok_count} CHECKS PASSED")

@@ -1,0 +1,40 @@
+name: Dashboard backtests
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backtests
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: data
+          key: bt-data-${{ github.run_id }}
+          restore-keys: |
+            bt-data-
+            research-data-
+      - run: python make_backtests.py
+      - name: Save
+        run: |
+          git config user.name "trading-bot"
+          git config user.email "trading-bot@users.noreply.github.com"
+          git add docs/data/backtest.json
+          git commit -qm "dashboard backtests $(date -u +'%Y-%m-%d %H:%M')" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push -q && break; sleep 7; done

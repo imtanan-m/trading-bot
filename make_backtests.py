@@ -11,7 +11,7 @@ import pandas as pd
 import yaml
 
 from engine import market
-from engine.portfolio import Portfolio, run_series
+from engine.portfolio import Portfolio, btc_regime, run_series, volume_universe
 from engine.report import downsample, equity_series, monthly, stats
 from engine.strategies import build
 
@@ -37,6 +37,8 @@ def load(sym, tf):
                                          "close": "last", "volume": "sum"}).dropna()
     if df is None:
         df = market.history(sym, tf, WARMUP_FROM)
+        os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
+        df.reset_index().to_csv(os.path.join(HERE, "data", f"{sym.replace('/', '_')}_{tf}.csv"), index=False)
     return df
 
 
@@ -45,9 +47,20 @@ def main():
     out = {"start": START, "generated": pd.Timestamp.now(tz="UTC").isoformat(), "bots": {}}
     for b in cfg["bots"]:
         s = build(b["kind"], b.get("params"))
-        pr = {sym: s.prepare(load(sym, b["timeframe"])) for sym in b["symbols"]}
+        syms = b.get("symbols") or (["BTC/USDT"] + [c for c in market.top_coins(int(b["universe"]["pool"])) if c != "BTC/USDT"])
+        raw = {}
+        for sym in syms:
+            try:
+                raw[sym] = load(sym, b["timeframe"])
+            except Exception as e:  # noqa: BLE001
+                print("skip", sym, e)
+        pr = {sym: s.prepare(df) for sym, df in raw.items() if len(df) >= 30}
+        regime = btc_regime(load("BTC/USDT", "1d"), int(b.get("btc_filter_sma", 50))) if b.get("btc_filter") else None
+        eligible = None
+        if "universe" in b:
+            eligible = volume_universe({k: load(k, "1d") for k in pr}, top=int(b["universe"]["top"]))
         p = Portfolio(s, b.get("risk", {}), float(b["capital"]), cfg["fee_pct"], cfg["slippage_pct"])
-        run_series(p, pr, start=pd.Timestamp(START, tz="UTC"))
+        run_series(p, pr, start=pd.Timestamp(START, tz="UTC"), regime=regime, eligible=eligible)
         eq = equity_series(p.st)
         st = stats(p.st, float(b["capital"]))
         st["return_pct"] = round((eq.iloc[-1] / float(b["capital"]) - 1) * 100, 1)

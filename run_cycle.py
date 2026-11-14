@@ -20,7 +20,7 @@ import copy
 
 from engine import market, notify
 from engine.news import NewsGuard
-from engine.portfolio import Portfolio, run_series
+from engine.portfolio import Portfolio, btc_regime, run_series, volume_universe
 from engine.report import downsample, equity_series, stats
 from engine.strategies import build
 
@@ -53,26 +53,67 @@ def save_json(path, obj):
     os.replace(tmp, path)
 
 
+def get_klines(cache, sym, tf, limit=1000):
+    key = (sym, tf)
+    if key not in cache:
+        cache[key] = market.klines(sym, tf, limit)
+    return cache[key]
+
+
+def coin_pool(n):
+    """Top-n coins by volume, refreshed once a day (saved in state/universe.json)."""
+    path = os.path.join(STATE_DIR, "universe.json")
+    u = load_json(path, {})
+    fresh = u.get("date") == datetime.now(timezone.utc).strftime("%Y-%m-%d") and len(u.get("coins", [])) >= n
+    if not fresh:
+        try:
+            u = {"date": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "coins": market.top_coins(n)}
+            save_json(path, u)
+        except Exception as e:  # noqa: BLE001
+            log.warning(f"universe refresh failed, using last list: {e}")
+    return u.get("coins", [])[:n]
+
+
+def bot_symbols(b, state):
+    if "universe" not in b:
+        return list(b["symbols"])
+    syms = coin_pool(int(b["universe"].get("pool", 80)))
+    held = list((state or {}).get("positions", {})) + list((state or {}).get("pend_entry", {}))
+    return list(dict.fromkeys(["BTC/USDT"] + syms + held))
+
+
 def run_bot(b, cfg, news, cache):
     strat = build(b["kind"], b.get("params"))
     path = os.path.join(STATE_DIR, f"{b['id']}.json")
     state = load_json(path)
     p = Portfolio(strat, b.get("risk", {}), float(b["capital"]), cfg.get("fee_pct", 0.1),
                   cfg.get("slippage_pct", 0.05), state)
-    prepared = {}
-    for sym in b["symbols"]:
-        key = (sym, b["timeframe"])
-        if key not in cache:
-            cache[key] = market.klines(sym, b["timeframe"], 1000)
-        prepared[sym] = strat.prepare(cache[key])
+    prepared, raw = {}, {}
+    for sym in bot_symbols(b, state):
+        try:
+            raw[sym] = get_klines(cache, sym, b["timeframe"])
+        except Exception as e:  # noqa: BLE001 - a single delisted/odd coin must not stop the bot
+            log.warning(f"{b['id']}: {sym} skipped ({e})")
+            continue
+        if len(raw[sym]) >= 30:
+            prepared[sym] = strat.prepare(raw[sym])
+    regime = eligible = None
+    if b.get("btc_filter"):
+        regime = btc_regime(get_klines(cache, "BTC/USDT", "1d"), int(b.get("btc_filter_sma", 50)))
+    if "universe" in b:
+        daily = {s: get_klines(cache, s, "1d") for s in prepared}
+        eligible = volume_universe(daily, top=int(b["universe"].get("top", 30)))
+        p.eligible_now = {s: eligible(pd.Timestamp.now(tz="UTC"), s) for s in prepared}
+    p.regime_now = regime(pd.Timestamp.now(tz="UTC")) if regime else None
+    b["symbols"] = list(prepared)
     start = None
     if state is None:  # brand-new bot: start trading from the latest closed candle, not from history
-        start = min(df.index[-1] for df in prepared.values())
+        start = max(df.index[-1] for df in prepared.values())
         log.info(f"{b['id']}: new bot, starting at {start}")
     flt = news.check if b.get("news_filter") else None
     n_before = len(p.st["trades"])
     before = copy.deepcopy({"positions": p.st["positions"], "trades": p.st["trades"], "killed": p.st["killed"]})
-    run_series(p, prepared, start=start, entry_filter_last=flt)
+    run_series(p, prepared, start=start, entry_filter_last=flt, regime=regime, eligible=eligible)
     p.st["events"] = p.st.get("events", [])[-50:]
     save_json(path, p.st)
     p.alerts = [] if state is None else notify.diff_messages(b["name"], before, p.st)
@@ -82,6 +123,10 @@ def run_bot(b, cfg, news, cache):
         conds = strat.explain(r)
         p.radar[sym] = {"candle": r.name.isoformat(), "close": round(float(r.close), 4), "conditions": conds,
                         "met": sum(c["ok"] for c in conds), "total": len(conds)}
+        if getattr(strat, "cross", False):
+            sc = strat.score(r)
+            p.radar[sym]["score"] = round(float(sc), 3) if sc == sc else None
+            p.radar[sym]["eligible"] = getattr(p, "eligible_now", {}).get(sym, True)
     log.info(f"{b['id']}: equity {p.equity():.2f}, open {list(p.st['positions'])}, "
              f"new trades {len(p.st['trades']) - n_before}")
     return p
@@ -120,6 +165,9 @@ def bot_summary(b, p, live):
         "stats": stats(st, cap), "curve": downsample(eq, 400),
         "radar": getattr(p, "radar", {}), "params": b.get("params", {}), "risk": b.get("risk", {}),
         "kind": b["kind"], "news_filter": bool(b.get("news_filter")),
+        "scanner": "universe" in b, "btc_filter": bool(b.get("btc_filter")),
+        "market_ok": getattr(p, "regime_now", None),
+        "universe": b.get("universe"),
     }
 
 
@@ -127,7 +175,7 @@ def main():
     cfg = yaml.safe_load(open(os.path.join(HERE, "bots.yaml"), encoding="utf-8"))
     news = NewsGuard(NEWS_CFG, log)
     cache, bots_out, errors = {}, [], []
-    all_syms = sorted({s for b in cfg["bots"] for s in b["symbols"]})
+    core = ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
     for b in cfg["bots"]:
         try:
             p = run_bot(b, cfg, news, cache)
@@ -135,6 +183,8 @@ def main():
         except Exception as e:  # noqa: BLE001 - one broken bot must not stop the others
             log.error(f"{b['id']} failed: {e}\n{traceback.format_exc()}")
             errors.append(f"{b['name']}: {e}")
+    held = sorted({s for _, p in bots_out for s in p.st["positions"]} - set(core))
+    all_syms = core + held
     live = market.prices(all_syms) if bots_out else {}
     coins = {}
     for sym in all_syms:

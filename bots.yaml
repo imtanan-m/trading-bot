@@ -6,6 +6,41 @@ fee_pct: 0.10        # Binance spot fee har taraf
 slippage_pct: 0.05
 
 bots:
+  - id: hunter_daily
+    name: "Opportunity Hunter"
+    tag: "High risk"
+    color: "#0ea5e9"
+    kind: rotation
+    timeframe: 1d
+    universe: {pool: 100, top: 30}
+    btc_filter: true
+    capital: 1000
+    news_filter: true
+    params: {lookback: 14, sma: 20, k: 3}
+    risk: {max_open_positions: 3, min_cash_reserve_pct: 1, daily_loss_limit_pct: 100, max_drawdown_kill_pct: 60}
+    about: >
+      Agent jo Binance ke top 100 coins roz scan karta hai. Us din ke top-30 volume wale coins mein se
+      jo 3 sab se mazboot trend mein hon (14 din ka risk-adjusted return), unhein khareedta hai, aur
+      trend tootne pe bech ke agla behtar coin le leta hai. Sirf tab khareedta hai jab BTC khud apne
+      50-din average se upar ho (BTC filter). Backtest: +47%/saal, lekin giraav -54% tak. Bohot risky.
+
+  - id: dip_catcher
+    name: "Dip Catcher"
+    tag: "Profit-booking"
+    color: "#14b8a6"
+    kind: dip
+    timeframe: 1d
+    universe: {pool: 100, top: 30}
+    capital: 1000
+    news_filter: true
+    params: {rsi_buy: 25, take_profit_pct: 0.12, stop_pct: 0.08, max_bars: 10, k: 3}
+    risk: {max_open_positions: 3, min_cash_reserve_pct: 1, daily_loss_limit_pct: 100, max_drawdown_kill_pct: 40}
+    about: >
+      Agent jo top coins mein se sab se zyada gire hue (oversold, RSI-14 25 se neeche) coin dhoondta hai
+      aur khareedta hai. +12% pe profit book, -8% pe stop-loss, ya 10 din baad bech deta hai. Har trade
+      ka anjaam pehle se tay hai. Backtest: +13%/saal, giraav -28%, aadhi se zyada trades jeet.
+      Girte market mein bhi mauqe dhoondta hai.
+
   - id: momentum_daily
     name: "Momentum Daily"
     tag: "Growth"
