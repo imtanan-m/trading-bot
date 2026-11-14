@@ -1,0 +1,37 @@
+universe: ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ZEC/USDT', 'NVDAB/USDT', 'XRP/USDT', 'BNB/USDT', 'NEAR/USDT', 'SPCXB/USDT', 'SOXLB/USDT', 'PEPE/USDT', 'HYPE/USDT', 'UNI/USDT', 'ENA/USDT', 'DOGE/USDT', 'SHELL/USDT', 'SUI/USDT', 'SNDKB/USDT', 'INJ/USDT', 'LINK/USDT', 'AVAX/USDT', 'TAO/USDT', 'TRX/USDT', 'BARD/USDT', 'ADA/USDT', 'LTC/USDT', 'CRCLB/USDT', 'AAVE/USDT', 'WLD/USDT', 'MSTRB/USDT', 'BERA/USDT', 'RWUSD/USDT', 'MUB/USDT', 'HBAR/USDT', 'SOXSB/USDT', 'PUMP/USDT', 'FET/USDT', 'SOPH/USDT', 'BMT/USDT', 'XLM/USDT']
+data loaded in 347s; 19/40 coins have full history
+rotation lb14 sma20 k3                               1s  ret    439.1%  CAGR   46.0%  DD  -63.1%  tr  409 (1.76/wk)  win 32.3%  PF 1.22  A 68.4%  B 31.1%  90d 8.4%
+rotation lb14 sma20 k3 +BTCfilter                    1s  ret   1355.1%  CAGR   82.5%  DD  -47.3%  tr  232 (1.0/wk)  win 37.1%  PF 2.0  A 79.5%  B 86.4%  90d 40.4%
+rotation lb14 sma20 k5                               1s  ret    278.0%  CAGR   34.8%  DD  -61.2%  tr  685 (2.95/wk)  win 30.1%  PF 1.17  A 65.5%  B 14.7%  90d -0.8%
+rotation lb14 sma20 k5 +BTCfilter                    1s  ret    671.7%  CAGR   58.3%  DD  -46.5%  tr  402 (1.73/wk)  win 35.6%  PF 1.54  A 75.8%  B 46.0%  90d 13.3%
+rotation lb14 sma50 k3                               1s  ret    430.7%  CAGR   45.5%  DD  -70.2%  tr  390 (1.68/wk)  win 29.2%  PF 1.23  A 73.8%  B 26.6%  90d 11.1%
+rotation lb14 sma50 k3 +BTCfilter                    1s  ret   1580.7%  CAGR   88.5%  DD  -49.8%  tr  213 (0.92/wk)  win 36.2%  PF 1.89  A 120.3%  B 67.3%  90d 40.4%
+rotation lb14 sma50 k5                               1s  ret    517.2%  CAGR   50.5%  DD  -57.3%  tr  616 (2.65/wk)  win 30.8%  PF 1.28  A 74.9%  B 33.8%  90d -7.2%
+rotation lb14 sma50 k5 +BTCfilter                    1s  ret   1121.8%  CAGR   75.5%  DD  -45.5%  tr  373 (1.61/wk)  win 36.7%  PF 1.69  A 110.3%  B 52.1%  90d 20.1%
+rotation lb28 sma20 k3                               1s  ret   1231.9%  CAGR   78.9%  DD  -65.1%  tr  407 (1.75/wk)  win 27.8%  PF 1.36  A 110.1%  B 58.4%  90d 22.7%
+rotation lb28 sma20 k3 +BTCfilter                    1s  ret   2100.0%  CAGR  100.2%  DD  -51.1%  tr  238 (1.02/wk)  win 30.7%  PF 1.93  A 119.1%  B 87.6%  90d 36.0%
+rotation lb28 sma20 k5                               1s  ret   1087.6%  CAGR   74.3%  DD  -60.2%  tr  628 (2.7/wk)  win 28.8%  PF 1.46  A 84.7%  B 67.3%  90d 13.0%
+rotation lb28 sma20 k5 +BTCfilter                    1s  ret   1738.5%  CAGR   92.3%  DD  -46.3%  tr  388 (1.67/wk)  win 32.7%  PF 1.89  A 113.1%  B 77.6%  90d 19.9%
+rotation lb28 sma50 k3                               1s  ret    551.2%  CAGR   52.3%  DD  -60.8%  tr  253 (1.09/wk)  win 27.3%  PF 1.41  A 75.2%  B 36.9%  90d 10.9%
+rotation lb28 sma50 k3 +BTCfilter                    1s  ret   1045.2%  CAGR   72.9%  DD  -55.5%  tr  134 (0.58/wk)  win 32.1%  PF 1.91  A 93.8%  B 58.4%  90d 15.8%
+rotation lb28 sma50 k5                               1s  ret    697.4%  CAGR   59.4%  DD  -54.0%  tr  424 (1.83/wk)  win 27.6%  PF 1.46  A 89.5%  B 38.9%  90d 0.7%
+rotation lb28 sma50 k5 +BTCfilter                    1s  ret   1288.2%  CAGR   80.6%  DD  -50.6%  tr  238 (1.02/wk)  win 35.3%  PF 1.85  A 124.3%  B 51.7%  90d 9.8%
+rotation lb28 sma20 k3 TP15 SL10                     1s  ret     -3.7%  CAGR   -0.8%  DD  -80.3%  tr  917 (3.95/wk)  win 37.3%  PF 1.0  A 53.0%  B -30.0%  90d -2.1%
+rotation lb28 sma20 k3 TP15 SL10 +BTCfilter          1s  ret    -10.5%  CAGR   -2.5%  DD  -74.4%  tr  581 (2.5/wk)  win 39.2%  PF 0.99  A 29.2%  B -22.0%  90d 3.6%
+rotation lb28 sma20 k3 TP25 SL12                     1s  ret     90.4%  CAGR   15.6%  DD  -79.4%  tr  663 (2.85/wk)  win 31.2%  PF 1.04  A 55.7%  B -8.8%  90d 7.4%
+rotation lb28 sma20 k3 TP25 SL12 +BTCfilter          1s  ret    258.1%  CAGR   33.2%  DD  -62.8%  tr  409 (1.76/wk)  win 35.5%  PF 1.15  A 66.7%  B 11.7%  90d 22.0%
+dip rsi<25 TP5 SL8 trendoff                          1s  ret     -6.6%  CAGR   -1.5%  DD  -25.9%  tr  164 (0.71/wk)  win 64.0%  PF 0.98  A -5.6%  B 1.9%  90d -8.3%
+dip rsi<25 TP5 SL8 trend100                          1s  ret      0.0%  CAGR    0.0%  DD    0.0%  tr    0 (0.0/wk)  win None%  PF None  A 0.0%  B 0.0%  90d 0.0%
+dip rsi<25 TP10 SL8 trendoff                         1s  ret    131.5%  CAGR   20.8%  DD  -25.9%  tr  147 (0.63/wk)  win 59.2%  PF 1.51  A 14.0%  B 26.6%  90d -4.0%
+dip rsi<25 TP10 SL8 trend100                         1s  ret      0.0%  CAGR    0.0%  DD    0.0%  tr    0 (0.0/wk)  win None%  PF None  A 0.0%  B 0.0%  90d 0.0%
+dip rsi<30 TP5 SL8 trendoff                          1s  ret    -69.3%  CAGR  -23.3%  DD  -69.8%  tr  433 (1.86/wk)  win 57.5%  PF 0.71  A -24.2%  B -22.6%  90d -14.9%
+dip rsi<30 TP5 SL8 trend100                          1s  ret     -2.3%  CAGR   -0.5%  DD   -5.4%  tr    4 (0.02/wk)  win 50.0%  PF 0.57  A 0.2%  B -1.1%  90d 0.0%
+dip rsi<30 TP10 SL8 trendoff                         1s  ret    -22.0%  CAGR   -5.4%  DD  -44.3%  tr  357 (1.54/wk)  win 46.8%  PF 0.94  A -13.7%  B 1.9%  90d -4.1%
+dip rsi<30 TP10 SL8 trend100                         1s  ret      0.8%  CAGR    0.2%  DD   -5.4%  tr    4 (0.02/wk)  win 50.0%  PF 1.14  A 1.8%  B -1.1%  90d 0.0%
+trend4h hunter TPatroff                              5s  ret    128.4%  CAGR   20.4%  DD  -20.7%  tr  581 (2.5/wk)  win 29.8%  PF 1.33  A 36.2%  B 8.9%  90d 2.7%
+trend4h hunter TPatroff +BTCfilter                   6s  ret    112.6%  CAGR   18.5%  DD  -23.1%  tr  478 (2.06/wk)  win 29.1%  PF 1.34  A 37.7%  B 4.8%  90d 3.7%
+trend4h hunter TPatr4                                4s  ret     21.0%  CAGR    4.4%  DD  -23.0%  tr  896 (3.85/wk)  win 37.5%  PF 1.06  A 11.1%  B -0.7%  90d 4.5%
+trend4h hunter TPatr4 +BTCfilter                     6s  ret     19.6%  CAGR    4.1%  DD  -23.7%  tr  757 (3.26/wk)  win 37.9%  PF 1.06  A 12.4%  B -2.2%  90d 3.8%
+BENCH hold BTC/ETH/SOL                               0s  ret     75.5%  CAGR   13.5%  DD  -64.5%  tr    0 (0.0/wk)  win None%  PF None  A 67.2%  B -17.5%  90d 3.7%
+BENCH current momentum_daily (3 coins)               0s  ret    379.3%  CAGR   42.2%  DD  -35.9%  tr  148 (0.64/wk)  win 31.1%  PF 2.02  A 85.8%  B 14.1%  90d 31.6%
+done in 390s
