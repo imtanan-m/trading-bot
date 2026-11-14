@@ -1,0 +1,50 @@
+data loaded 1394s
+5m both votes4 TP2.5/SL1.5             25s ret   -99.4% DD  -99.4%  4.72/day win 35.1% PF 0.51 L -539.1 S -455.0 | train CAGR -100.0% test CAGR -36.3% | 90d 0.0%
+5m both votes4 TP1.5/SL1.0             25s ret   -99.4% DD  -99.5%  3.62/day win 32.4% PF 0.37 L -484.1 S -510.4 | train CAGR -100.0% test CAGR -24.3% | 90d 0.0%
+5m both votes4 TP4.0/SL2.0             25s ret   -99.3% DD  -99.3%  5.69/day win 34.9% PF 0.58 L -624.8 S -368.6 | train CAGR -100.0% test CAGR -51.4% | 90d -0.2%
+5m both votes5 TP2.5/SL1.5             25s ret   -99.4% DD  -99.4%   4.8/day win 35.3% PF 0.51 L -578.9 S -415.0 | train CAGR -100.0% test CAGR -42.6% | 90d 0.0%
+5m both votes5 TP1.5/SL1.0             25s ret   -99.4% DD  -99.4%  3.68/day win 33.0% PF 0.38 L -477.0 S -517.5 | train CAGR -100.0% test CAGR -24.6% | 90d 0.0%
+5m both votes5 TP4.0/SL2.0             25s ret   -99.3% DD  -99.3%  5.39/day win 35.2% PF 0.57 L -607.7 S -385.4 | train CAGR -100.0% test CAGR -59.2% | 90d -0.2%
+5m trend votes4 TP2.5/SL1.5            25s ret   -99.4% DD  -99.4%  4.63/day win 36.5% PF 0.52 L -544.1 S -449.7 | train CAGR -100.0% test CAGR -40.4% | 90d -0.3%
+5m trend votes4 TP1.5/SL1.0            25s ret   -99.4% DD  -99.4%  3.69/day win 34.4% PF 0.39 L -479.0 S -515.5 | train CAGR -100.0% test CAGR -25.7% | 90d 0.0%
+5m trend votes4 TP4.0/SL2.0            25s ret   -99.3% DD  -99.3%  5.42/day win 37.0% PF 0.61 L -625.3 S -367.5 | train CAGR -100.0% test CAGR -58.0% | 90d -0.2%
+5m trend votes5 TP2.5/SL1.5            25s ret   -99.3% DD  -99.4%  4.65/day win 37.5% PF 0.55 L -569.2 S -424.2 | train CAGR -100.0% test CAGR -50.9% | 90d -0.3%
+5m trend votes5 TP1.5/SL1.0            25s ret   -99.4% DD  -99.4%  3.53/day win 33.9% PF 0.38 L -465.1 S -529.3 | train CAGR -100.0% test CAGR -27.9% | 90d 0.0%
+5m trend votes5 TP4.0/SL2.0            25s ret   -99.2% DD  -99.2%  5.26/day win 38.3% PF 0.64 L -651.1 S -341.0 | train CAGR -100.0% test CAGR -72.2% | 90d -1.9%
+5m range votes4 TP2.5/SL1.5            25s ret   -99.2% DD  -99.2%  3.96/day win 23.2% PF 0.21 L -566.7 S -425.6 | train CAGR -97.5% test CAGR -91.2% | 90d -7.9%
+5m range votes4 TP1.5/SL1.0            25s ret   -99.4% DD  -99.4%  3.31/day win 23.7% PF 0.22 L -569.6 S -424.0 | train CAGR -99.3% test CAGR -89.5% | 90d -2.6%
+5m range votes4 TP4.0/SL2.0            25s ret   -99.1% DD  -99.1%  4.66/day win 23.1% PF 0.2 L -563.6 S -427.0 | train CAGR -94.8% test CAGR -91.6% | 90d -12.9%
+15m both votes4 TP2.5/SL1.5            13s ret   -98.8% DD  -98.9%  3.51/day win 36.5% PF 0.6 L -539.9 S -448.5 | train CAGR -94.8% test CAGR -26.1% | 90d -2.8%
+15m both votes4 TP1.5/SL1.0            13s ret   -99.1% DD  -99.1%  2.75/day win 35.3% PF 0.54 L -513.5 S -477.9 | train CAGR -96.2% test CAGR -19.4% | 90d -3.3%
+15m both votes4 TP4.0/SL2.0            14s ret   -98.4% DD  -98.5%  4.12/day win 35.7% PF 0.64 L -543.3 S -440.9 | train CAGR -92.3% test CAGR -36.5% | 90d -5.3%
+15m both votes5 TP2.5/SL1.5            13s ret   -98.8% DD  -98.8%  3.47/day win 37.4% PF 0.62 L -568.1 S -419.7 | train CAGR -94.0% test CAGR -32.8% | 90d -3.3%
+15m both votes5 TP1.5/SL1.0            13s ret   -99.1% DD  -99.1%  2.91/day win 36.6% PF 0.57 L -492.7 S -498.4 | train CAGR -95.9% test CAGR -22.9% | 90d -3.3%
+15m both votes5 TP4.0/SL2.0            13s ret   -98.3% DD  -98.3%  4.29/day win 37.9% PF 0.66 L -525.9 S -456.9 | train CAGR -89.9% test CAGR -47.7% | 90d -6.8%
+15m trend votes4 TP2.5/SL1.5           13s ret   -98.7% DD  -98.7%  3.43/day win 36.8% PF 0.61 L -542.2 S -444.7 | train CAGR -94.3% test CAGR -26.1% | 90d -3.0%
+15m trend votes4 TP1.5/SL1.0           13s ret   -99.1% DD  -99.1%  2.71/day win 35.8% PF 0.55 L -507.2 S -483.5 | train CAGR -96.0% test CAGR -18.6% | 90d -2.2%
+15m trend votes4 TP4.0/SL2.0           13s ret   -98.2% DD  -98.3%  4.02/day win 36.1% PF 0.66 L -561.5 S -420.8 | train CAGR -91.4% test CAGR -38.0% | 90d -6.1%
+15m trend votes5 TP2.5/SL1.5           13s ret   -98.6% DD  -98.6%  3.36/day win 38.1% PF 0.65 L -571.7 S -413.8 | train CAGR -93.2% test CAGR -32.6% | 90d -4.2%
+15m trend votes5 TP1.5/SL1.0           13s ret   -99.0% DD  -99.0%  2.81/day win 36.7% PF 0.58 L -499.5 S -490.8 | train CAGR -95.7% test CAGR -21.5% | 90d -2.2%
+15m trend votes5 TP4.0/SL2.0           13s ret   -98.0% DD  -98.0%  4.29/day win 38.9% PF 0.69 L -542.3 S -437.2 | train CAGR -86.9% test CAGR -53.7% | 90d -7.4%
+15m range votes4 TP2.5/SL1.5           13s ret   -89.0% DD  -89.0%  1.72/day win 34.8% PF 0.33 L -453.4 S -436.1 | train CAGR -45.2% test CAGR -61.4% | 90d -20.2%
+15m range votes4 TP1.5/SL1.0           13s ret   -95.5% DD  -95.5%  1.83/day win 33.4% PF 0.35 L -447.4 S -507.1 | train CAGR -55.5% test CAGR -74.5% | 90d -26.8%
+15m range votes4 TP4.0/SL2.0           13s ret   -81.2% DD  -81.3%  1.67/day win 35.1% PF 0.34 L -404.7 S -407.1 | train CAGR -35.4% test CAGR -52.2% | 90d -17.0%
+1h both votes4 TP2.5/SL1.5              5s ret   -87.4% DD  -88.6%  3.07/day win 40.0% PF 0.79 L -396.3 S -477.8 | train CAGR -42.7% test CAGR -40.6% | 90d 1.4%
+1h both votes4 TP1.5/SL1.0              5s ret   -97.3% DD  -97.4%  2.37/day win 38.0% PF 0.6 L -382.7 S -590.3 | train CAGR -71.0% test CAGR -37.6% | 90d -3.3%
+1h both votes4 TP4.0/SL2.0              5s ret   -72.3% DD  -76.3%   2.5/day win 40.5% PF 0.81 L -273.3 S -453.4 | train CAGR -32.3% test CAGR -22.2% | 90d 12.6%
+1h both votes5 TP2.5/SL1.5              5s ret   -71.3% DD  -74.9%  2.33/day win 41.7% PF 0.84 L -304.8 S -408.4 | train CAGR -26.5% test CAGR -30.2% | 90d 10.4%
+1h both votes5 TP1.5/SL1.0              5s ret   -96.0% DD  -96.2%  2.59/day win 39.6% PF 0.66 L -387.9 S -572.5 | train CAGR -58.4% test CAGR -54.9% | 90d -6.2%
+1h both votes5 TP4.0/SL2.0              5s ret   -60.2% DD  -67.1%  1.91/day win 41.7% PF 0.84 L -197.3 S -409.8 | train CAGR -21.6% test CAGR -21.2% | 90d 17.6%
+1h trend votes4 TP2.5/SL1.5             5s ret   -83.5% DD  -85.1%  2.88/day win 40.0% PF 0.8 L -377.9 S -456.8 | train CAGR -41.0% test CAGR -31.7% | 90d 6.7%
+1h trend votes4 TP1.5/SL1.0             5s ret   -97.0% DD  -97.1%  2.42/day win 38.0% PF 0.61 L -396.4 S -573.5 | train CAGR -69.3% test CAGR -38.9% | 90d -4.6%
+1h trend votes4 TP4.0/SL2.0             5s ret   -67.2% DD  -72.5%  2.32/day win 40.5% PF 0.83 L -243.0 S -433.3 | train CAGR -31.5% test CAGR -14.2% | 90d 15.2%
+1h trend votes5 TP2.5/SL1.5             5s ret   -62.9% DD  -68.3%  2.12/day win 41.7% PF 0.86 L -259.0 S -369.9 | train CAGR -23.8% test CAGR -21.4% | 90d 13.1%
+1h trend votes5 TP1.5/SL1.0             5s ret   -95.1% DD  -95.4%   2.5/day win 39.5% PF 0.68 L -402.0 S -548.5 | train CAGR -56.4% test CAGR -51.4% | 90d -2.3%
+1h trend votes5 TP4.0/SL2.0             5s ret   -51.4% DD  -60.8%  1.71/day win 41.9% PF 0.86 L -150.3 S -370.7 | train CAGR -20.0% test CAGR -12.6% | 90d 20.5%
+1h range votes4 TP2.5/SL1.5             4s ret   -23.6% DD  -24.6%  0.23/day win 40.7% PF 0.5 L -114.9 S -121.2 | train CAGR -3.5% test CAGR -11.9% | 90d -2.8%
+1h range votes4 TP1.5/SL1.0             4s ret   -32.4% DD  -33.5%  0.24/day win 39.6% PF 0.48 L -114.7 S -209.2 | train CAGR -5.9% test CAGR -15.7% | 90d -4.2%
+1h range votes4 TP4.0/SL2.0             4s ret   -17.9% DD  -18.6%  0.22/day win 40.1% PF 0.52 L -79.0 S -99.9 | train CAGR -2.6% test CAGR -8.9% | 90d -2.9%
+1h range votes4 TP4.0/SL2.0 [maker fees 0.02%]       ret -10.9% DD -13.5% train -0.7% test -6.5%
+1h range votes4 TP2.5/SL1.5 [maker fees 0.02%]       ret -15.3% DD -17.8% train -1.1% test -9.2%
+1h range votes4 TP1.5/SL1.0 [maker fees 0.02%]       ret -18.6% DD -20.5% train -1.7% test -10.8%
+done 2051s
