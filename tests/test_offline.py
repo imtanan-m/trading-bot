@@ -86,7 +86,7 @@ with tempfile.TemporaryDirectory() as d:
         NOW["t"] = start + pd.Timedelta(hours=6 * i)
         run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 8 and not summ["errors"], "8 bots ran without errors: " + str(summ["errors"]))
+    ok(len(summ["bots"]) == 9 and not summ["errors"], "9 bots ran without errors: " + str(summ["errors"]))
     need = {"id", "name", "equity", "return_pct", "positions", "trades", "stats", "curve", "change_24h", "radar"}
     ok(set(summ["coins"]) == {"BTC/USDT", "ETH/USDT", "SOL/USDT"} and summ["usd_pkr"], "market snapshot + PKR rate")
     ok(all(r["conditions"] for b in summ["bots"] if b["id"] != "hold" for r in b["radar"].values()), "signal radar filled")
@@ -153,6 +153,6 @@ with tempfile.TemporaryDirectory() as d:
     NOW["t"] += pd.Timedelta(hours=6)
     run_cycle.main()
     summ = json.load(open(os.path.join(run_cycle.OUT, "summary.json")))
-    ok(len(summ["bots"]) == 7 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
+    ok(len(summ["bots"]) == 8 and len(summ["errors"]) == 1, "one failing bot is isolated and reported")
 
 print(f"\nALL {ok_count} CHECKS PASSED")

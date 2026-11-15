@@ -30,6 +30,28 @@ bots:
       koi bhi fees ke baad profit mein nahi thi. Ye sab se kam buri thi (90 din: +20%, poora backtest: -51%).
       Isse asli paise pe na chalayein.
 
+  - id: futures_active
+    name: "Futures Active"
+    tag: "Active"
+    color: "#e11d48"
+    kind: scalp
+    timeframe: 1h
+    bars: 2500
+    symbols: [BTC/USDT, ETH/USDT, SOL/USDT, XRP/USDT, BNB/USDT, DOGE/USDT, ADA/USDT, LINK/USDT, AVAX/USDT, SUI/USDT]
+    capital: 1000
+    news_filter: false
+    fee_pct: 0.05
+    slippage_pct: 0.02
+    params: {mode: trend, min_votes: 4, tp_atr: 4.0, sl_atr: 2.0, max_bars: 24}
+    risk: {leverage: 5, funding_pct_8h: 0.01, risk_per_trade_pct: 0.4, max_position_pct: 100,
+           max_open_positions: 5, min_cash_reserve_pct: 1, daily_loss_limit_pct: 6, max_drawdown_kill_pct: 60}
+    about: >
+      Zyada active futures agent (paper): 10 coins pe har ghante LONG/SHORT dhoondta hai, 5x leverage,
+      ek waqt mein 5 trades tak. Futures Scalper wali strategy hai, lekin 6 mein se 4 votes kaafi hain,
+      is liye roz kai trades leta hai. Har trade mein stop (2 ATR), target (4 ATR), break-even aur 24 ghante
+      ki limit. Har trade mein 0.4% risk. Sach: zyada trades = zyada fees. Backtest mein pichhle 90 din +15%,
+      lekin 2 saal mein -67%. Ye dikhane ke liye hai ke active trading asal mein kaisi chalti hai.
+
   - id: hunter_daily
     name: "Opportunity Hunter"
     tag: "High risk"

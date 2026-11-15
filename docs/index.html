@@ -181,6 +181,16 @@ dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:8px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
 .toast.on{opacity:1}
 .banner{border:1px dashed var(--down);color:var(--down);border-radius:var(--rad);padding:10px 12px;margin:0 0 12px;font-size:14px;background:var(--sheet)}
+.live{border:1.5px solid var(--ink);border-radius:var(--rad);background:var(--sheet);margin:4px 0 16px;overflow:hidden}
+.live .lh{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--grid2);font-weight:650}
+.live .pulse{width:9px;height:9px;border-radius:50%;background:var(--up);animation:pl 1.6s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--up) 60%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.lt{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 12px;border-bottom:1px solid var(--grid2)}
+.lt:last-child{border-bottom:0}
+.lt .big2{font-weight:740;font-stretch:112%;font-size:17px;text-align:right}
+.lt .sub2{font-size:12.5px;color:var(--mute)}
+.lbar{grid-column:1/-1;position:relative;height:6px;border-radius:3px;background:var(--grid);margin-top:4px}
+.lbar i{position:absolute;top:-3px;width:2px;height:12px;background:var(--ink)}
 .foot{color:var(--mute);font-size:12.5px;margin:28px 0 8px;max-width:62ch}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -203,6 +213,7 @@ dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
   <section class="view on" id="v-desk" aria-label="Desk">
     <p class="headline" id="headline">&nbsp;</p>
     <p class="lede" id="lede"></p>
+    <div id="liveBox"></div>
     <div class="race graph">
       <div class="bar">
         <div class="seg" role="group" aria-label="Waqt"><button data-range="7">7 din</button><button data-range="30">30 din</button><button data-range="0" aria-pressed="true">Shuru se</button></div>
@@ -316,9 +327,9 @@ function applyTheme(t){document.documentElement.dataset.theme=t==='light'?'light
 applyTheme(store.get('theme','auto'));
 if(window.Chart){Chart.defaults.font.family='Archivo, system-ui, -apple-system, Segoe UI, sans-serif';Chart.defaults.color='#66728A';}
 /* pen colours for bot lines, tuned per theme */
-const PENS={light:['#4D7C0F','#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#BEF264','#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
+const PENS={light:['#BE123C','#4D7C0F','#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#FDA4AF','#BEF264','#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
 const isDark=()=>css('--paper').toLowerCase()==='#0f2340';
-const ORDER=['futures_scalper','hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
+const ORDER=['futures_active','futures_scalper','hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
 const pen=id=>{const i=ORDER.indexOf(id);return PENS[isDark()?'dark':'light'][i<0?0:i]};
 const sideTag=x=>x.side?`<span class="badge ${x.side==='short'?'ghost':''}" style="${x.side==='short'?'color:var(--down);border-color:var(--down)':'background:var(--up);color:var(--paper)'}">${x.side==='long'?'LONG':'SHORT'}${x.lev?' '+x.lev+'x':''}</span>`:'';
 const coinsLabel=b=>b.scanner?`Top ${b.universe?.top||30} coins scan`:b.symbols.map(coin).join(', ');
@@ -407,6 +418,32 @@ function renderDesk(){
   bots.forEach(b=>{const v=curveOf(b).map(p=>p[1]);charts['sp_'+b.id]=spark($('#sp_'+b.id),v.length>1?v:[b.capital,b.equity],pen(b.id),b.capital);});
   renderFeed(); renderRace();
 }
+/* ---------- live open trades (prices straight from Binance every 10s) ---------- */
+let LIVE={};
+async function livePrices(){
+  if(!DATA)return;const syms=[...new Set(DATA.bots.flatMap(b=>b.positions.map(p=>p.symbol.replace('/',''))))];if(!syms.length){renderLive();return}
+  for(const base of ['https://data-api.binance.vision','https://api.binance.com']){
+    try{const r=await fetch(base+'/api/v3/ticker/price?symbols='+encodeURIComponent(JSON.stringify(syms)));if(!r.ok)continue;
+      (await r.json()).forEach(x=>LIVE[x.symbol]={p:+x.price,t:Date.now()});break}catch(e){}}
+  renderLive();
+}
+function livePos(p){const px=LIVE[p.symbol.replace('/','')]?.p??p.price,side=p.side==='short'?-1:1,lev=p.lev||1;
+  const move=side*(px/p.entry-1)*100,usdP=side*p.qty*(px-p.entry);return{px,move,roe:move*lev,usdP,side,lev}}
+function renderLive(){
+  if(!DATA)return;const rows=DATA.bots.flatMap(b=>b.positions.map(p=>({b,p})));
+  if(!rows.length){$('#liveBox').innerHTML=`<div class="live"><div class="lh"><span class="pulse" style="background:var(--mute);animation:none"></span>Abhi koi trade khuli nahi</div><div class="lt"><div class="sub2" style="grid-column:1/-1">Saare bots signal ka intezar kar rahe hain. Market tab mein Radar dekhein ke kaun qareeb hai.</div></div></div>`;return}
+  const tot=rows.reduce((a,{p})=>a+livePos(p).usdP,0),fresh=Object.values(LIVE).some(x=>Date.now()-x.t<30000);
+  $('#liveBox').innerHTML=`<div class="live"><div class="lh"><span class="pulse"></span>Live khuli trades (${rows.length})<span style="margin-left:auto" class="${tone(tot)}">${money(tot)}</span></div>`+
+    rows.sort((a,c)=>new Date(c.p.since)-new Date(a.p.since)).map(({b,p},i)=>{const L=livePos(p);
+      const lo=Math.min(p.stop??L.px,p.tp??L.px,L.px,p.entry),hi=Math.max(p.stop??L.px,p.tp??L.px,L.px,p.entry),pos=v=>hi>lo?((v-lo)/(hi-lo)*100):50;
+      const bar=(p.stop||p.tp)?`<div class="lbar" title="Stop ←→ Target">${p.stop?`<span style="position:absolute;left:${pos(p.stop)}%;top:-14px;font-size:10px;color:var(--down);transform:translateX(-50%)">SL</span>`:''}${p.tp?`<span style="position:absolute;left:${pos(p.tp)}%;top:-14px;font-size:10px;color:var(--up);transform:translateX(-50%)">TP</span>`:''}<i style="left:${pos(p.entry)}%;background:var(--mute)"></i><i style="left:${pos(L.px)}%"></i></div>`:'';
+      return(i===6?`<details><summary class="sub2" style="padding:10px 12px;cursor:pointer">Aur ${rows.length-6} trades dekhein</summary>`:'')+`<div class="lt"><div><b>${coin(p.symbol)}</b> ${p.side?`<span class="badge" style="${p.side==='short'?'background:var(--down)':'background:var(--up)'};color:var(--paper)">${p.side.toUpperCase()} ${p.lev}x</span>`:'<span class="badge ghost">SPOT</span>'} <span class="sub2"><span class="pen" style="background:${pen(b.id)}"></span>${esc(b.name)}</span></div>
+        <div class="big2 ${tone(L.usdP)}">${pct(L.roe)}</div>
+        <div class="sub2">Entry ${price(p.entry)} → abhi <b style="color:var(--ink)">${price(L.px)}</b>${p.tp?' · target '+price(p.tp):''}${p.stop?' · stop '+price(p.stop):''}</div><div class="sub2" style="text-align:right">${money(L.usdP)}</div>${bar}</div>`+(i===rows.length-1&&rows.length>6?'</details>':'')}).join('')+
+    `<div class="lt"><div class="sub2" style="grid-column:1/-1">${fresh?'Prices Binance se har 10 second update ho rahi hain.':'Live price load ho rahi hai…'} Bot apne faisle har 15 minute pe cloud mein leta hai.</div></div></div>`;
+}
+setInterval(livePrices,10000);
+
 function renderFeed(){
   const ev=[];
   DATA.bots.forEach(b=>{
@@ -579,7 +616,7 @@ function renderMore(){
 }
 
 /* ================= wiring ================= */
-function renderAll(){syncUI();renderDesk();renderBots();renderTrades();renderMarket();renderMore();if(openBot)renderSheet();
+function renderAll(){syncUI();renderDesk();livePrices();renderBots();renderTrades();renderMarket();renderMore();if(openBot)renderSheet();
   $$('[data-range]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.range===raceRange));$$('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.unit===raceUnit));
   $('#unitMoney').textContent=CUR==='PKR'&&DATA.usd_pkr?'Rs':'$';}
 function show(v,push=true){$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));$$('nav.tabs button').forEach(b=>b.dataset.view===v?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));

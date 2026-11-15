@@ -203,7 +203,7 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
 
 /* ======================= state ======================= */
 const S={sym:store.get('sym','BTCUSDT'),tf:store.get('tf','15m'),tick:{},list:[],mkTab:'all',mkQ:'',fav:new Set(store.get('fav',['BTCUSDT','ETHUSDT','SOLUSDT'])),
-  ind:store.get('ind',{ema:true,bb:false,rsi:true,bots:true}),bookTab:'book',acTab:'pos',mkt:store.get('mkt','spot'),side:'buy',otype:'market',lev:store.get('lev',5),
+  ind:store.get('ind',{ema:true,bb:false,rsi:true,bots:true}),bookTab:'book',acTab:'bots',mkt:store.get('mkt','spot'),side:'buy',otype:'market',lev:store.get('lev',5),
   kl:[],book:null,trades:[],bots:null};
 
 /* ======================= data: REST ======================= */
@@ -483,7 +483,7 @@ function submit(side){
 }
 
 /* ======================= account panel ======================= */
-const AC=[['pos','Positions'],['ord','Open orders'],['hist','History'],['assets','Assets'],['bots','Bots']];
+const AC=[['bots','Bot trades (live)'],['pos','Meri positions'],['ord','Open orders'],['hist','History'],['assets','Assets']];
 function renderAcct(){
   const d=A.d;$('#acTabs').innerHTML=AC.map(([k,l])=>`<button class="tab" data-ac="${k}" aria-selected="${S.acTab===k}">${l}${k==='pos'&&Object.keys(d.pos).length?' ('+Object.keys(d.pos).length+')':k==='ord'&&d.orders.length?' ('+d.orders.length+')':''}</button>`).join('');
   const eq=A.equity(),pnl=eq-START_USDT;$('#eqHead').innerHTML=`${usd(eq)} <span class="${tone(pnl)}" style="display:inline;font-size:12px">${pc(pnl/START_USDT*100)}</span>`;
@@ -504,7 +504,12 @@ function renderAcct(){
     h=`<table><tr><th>Asset</th><th class="r">Miqdar</th><th class="r">Avg khareed</th><th class="r">Abhi</th><th class="r">Value</th><th class="r">P/L</th></tr><tr><td><b>USDT</b></td><td class="r">${fp(d.usdt+d.locked,2)}</td><td class="r">–</td><td class="r">1.00</td><td class="r">${usd(d.usdt+d.locked)}</td><td class="r mute">${d.locked?usd(d.locked)+' orders mein':''}</td></tr>${rows}</table>`;}
   else if(S.acTab==='bots'){
     const B=S.bots?.bots||[];const rows=B.flatMap(b=>b.positions.map(p=>({b,p})));
-    h=`<div class="note" style="padding:8px 12px">Aap ke cloud bots ki khuli positions. Coin pe tap karein to chart pe bot ki entry, stop aur target dikhenge.</div>`+(rows.length?`<table><tr><th>Bot</th><th>Coin</th><th class="r">Entry</th><th class="r">Abhi</th><th class="r">P/L</th><th class="r">Stop</th><th class="r">Target</th></tr>${rows.map(({b,p})=>`<tr><td><span style="color:${b.color}">●</span> ${esc(b.name)}</td><td><a href="#" data-sym="${p.symbol.replace('/','')}" style="color:inherit"><b>${p.symbol}</b></a> ${p.side?`<span class="badge ${p.side}">${p.side.toUpperCase()} ${p.lev}x</span>`:''}</td><td class="r">${fp(p.entry)}</td><td class="r">${fp(p.price)}</td><td class="r ${tone(p.pnl_pct)}">${pc(p.pnl_pct)}</td><td class="r">${p.stop?fp(p.stop):'–'}</td><td class="r">${p.tp?fp(p.tp):'–'}</td></tr>`).join('')}</table>`:'<div class="empty">Bots ki abhi koi position khuli nahi.</div>');}
+    const L=p=>{const px=S.tick[p.symbol.replace('/','')]?.c??p.price,side=p.side==='short'?-1:1,lev=p.lev||1,move=side*(px/p.entry-1)*100;return{px,roe:move*lev,u:side*p.qty*(px-p.entry)}};
+    const tot=rows.reduce((a,r)=>a+L(r.p).u,0);
+    const closed=B.flatMap(b=>b.trades.slice(0,8).map(t=>({b,t}))).sort((a,c)=>new Date(c.t.exit_time)-new Date(a.t.exit_time)).slice(0,12);
+    h=`<div class="note" style="padding:8px 12px">Cloud bots ki khuli trades, live price ke saath (har second). ${rows.length?`Kul: <b class="${tone(tot)}">${usd(tot)}</b>`:''}</div>`+
+      (rows.length?`<table><tr><th>Bot</th><th>Coin</th><th class="r">Entry</th><th class="r">Abhi</th><th class="r">P/L</th><th class="r">Stop</th><th class="r">Target</th><th>Kab se</th></tr>${rows.map(({b,p})=>{const x=L(p);return`<tr><td><span style="color:${b.color}">●</span> ${esc(b.name)}</td><td><a href="#" data-sym="${p.symbol.replace('/','')}" style="color:inherit"><b>${p.symbol}</b></a> ${p.side?`<span class="badge ${p.side}">${p.side.toUpperCase()} ${p.lev}x</span>`:'<span class="badge" style="background:#7D879C26;color:var(--mute)">SPOT</span>'}</td><td class="r">${fp(p.entry)}</td><td class="r">${fp(x.px)}</td><td class="r ${tone(x.u)}">${usd(x.u)}<br><small>${pc(x.roe)}</small></td><td class="r">${p.stop?fp(p.stop):'–'}</td><td class="r">${p.tp?fp(p.tp):'–'}</td><td class="mute">${new Date(p.since).toLocaleString([], {hour12:false,month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</td></tr>`}).join('')}</table>`:'<div class="empty">Bots ki abhi koi trade khuli nahi. Wo signal ka intezar kar rahe hain.</div>')+
+      (closed.length?`<div class="note" style="padding:10px 12px 4px">Aakhri band trades</div><table><tr><th>Bot</th><th>Coin</th><th class="r">Entry → Exit</th><th class="r">Nateeja</th><th>Wajah</th><th>Kab</th></tr>${closed.map(({b,t})=>`<tr><td><span style="color:${b.color}">●</span> ${esc(b.name)}</td><td><b>${t.symbol}</b> ${t.side?`<span class="badge ${t.side}">${t.side.toUpperCase()}</span>`:''}</td><td class="r">${fp(t.entry)} → ${fp(t.exit)}</td><td class="r ${tone(t.pnl)}">${usd(t.pnl)} <small>${pc(t.ret_pct)}</small></td><td class="mute">${esc(t.reason)}</td><td class="mute">${new Date(t.exit_time).toLocaleString([], {hour12:false,month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</td></tr>`).join('')}</table>`:'');}
   $('#acBody').innerHTML=h;
 }
 function render(){renderAcct();renderOrder();}
@@ -516,7 +521,7 @@ function drawBots(){
   if(!S.ind.bots||!S.bots||!S.kl.length){markers.setMarkers([]);return}
   const sym=pretty(S.sym),tf=TFMS[S.tf],first=S.kl[0].t,mk=[];
   const snap=ms=>T(Math.floor(ms/tf)*tf);
-  const SHORT={momentum_daily:'Momentum',trend_4h:'Trend4h',trend_1h:'Trend1h',scalper_1h:'Scalper',hold:'Hold',hunter_daily:'Hunter',dip_catcher:'Dip',futures_scalper:'Futures'};
+  const SHORT={futures_active:'Active',momentum_daily:'Momentum',trend_4h:'Trend4h',trend_1h:'Trend1h',scalper_1h:'Scalper',hold:'Hold',hunter_daily:'Hunter',dip_catcher:'Dip',futures_scalper:'Futures'};
   for(const b of S.bots.bots){
     const nm=SHORT[b.id]||b.name.split(' ')[0];
     for(const t of b.trades.filter(t=>t.symbol===sym)){
