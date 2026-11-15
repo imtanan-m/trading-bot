@@ -231,8 +231,11 @@ def run_series(portfolio, prepared: dict, start=None, entry_filter_last=None, re
     last processed timestamp are used, so this works for backtests AND incremental cloud runs."""
     st = portfolio.st
     events = []
+    # A coin that joins a running bot later (e.g. it entered the top-100 list today) starts from the bot's
+    # current time, never from its own old history -- otherwise old candles would be traded as if live.
+    bot_now = max(st["last_ts"].values()) if st["last_ts"] else None
     for sym, df in prepared.items():
-        last = st["last_ts"].get(sym)
+        last = st["last_ts"].get(sym) or bot_now
         d = df[df.index > last] if last else df
         if start is not None:
             d = d[d.index >= start]
