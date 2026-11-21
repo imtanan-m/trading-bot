@@ -419,8 +419,112 @@ class FuturesScalper(Base):
         return out
 
 
+class MomentumLS(Base):
+    """Daily momentum, LONG and SHORT (futures). Long while price > SMA and N-day return > 0,
+    short while price < SMA and N-day return < 0, flat otherwise. Low leverage, equal share per coin."""
+    futures = True
+    sizing = "alloc"
+
+    def __init__(self, sma=50, lookback=30, n_coins=3, stop_pct=0.0, shorts=True):
+        super().__init__()
+        self.sma, self.lb, self.sl, self.shorts = int(sma), int(lookback), float(stop_pct), bool(shorts)
+        self.alloc = 0.95 / int(n_coins)
+        self.min_bars = max(self.sma, self.lb) + 2
+
+    def prepare(self, df):
+        o = df.copy()
+        o["sma"] = o.close.rolling(self.sma).mean()
+        o["mom"] = o.close / o.close.shift(self.lb) - 1
+        return self._warm(o)
+
+    def entry_signal(self, r):
+        if not (r["warm"] and _ok(r["sma"], r["mom"])):
+            return 0
+        if r["close"] > r["sma"] and r["mom"] > 0:
+            return 1
+        if self.shorts and r["close"] < r["sma"] and r["mom"] < 0:
+            return -1
+        return 0
+
+    def initial_stop(self, entry, r, side):
+        return entry * (1 - side * self.sl) if self.sl > 0 else None
+
+    def take_profit(self, entry, r, side):
+        return None
+
+    def exit_signal(self, r, pos):
+        if not _ok(r["sma"], r["mom"]):
+            return False
+        d = pos["side"]
+        return bool((d > 0 and (r["close"] < r["sma"] or r["mom"] < 0)) or (d < 0 and (r["close"] > r["sma"] or r["mom"] > 0)))
+
+    def explain(self, r):
+        if not _ok(r["sma"], r["mom"]):
+            return []
+        up = r["close"] > r["sma"]
+        return [_cond(f"Price {self.sma}-din average se {'upar (LONG side)' if up else 'neeche (SHORT side)'}", True, _pct(r["close"], r["sma"])),
+                _cond(f"{self.lb} din ka return {'positive' if r['mom'] > 0 else 'negative'}", (r["mom"] > 0) == up, round(float(r["mom"]) * 100, 2))]
+
+
+class BreakoutHunter(Base):
+    """Pump Rider: buys coins showing the Pump Radar's strongest signals (volume spike and/or a breakout
+    out of a quiet base), only if liquid enough. Fixed profit target, stop-loss and time limit."""
+    sizing = "alloc"
+    cross = True
+
+    def __init__(self, signal="either", take_profit_pct=0.3, stop_pct=0.12, max_bars=15, k=5, min_qvol=1_000_000,
+                 trail_after=0.0):
+        super().__init__()
+        self.signal, self.tp, self.sl, self.max_bars = signal, float(take_profit_pct), float(stop_pct), int(max_bars)
+        self.k, self.min_qvol, self.trail_after = int(k), float(min_qvol), float(trail_after)
+        self.alloc = 0.97 / self.k
+        self.min_bars = 95
+
+    def prepare(self, df):
+        from .pump import features
+        o = df.copy()
+        btc = getattr(self, "btc", None)
+        f = features(df, btc if btc is not None else df)
+        for c in ("vspike", "brk60", "range30", "qvol30", "ret1"):
+            o[c] = f[c]
+        return self._warm(o)
+
+    def entry_signal(self, r):
+        if not (r["warm"] and _ok(r["vspike"], r["brk60"], r["range30"], r["qvol30"])) or r["qvol30"] < self.min_qvol:
+            return False
+        quiet = r["range30"] <= 0.35 and r["brk60"] >= 1
+        spike = r["vspike"] >= 3 and r["brk60"] >= 1
+        return bool({"quiet": quiet, "spike": spike, "either": quiet or spike}[self.signal])
+
+    def score(self, r):
+        return float(r["vspike"]) if _ok(r["vspike"]) else 0.0
+
+    def initial_stop(self, entry, r):
+        return entry * (1 - self.sl)
+
+    def take_profit(self, entry, r):
+        return entry * (1 + self.tp)
+
+    def trail_stop(self, pos, r):
+        if self.trail_after > 0 and pos["hi"] >= pos["entry"] * (1 + self.trail_after):
+            return max(pos["stop"], pos["entry"] * 1.002)   # lock break-even once up enough
+        return None
+
+    def exit_signal(self, r, pos):
+        return pos["bars"] >= self.max_bars
+
+    def explain(self, r):
+        if not _ok(r["vspike"], r["range30"]):
+            return []
+        return [_cond("Volume 3x+", r["vspike"] >= 3, round(float(r["vspike"]), 1)),
+                _cond("60-din ka high toota", r["brk60"] >= 1, None),
+                _cond("Khamosh base (30 din range kam)", r["range30"] <= 0.35, round(float(r["range30"]) * 100, 1)),
+                _cond("Kaafi volume ($1M+/din)", r["qvol30"] >= self.min_qvol, round(float(r["qvol30"]) / 1e6, 2))]
+
+
 REGISTRY = {"trend": TrendBreakout, "momentum": DailyMomentum, "rsi2": RSI2Scalper, "hold": BuyHold,
-            "rotation": Rotation, "dip": DipBuyer, "scalp": FuturesScalper}
+            "rotation": Rotation, "dip": DipBuyer, "scalp": FuturesScalper, "momls": MomentumLS,
+            "breakout": BreakoutHunter}
 
 
 def build(kind, params):
