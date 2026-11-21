@@ -241,6 +241,14 @@ def main():
         "bots": sorted([bot_summary(b, p, live) for b, p in bots_out], key=lambda x: -x["return_pct"]),
     }
     save_json(os.path.join(OUT, "summary.json"), summary)
+    mpath = os.path.join(HERE, "research", "pump_model.json")
+    if os.path.exists(mpath):
+        try:
+            from engine.pump import run_radar
+            run_radar(market, load_json(mpath), STATE_DIR, os.path.join(OUT, "pumps.json"), log,
+                      research=load_json(os.path.join(HERE, "research", "pump_results.json"), {}))
+        except Exception as e:  # noqa: BLE001
+            log.warning(f"pump radar failed: {e}")
     log.info(f"summary written, {len(bots_out)} bots, {len(errors)} errors")
     if not bots_out:
         sys.exit(1)

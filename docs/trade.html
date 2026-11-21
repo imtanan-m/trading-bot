@@ -142,7 +142,7 @@ td.r,th.r{text-align:right}
   <main class="main" id="main">
     <section class="pane" id="mk" aria-label="Markets">
       <input class="search" id="mkSearch" placeholder="Coin dhoondein (e.g. SOL)" autocomplete="off">
-      <div class="ph"><div class="tabs" id="mkTabs"><button class="tab" data-mk="all" aria-selected="true">USDT</button><button class="tab" data-mk="fav" aria-selected="false">★ Pasand</button><button class="tab" data-mk="gain" aria-selected="false">Gainers</button><button class="tab" data-mk="lose" aria-selected="false">Losers</button></div></div>
+      <div class="ph"><div class="tabs" id="mkTabs"><button class="tab" data-mk="all" aria-selected="true">USDT</button><button class="tab" data-mk="fav" aria-selected="false">★ Pasand</button><button class="tab" data-mk="gain" aria-selected="false">Gainers</button><button class="tab" data-mk="lose" aria-selected="false">Losers</button><button class="tab" data-mk="radar" aria-selected="false">🔥 Radar</button></div></div>
       <div class="scroll" id="mkList"></div>
     </section>
     <section class="pane" id="chartPane" aria-label="Chart">
@@ -202,7 +202,7 @@ const TFMS={'1m':6e4,'5m':3e5,'15m':9e5,'1h':36e5,'4h':144e5,'1d':864e5};
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200);}
 
 /* ======================= state ======================= */
-const S={sym:store.get('sym','BTCUSDT'),tf:store.get('tf','15m'),tick:{},list:[],mkTab:'all',mkQ:'',fav:new Set(store.get('fav',['BTCUSDT','ETHUSDT','SOLUSDT'])),
+const S={sym:(Q.get('sym')||store.get('sym','BTCUSDT')).toUpperCase(),tf:store.get('tf','15m'),tick:{},list:[],mkTab:'all',mkQ:'',fav:new Set(store.get('fav',['BTCUSDT','ETHUSDT','SOLUSDT'])),
   ind:store.get('ind',{ema:true,bb:false,rsi:true,bots:true}),bookTab:'book',acTab:'bots',mkt:store.get('mkt','spot'),side:'buy',otype:'market',lev:store.get('lev',5),
   kl:[],book:null,trades:[],bots:null};
 
@@ -242,7 +242,8 @@ function renderMarkets(target='#mkList'){
   if(S.mkTab==='fav')l=l.filter(s=>S.fav.has(s)).concat([...S.fav].filter(s=>!l.includes(s)));
   if(S.mkTab==='gain')l.sort((a,b)=>chg(S.tick[b])-chg(S.tick[a]));
   if(S.mkTab==='lose')l.sort((a,b)=>chg(S.tick[a])-chg(S.tick[b]));
-  const html=l.map(s=>{const t=S.tick[s]||{};const c=chg(t);return`<div class="mrow ${s===S.sym?'on':''}" data-sym="${s}" role="button" tabindex="0"><button class="star ${S.fav.has(s)?'on':''}" data-fav="${s}" aria-label="Pasand">★</button><span><b>${base(s)}</b><span class="mute">/USDT</span><br><span class="mute" style="font-size:11px">Vol ${fq(t.q||0)}</span></span><span class="p">${fp(t.c)}</span><span class="c ${tone(c)}">${pc(c)}</span></div>`}).join('')||'<div class="empty">Koi coin nahi mila</div>';
+  if(S.mkTab==='radar')l=(S.pump?.picks||[]).map(p=>p.coin.replace('/',''));
+  const html=l.map(s=>{const t=S.tick[s]||{};const c=chg(t);return`<div class="mrow ${s===S.sym?'on':''}" data-sym="${s}" role="button" tabindex="0"><button class="star ${S.fav.has(s)?'on':''}" data-fav="${s}" aria-label="Pasand">★</button><span><b>${base(s)}</b><span class="mute">/USDT</span><br><span class="mute" style="font-size:11px">${S.mkTab==='radar'?esc((S.pump?.picks.find(p=>p.coin.replace('/','')===s)?.reasons||[]).slice(0,2).join(' · ')):'Vol '+fq(t.q||0)}</span></span><span class="p">${fp(t.c)}</span><span class="c ${tone(c)}">${pc(c)}</span></div>`}).join('')||'<div class="empty">Koi coin nahi mila</div>';
   $$(target==='#mkList'?'#mkList':'#mkSheetList').forEach(e=>e.innerHTML=html);
   if($('#mkSheetList'))$('#mkSheetList').innerHTML=html;
 }
@@ -515,6 +516,7 @@ function renderAcct(){
 function render(){renderAcct();renderOrder();}
 
 /* ======================= bot overlays ======================= */
+async function loadPump(){try{S.pump=await fetch('data/pumps.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null);renderMarkets()}catch(e){}}
 async function loadBots(){try{S.bots=await fetch('data/summary.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json());drawBots();if(S.acTab==='bots')renderAcct()}catch(e){}}
 function drawBots(){
   if(!cs)return;priceLines.forEach(l=>cs.removePriceLine(l));priceLines=[];
@@ -599,7 +601,7 @@ document.addEventListener('click',e=>{
   if(ds.half){const p=A.d.pos[ds.half];A.closePos(ds.half,(A.px(ds.half)||p.entry)*(1-p.dir*SLIP),'50% close',0.5);render();drawBots();return}
   if(ds.cancel){A.cancel(+ds.cancel);drawBots();return}
   if(ds.tpsl){tpslEdit(ds.tpsl);return}
-  if(t.id==='symBtn'){$('#mkSheet').innerHTML=`<div class="ph" style="justify-content:space-between"><b>Coin chunein</b><button class="mini" id="mkSheetClose">✕</button></div><input class="search" id="mkSearch2" placeholder="Coin dhoondein" autocomplete="off"><div class="ph"><div class="tabs">${['all','fav','gain','lose'].map((k,i)=>`<button class="tab" data-mk="${k}" aria-selected="${S.mkTab===k}">${['USDT','★ Pasand','Gainers','Losers'][i]}</button>`).join('')}</div></div><div class="scroll" id="mkSheetList"></div>`;renderMarkets();openSheet('#mkSheet');setTimeout(()=>$('#mkSearch2')?.focus(),50);return}
+  if(t.id==='symBtn'){$('#mkSheet').innerHTML=`<div class="ph" style="justify-content:space-between"><b>Coin chunein</b><button class="mini" id="mkSheetClose">✕</button></div><input class="search" id="mkSearch2" placeholder="Coin dhoondein" autocomplete="off"><div class="ph"><div class="tabs">${['all','fav','gain','lose','radar'].map((k,i)=>`<button class="tab" data-mk="${k}" aria-selected="${S.mkTab===k}">${['USDT','★ Pasand','Gainers','Losers','🔥 Radar'][i]}</button>`).join('')}</div></div><div class="scroll" id="mkSheetList"></div>`;renderMarkets();openSheet('#mkSheet');setTimeout(()=>$('#mkSearch2')?.focus(),50);return}
   if(t.id==='mkSheetClose'||t.id==='orderClose'||t.id==='tpslCancel'){closeSheets();return}
   if(t.id==='resetAcct'){if(confirm('Paper account reset karein? Saari positions aur history mit jayegi.')){A.reset();render();drawBots()}return}
   if(t.id==='tpslSave'){const s=t.dataset.s,p=A.d.pos[s];if(p){p.tp=parseFloat($('#eTp').value)||null;p.sl=parseFloat($('#eSl').value)||null;A.save();render();drawBots();toast('TP/SL save')}closeSheets();return}
@@ -693,7 +695,7 @@ function selfTest(){
   global.open(['!miniTicker@arr']);
   await setSymbol(S.sym);
   await A.catchUp();render();
-  loadBots();setInterval(loadBots,120000);
+  loadBots();loadPump();setInterval(loadBots,120000);
   if(Q.has('selftest'))selfTest();
   if(MOCK&&Q.has('demo')){A.reset(false);const b=S.tick.BTCUSDT.c;S.mkt='fut';S.lev=10;A.place({sym:'BTCUSDT',mkt:'fut',side:'buy',type:'market',total:500,lev:10,tp:b*1.03,sl:b*0.985});A.place({sym:'ETHUSDT',mkt:'spot',side:'buy',type:'market',total:2000});A.place({sym:'BTCUSDT',mkt:'fut',side:'buy',type:'limit',price:b*0.97,total:300,lev:5});render();drawBots();}
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
