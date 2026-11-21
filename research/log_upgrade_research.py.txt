@@ -1,0 +1,67 @@
+data: 388 daily coins, 4h 10; 61s
+A momentum L/S BTC/ETH/SOL sma50 lb30 1x                0s ret   304.5% DD  -49.7%  1.25/wk win 27.0 PF 1.44 L 2470.2 S -349.4 | train 56.9% test 39.5% | 90d 31.8%
+A momentum L/S BTC/ETH/SOL sma50 lb30 2x                0s ret   632.9% DD  -72.9%  1.25/wk win 27.0 PF 1.28 L 5062.8 S -1456.8 | train 87.0% test 64.4% | 90d 63.0%
+A momentum long BTC/ETH/SOL sma50 lb30 1x               0s ret   311.9% DD  -36.7%   0.6/wk win 30.3 PF 2.04 L 3119.0 S 0 | train 90.9% test 8.2% | 90d 2.7%
+A momentum long BTC/ETH/SOL sma50 lb30 2x               0s ret   688.9% DD  -59.8%   0.6/wk win 30.6 PF 1.62 L 6889.3 S 0 | train 165.5% test 7.2% | 90d 4.6%
+A momentum L/S BTC/ETH/SOL sma20 lb14 1x                0s ret   139.7% DD  -40.8%  2.05/wk win 33.4 PF 1.15 L 1462.7 S -597.7 | train 47.4% test 7.1% | 90d 19.8%
+A momentum L/S BTC/ETH/SOL sma20 lb14 2x                0s ret   184.5% DD  -71.5%  2.05/wk win 33.4 PF 1.06 L 2788.1 S -1974.0 | train 74.8% test -4.4% | 90d 35.0%
+A momentum long BTC/ETH/SOL sma20 lb14 1x               0s ret   142.8% DD  -38.2%  1.16/wk win 32.7 PF 1.4 L 1427.7 S 0 | train 56.7% test -0.7% | 90d 0.2%
+A momentum long BTC/ETH/SOL sma20 lb14 2x               0s ret   245.5% DD  -63.1%  1.16/wk win 32.7 PF 1.23 L 2455.1 S 0 | train 99.1% test -8.9% | 90d 0.4%
+A momentum L/S top10 sma50 lb30 1x                      0s ret   274.2% DD  -37.3%   4.7/wk win 26.4 PF 1.28 L 2202.6 S -298.3 | train 66.6% test 22.7% | 90d 28.5%
+A momentum L/S top10 sma50 lb30 2x                      0s ret   426.9% DD  -69.2%  4.56/wk win 26.9 PF 1.12 L 4324.8 S -1999.3 | train 101.3% test 19.8% | 90d 53.2%
+A momentum long top10 sma50 lb30 1x                     0s ret   203.9% DD  -40.2%  2.34/wk win 23.1 PF 1.56 L 2039.4 S 0 | train 77.4% test -2.5% | 90d 1.5%
+A momentum long top10 sma50 lb30 2x                     0s ret   328.4% DD  -68.6%   2.3/wk win 23.1 PF 1.24 L 3283.9 S 0 | train 141.6% test -19.2% | 90d -0.0%
+A momentum L/S top10 sma20 lb14 1x                      0s ret   201.5% DD  -42.3%  7.03/wk win 31.7 PF 1.16 L 1801.4 S -479.1 | train 64.8% test 7.8% | 90d 19.4%
+A momentum L/S top10 sma20 lb14 2x                      0s ret   355.2% DD  -68.7%  6.95/wk win 31.6 PF 1.07 L 3605.0 S -1757.4 | train 123.2% test -5.3% | 90d 35.7%
+A momentum long top10 sma20 lb14 1x                     0s ret   180.0% DD  -45.1%  3.83/wk win 30.2 PF 1.35 L 1799.9 S 0 | train 79.6% test -9.1% | 90d -2.8%
+A momentum long top10 sma20 lb14 2x                     0s ret   266.4% DD  -73.4%   3.8/wk win 30.0 PF 1.15 L 2664.1 S 0 | train 145.7% test -28.7% | 90d -4.9%
+B futures 4h trend votes4 TP4.0/SL2.0 max12             1s ret    24.8% DD  -22.5%  7.77/wk win 40.2 PF 1.07 L 279.4 S -50.2 | train 11.7% test -0.2% | 90d -7.0%
+B futures 4h trend votes4 TP4.0/SL2.0 max30             1s ret    44.7% DD  -15.1%  6.99/wk win 35.3 PF 1.11 L 408.3 S 21.9 | train 16.2% test 4.6% | 90d 1.7%
+B futures 4h trend votes4 TP6.0/SL3.0 max12             1s ret    26.0% DD  -15.8%  6.99/wk win 42.1 PF 1.11 L 290.9 S -50.0 | train 9.4% test 3.4% | 90d -3.5%
+B futures 4h trend votes4 TP6.0/SL3.0 max30             1s ret    39.8% DD  -13.2%  5.68/wk win 39.1 PF 1.15 L 400.8 S -31.2 | train 13.2% test 6.0% | 90d 2.8%
+B futures 4h trend votes5 TP4.0/SL2.0 max12             1s ret    34.0% DD  -20.9%  5.62/wk win 41.9 PF 1.12 L 296.9 S 23.7 | train 12.0% test 4.4% | 90d -5.7%
+B futures 4h trend votes5 TP4.0/SL2.0 max30             1s ret    46.0% DD  -14.9%   5.1/wk win 36.9 PF 1.15 L 345.5 S 97.9 | train 11.4% test 11.5% | 90d 2.4%
+B futures 4h trend votes5 TP6.0/SL3.0 max12             1s ret    39.5% DD  -12.3%  5.01/wk win 44.8 PF 1.23 L 327.0 S 50.2 | train 12.1% test 7.2% | 90d 0.2%
+B futures 4h trend votes5 TP6.0/SL3.0 max30             1s ret    46.1% DD  -11.7%  4.14/wk win 42.4 PF 1.23 L 416.0 S 15.4 | train 12.5% test 10.2% | 90d 2.1%
+C pump-rider quiet TP20 SL10 10d                        7s ret   -65.5% DD  -74.2%   3.0/wk win 35.9 PF 0.86 L -655.0 S 0 | train -24.5% test -29.5% | 90d -4.1%
+C pump-rider quiet TP20 SL10 10d +BTCfilter             8s ret   -41.5% DD  -66.0%  2.54/wk win 37.3 PF 0.91 L -414.9 S 0 | train -20.8% test -5.2% | 90d 2.5%
+C pump-rider quiet TP20 SL10 20d                        7s ret   -66.0% DD  -71.6%  2.67/wk win 34.0 PF 0.83 L -658.9 S 0 | train -34.8% test -15.0% | 90d -6.3%
+C pump-rider quiet TP20 SL10 20d +BTCfilter             8s ret   -57.3% DD  -72.1%  2.26/wk win 34.1 PF 0.85 L -572.7 S 0 | train -34.7% test -1.0% | 90d -8.3%
+C pump-rider quiet TP30 SL12 10d                        7s ret   -66.4% DD  -77.7%  2.53/wk win 34.1 PF 0.84 L -664.1 S 0 | train -29.9% test -23.5% | 90d -2.0%
+C pump-rider quiet TP30 SL12 10d +BTCfilter             8s ret   -40.8% DD  -71.6%   2.1/wk win 35.5 PF 0.9 L -407.8 S 0 | train -21.8% test -2.9% | 90d 11.3%
+C pump-rider quiet TP30 SL12 20d                        8s ret   -64.2% DD  -75.5%  2.11/wk win 31.2 PF 0.83 L -641.6 S 0 | train -35.9% test -9.9% | 90d 7.5%
+C pump-rider quiet TP30 SL12 20d +BTCfilter             9s ret   -46.8% DD  -71.9%  1.74/wk win 31.7 PF 0.87 L -467.7 S 0 | train -27.9% test 0.1% | 90d 12.8%
+C pump-rider quiet TP50 SL15 10d                        7s ret   -50.3% DD  -59.7%  2.22/wk win 35.2 PF 0.88 L -503.5 S 0 | train -26.8% test -5.7% | 90d -14.4%
+C pump-rider quiet TP50 SL15 10d +BTCfilter             9s ret   -44.8% DD  -68.3%  1.81/wk win 35.4 PF 0.87 L -447.7 S 0 | train -29.2% test 6.1% | 90d -10.2%
+C pump-rider quiet TP50 SL15 20d                        7s ret   -35.1% DD  -64.1%  1.69/wk win 34.3 PF 0.92 L -349.3 S 0 | train -22.6% test 3.0% | 90d -2.7%
+C pump-rider quiet TP50 SL15 20d +BTCfilter             9s ret     6.1% DD  -60.7%  1.39/wk win 35.7 PF 1.02 L 60.8 S 0 | train -24.1% test 48.6% | 90d 12.8%
+C pump-rider spike TP20 SL10 10d                        8s ret   -96.7% DD  -97.2%  5.43/wk win 30.0 PF 0.84 L -967.8 S 0 | train -46.4% test -77.2% | 90d -37.4%
+C pump-rider spike TP20 SL10 10d +BTCfilter             9s ret   -86.2% DD  -88.4%  4.41/wk win 32.0 PF 0.87 L -862.1 S 0 | train -40.3% test -47.6% | 90d -23.4%
+C pump-rider spike TP20 SL10 20d                        8s ret   -96.7% DD  -97.3%  5.23/wk win 29.5 PF 0.85 L -966.9 S 0 | train -46.1% test -77.0% | 90d -30.7%
+C pump-rider spike TP20 SL10 20d +BTCfilter             9s ret   -87.8% DD  -91.0%  4.22/wk win 31.0 PF 0.86 L -878.4 S 0 | train -45.8% test -45.1% | 90d -14.4%
+C pump-rider spike TP30 SL12 10d                        8s ret   -94.1% DD  -95.6%  4.38/wk win 28.4 PF 0.87 L -941.8 S 0 | train -31.2% test -75.8% | 90d -37.3%
+C pump-rider spike TP30 SL12 10d +BTCfilter             9s ret   -82.2% DD  -87.0%  3.47/wk win 29.8 PF 0.88 L -822.3 S 0 | train -31.9% test -48.0% | 90d -22.7%
+C pump-rider spike TP30 SL12 20d                        8s ret   -94.7% DD  -95.8%  3.99/wk win 26.3 PF 0.85 L -947.4 S 0 | train -33.7% test -76.2% | 90d -41.2%
+C pump-rider spike TP30 SL12 20d +BTCfilter             9s ret   -81.6% DD  -85.3%  3.11/wk win 27.7 PF 0.86 L -816.2 S 0 | train -34.9% test -43.3% | 90d -24.9%
+C pump-rider spike TP50 SL15 10d                        8s ret   -86.9% DD  -94.4%  3.49/wk win 28.8 PF 0.92 L -870.7 S 0 | train -9.6% test -71.2% | 90d -24.3%
+C pump-rider spike TP50 SL15 10d +BTCfilter             9s ret   -73.8% DD  -87.0%  2.67/wk win 29.4 PF 0.91 L -737.6 S 0 | train -29.5% test -35.2% | 90d -13.0%
+C pump-rider spike TP50 SL15 20d                        8s ret   -84.4% DD  -93.9%  2.96/wk win 25.9 PF 0.93 L -846.2 S 0 | train 7.2% test -74.7% | 90d -32.4%
+C pump-rider spike TP50 SL15 20d +BTCfilter             9s ret   -59.0% DD  -78.2%  2.16/wk win 28.6 PF 0.92 L -590.1 S 0 | train -20.1% test -27.2% | 90d -25.5%
+C pump-rider either TP20 SL10 10d                       8s ret   -97.5% DD  -97.8%  5.53/wk win 30.2 PF 0.82 L -975.3 S 0 | train -52.9% test -77.5% | 90d -31.2%
+C pump-rider either TP20 SL10 10d +BTCfilter            9s ret   -90.7% DD  -92.2%  4.48/wk win 31.4 PF 0.84 L -906.6 S 0 | train -48.1% test -51.3% | 90d -28.0%
+C pump-rider either TP20 SL10 20d                       8s ret   -95.5% DD  -95.9%  5.24/wk win 30.3 PF 0.84 L -955.2 S 0 | train -46.2% test -71.7% | 90d -33.1%
+C pump-rider either TP20 SL10 20d +BTCfilter            9s ret   -84.3% DD  -88.2%  4.23/wk win 31.9 PF 0.87 L -843.4 S 0 | train -42.8% test -39.4% | 90d -21.6%
+C pump-rider either TP30 SL12 10d                       8s ret   -95.5% DD  -96.2%  4.62/wk win 28.9 PF 0.82 L -955.2 S 0 | train -44.3% test -73.0% | 90d -36.4%
+C pump-rider either TP30 SL12 10d +BTCfilter            9s ret   -86.1% DD  -89.4%  3.59/wk win 30.0 PF 0.83 L -861.2 S 0 | train -47.0% test -38.0% | 90d -19.3%
+C pump-rider either TP30 SL12 20d                       8s ret   -92.7% DD  -94.0%   4.0/wk win 27.5 PF 0.82 L -927.7 S 0 | train -37.8% test -67.8% | 90d -36.8%
+C pump-rider either TP30 SL12 20d +BTCfilter            9s ret   -84.4% DD  -88.1%  3.09/wk win 27.5 PF 0.82 L -844.2 S 0 | train -41.7% test -41.3% | 90d -15.8%
+C pump-rider either TP50 SL15 10d                       8s ret   -90.5% DD  -93.1%   3.7/wk win 30.0 PF 0.88 L -906.5 S 0 | train -19.2% test -73.1% | 90d -29.1%
+C pump-rider either TP50 SL15 10d +BTCfilter            9s ret   -71.9% DD  -82.5%  2.79/wk win 31.3 PF 0.9 L -719.1 S 0 | train -30.3% test -31.0% | 90d -12.0%
+C pump-rider either TP50 SL15 20d                       8s ret   -79.4% DD  -90.2%  3.05/wk win 26.8 PF 0.93 L -796.0 S 0 | train 0.0% test -65.8% | 90d -29.3%
+C pump-rider either TP50 SL15 20d +BTCfilter            9s ret   -58.6% DD  -81.6%  2.24/wk win 28.1 PF 0.93 L -586.5 S 0 | train -22.5% test -23.5% | 90d -27.3%
+D dip rsi<25 TP8 SL8                                    7s ret   -14.7% DD  -31.0%  0.58/wk win 49.5 PF 0.9 L -140.7 S 0 | train 6.2% test -17.3% | 90d -11.3%
+D dip rsi<25 TP12 SL8                                   8s ret    14.4% DD  -26.6%   0.5/wk win 46.7 PF 1.11 L 154.8 S 0 | train 17.8% test -12.3% | 90d -11.2%
+D dip rsi<25 TP8 SL8 +BTCfilter                         8s ret    11.0% DD   -6.1%  0.09/wk win 62.5 PF 1.71 L 109.9 S 0 | train 5.7% test -0.4% | 90d 0.0%
+D dip rsi<25 TP12 SL8 +BTCfilter                        8s ret    16.9% DD   -6.2%  0.09/wk win 56.2 PF 1.99 L 168.6 S 0 | train 9.5% test -1.7% | 90d 0.0%
+BENCH hold BTC/ETH/SOL                                  0s ret   112.8% DD  -67.4%   0.0/wk win None PF None L 0 S 0 | train 106.4% test -37.9% | 90d -29.3%
+done 403s

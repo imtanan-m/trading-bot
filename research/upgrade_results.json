@@ -1,0 +1,4144 @@
+{
+ "generated": "2026-11-21T07:44:02.949714+00:00",
+ "results": [
+  {
+   "name": "A momentum L/S BTC/ETH/SOL sma50 lb30 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 3,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 304.5,
+    "cagr": 49.6,
+    "max_dd": -49.7,
+    "trades": 226,
+    "per_week": 1.25,
+    "win_rate": 27.0,
+    "pf": 1.44,
+    "long_pnl": 2470.2,
+    "short_pnl": -349.4
+   },
+   "train": {
+    "return": 146.2,
+    "cagr": 56.9,
+    "max_dd": -49.7,
+    "trades": 123,
+    "per_week": 1.18,
+    "win_rate": 26.0,
+    "pf": 1.4,
+    "long_pnl": 1620.6,
+    "short_pnl": -625.1
+   },
+   "test": {
+    "return": 63.2,
+    "cagr": 39.5,
+    "max_dd": -30.4,
+    "trades": 103,
+    "per_week": 1.34,
+    "win_rate": 28.2,
+    "pf": 1.49,
+    "long_pnl": 849.7,
+    "short_pnl": 275.7
+   },
+   "last_90d": {
+    "return": 31.8,
+    "cagr": 214.5,
+    "max_dd": -11.7,
+    "trades": 5,
+    "per_week": 0.4,
+    "win_rate": 60.0,
+    "pf": 22.78,
+    "long_pnl": 721.5,
+    "short_pnl": -31.7
+   }
+  },
+  {
+   "name": "A momentum L/S BTC/ETH/SOL sma50 lb30 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 3,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 632.9,
+    "cagr": 77.5,
+    "max_dd": -72.9,
+    "trades": 226,
+    "per_week": 1.25,
+    "win_rate": 27.0,
+    "pf": 1.28,
+    "long_pnl": 5062.8,
+    "short_pnl": -1456.8
+   },
+   "train": {
+    "return": 249.3,
+    "cagr": 87.0,
+    "max_dd": -72.9,
+    "trades": 123,
+    "per_week": 1.18,
+    "win_rate": 26.0,
+    "pf": 1.21,
+    "long_pnl": 3330.2,
+    "short_pnl": -1933.5
+   },
+   "test": {
+    "return": 107.7,
+    "cagr": 64.4,
+    "max_dd": -50.7,
+    "trades": 103,
+    "per_week": 1.34,
+    "win_rate": 28.2,
+    "pf": 1.34,
+    "long_pnl": 1732.6,
+    "short_pnl": 476.7
+   },
+   "last_90d": {
+    "return": 63.0,
+    "cagr": 659.2,
+    "max_dd": -18.9,
+    "trades": 5,
+    "per_week": 0.4,
+    "win_rate": 60.0,
+    "pf": 18.69,
+    "long_pnl": 1760.1,
+    "short_pnl": -94.2
+   }
+  },
+  {
+   "name": "A momentum long BTC/ETH/SOL sma50 lb30 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 3,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 311.9,
+    "cagr": 50.3,
+    "max_dd": -36.7,
+    "trades": 109,
+    "per_week": 0.6,
+    "win_rate": 30.3,
+    "pf": 2.04,
+    "long_pnl": 3119.0,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 264.1,
+    "cagr": 90.9,
+    "max_dd": -33.5,
+    "trades": 62,
+    "per_week": 0.59,
+    "win_rate": 30.6,
+    "pf": 2.41,
+    "long_pnl": 1937.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 12.3,
+    "cagr": 8.2,
+    "max_dd": -36.7,
+    "trades": 47,
+    "per_week": 0.61,
+    "win_rate": 29.8,
+    "pf": 1.73,
+    "long_pnl": 1181.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 2.7,
+    "cagr": 11.8,
+    "max_dd": -10.0,
+    "trades": 3,
+    "per_week": 0.24,
+    "win_rate": 100.0,
+    "pf": null,
+    "long_pnl": 939.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum long BTC/ETH/SOL sma50 lb30 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 3,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 688.9,
+    "cagr": 81.3,
+    "max_dd": -59.8,
+    "trades": 108,
+    "per_week": 0.6,
+    "win_rate": 30.6,
+    "pf": 1.62,
+    "long_pnl": 6889.3,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 604.2,
+    "cagr": 165.5,
+    "max_dd": -53.0,
+    "trades": 61,
+    "per_week": 0.58,
+    "win_rate": 31.1,
+    "pf": 1.79,
+    "long_pnl": 3723.5,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 10.7,
+    "cagr": 7.2,
+    "max_dd": -59.8,
+    "trades": 47,
+    "per_week": 0.61,
+    "win_rate": 29.8,
+    "pf": 1.49,
+    "long_pnl": 3165.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 4.6,
+    "cagr": 20.3,
+    "max_dd": -15.4,
+    "trades": 3,
+    "per_week": 0.24,
+    "win_rate": 100.0,
+    "pf": null,
+    "long_pnl": 2936.9,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum L/S BTC/ETH/SOL sma20 lb14 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 3,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 139.7,
+    "cagr": 28.6,
+    "max_dd": -40.8,
+    "trades": 371,
+    "per_week": 2.05,
+    "win_rate": 33.4,
+    "pf": 1.15,
+    "long_pnl": 1462.7,
+    "short_pnl": -597.7
+   },
+   "train": {
+    "return": 117.2,
+    "cagr": 47.4,
+    "max_dd": -31.2,
+    "trades": 207,
+    "per_week": 1.98,
+    "win_rate": 34.8,
+    "pf": 1.37,
+    "long_pnl": 1505.2,
+    "short_pnl": -395.7
+   },
+   "test": {
+    "return": 10.6,
+    "cagr": 7.1,
+    "max_dd": -40.0,
+    "trades": 164,
+    "per_week": 2.14,
+    "win_rate": 31.7,
+    "pf": 0.91,
+    "long_pnl": -42.5,
+    "short_pnl": -202.0
+   },
+   "last_90d": {
+    "return": 19.8,
+    "cagr": 111.9,
+    "max_dd": -14.8,
+    "trades": 16,
+    "per_week": 1.27,
+    "win_rate": 50.0,
+    "pf": 2.23,
+    "long_pnl": 433.5,
+    "short_pnl": -155.8
+   }
+  },
+  {
+   "name": "A momentum L/S BTC/ETH/SOL sma20 lb14 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 3,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 184.5,
+    "cagr": 35.1,
+    "max_dd": -71.5,
+    "trades": 371,
+    "per_week": 2.05,
+    "win_rate": 33.4,
+    "pf": 1.06,
+    "long_pnl": 2788.1,
+    "short_pnl": -1974.0
+   },
+   "train": {
+    "return": 205.3,
+    "cagr": 74.8,
+    "max_dd": -55.2,
+    "trades": 207,
+    "per_week": 1.98,
+    "win_rate": 34.8,
+    "pf": 1.23,
+    "long_pnl": 3047.7,
+    "short_pnl": -1169.7
+   },
+   "test": {
+    "return": -6.4,
+    "cagr": -4.4,
+    "max_dd": -64.5,
+    "trades": 164,
+    "per_week": 2.14,
+    "win_rate": 31.7,
+    "pf": 0.82,
+    "long_pnl": -259.6,
+    "short_pnl": -804.3
+   },
+   "last_90d": {
+    "return": 35.0,
+    "cagr": 247.7,
+    "max_dd": -26.9,
+    "trades": 16,
+    "per_week": 1.27,
+    "win_rate": 50.0,
+    "pf": 1.93,
+    "long_pnl": 756.5,
+    "short_pnl": -324.6
+   }
+  },
+  {
+   "name": "A momentum long BTC/ETH/SOL sma20 lb14 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 3,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 142.8,
+    "cagr": 29.1,
+    "max_dd": -38.2,
+    "trades": 211,
+    "per_week": 1.16,
+    "win_rate": 32.7,
+    "pf": 1.4,
+    "long_pnl": 1427.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 145.4,
+    "cagr": 56.7,
+    "max_dd": -28.6,
+    "trades": 125,
+    "per_week": 1.2,
+    "win_rate": 32.8,
+    "pf": 1.76,
+    "long_pnl": 1454.2,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -1.1,
+    "cagr": -0.7,
+    "max_dd": -38.2,
+    "trades": 86,
+    "per_week": 1.12,
+    "win_rate": 32.6,
+    "pf": 0.98,
+    "long_pnl": -26.5,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 0.2,
+    "cagr": 0.9,
+    "max_dd": -6.2,
+    "trades": 9,
+    "per_week": 0.72,
+    "win_rate": 66.7,
+    "pf": 8.25,
+    "long_pnl": 505.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum long BTC/ETH/SOL sma20 lb14 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 3,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 3,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 245.5,
+    "cagr": 42.9,
+    "max_dd": -63.1,
+    "trades": 211,
+    "per_week": 1.16,
+    "win_rate": 32.7,
+    "pf": 1.23,
+    "long_pnl": 2455.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 296.1,
+    "cagr": 99.1,
+    "max_dd": -48.4,
+    "trades": 125,
+    "per_week": 1.2,
+    "win_rate": 32.8,
+    "pf": 1.52,
+    "long_pnl": 2961.3,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -12.8,
+    "cagr": -8.9,
+    "max_dd": -63.1,
+    "trades": 86,
+    "per_week": 1.12,
+    "win_rate": 32.6,
+    "pf": 0.9,
+    "long_pnl": -506.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 0.4,
+    "cagr": 1.6,
+    "max_dd": -10.6,
+    "trades": 9,
+    "per_week": 0.72,
+    "win_rate": 66.7,
+    "pf": 7.0,
+    "long_pnl": 1190.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum L/S top10 sma50 lb30 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 10,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 274.2,
+    "cagr": 46.2,
+    "max_dd": -37.3,
+    "trades": 851,
+    "per_week": 4.7,
+    "win_rate": 26.4,
+    "pf": 1.28,
+    "long_pnl": 2202.6,
+    "short_pnl": -298.3
+   },
+   "train": {
+    "return": 177.5,
+    "cagr": 66.6,
+    "max_dd": -31.1,
+    "trades": 478,
+    "per_week": 4.58,
+    "win_rate": 27.2,
+    "pf": 1.45,
+    "long_pnl": 2048.1,
+    "short_pnl": -476.2
+   },
+   "test": {
+    "return": 35.0,
+    "cagr": 22.7,
+    "max_dd": -30.5,
+    "trades": 373,
+    "per_week": 4.86,
+    "win_rate": 25.5,
+    "pf": 1.11,
+    "long_pnl": 154.5,
+    "short_pnl": 178.0
+   },
+   "last_90d": {
+    "return": 28.5,
+    "cagr": 182.8,
+    "max_dd": -14.2,
+    "trades": 27,
+    "per_week": 2.15,
+    "win_rate": 48.1,
+    "pf": 3.85,
+    "long_pnl": 516.4,
+    "short_pnl": -44.2
+   }
+  },
+  {
+   "name": "A momentum L/S top10 sma50 lb30 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 10,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 426.9,
+    "cagr": 61.4,
+    "max_dd": -69.2,
+    "trades": 826,
+    "per_week": 4.56,
+    "win_rate": 26.9,
+    "pf": 1.12,
+    "long_pnl": 4324.8,
+    "short_pnl": -1999.3
+   },
+   "train": {
+    "return": 304.9,
+    "cagr": 101.3,
+    "max_dd": -52.5,
+    "trades": 458,
+    "per_week": 4.39,
+    "win_rate": 27.9,
+    "pf": 1.23,
+    "long_pnl": 4488.8,
+    "short_pnl": -2018.8
+   },
+   "test": {
+    "return": 30.4,
+    "cagr": 19.8,
+    "max_dd": -57.5,
+    "trades": 368,
+    "per_week": 4.8,
+    "win_rate": 25.5,
+    "pf": 0.98,
+    "long_pnl": -164.0,
+    "short_pnl": 19.5
+   },
+   "last_90d": {
+    "return": 53.2,
+    "cagr": 488.0,
+    "max_dd": -23.3,
+    "trades": 27,
+    "per_week": 2.15,
+    "win_rate": 48.1,
+    "pf": 3.73,
+    "long_pnl": 1016.1,
+    "short_pnl": -103.6
+   }
+  },
+  {
+   "name": "A momentum long top10 sma50 lb30 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 10,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 203.9,
+    "cagr": 37.7,
+    "max_dd": -40.2,
+    "trades": 424,
+    "per_week": 2.34,
+    "win_rate": 23.1,
+    "pf": 1.56,
+    "long_pnl": 2039.4,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 214.4,
+    "cagr": 77.4,
+    "max_dd": -29.7,
+    "trades": 250,
+    "per_week": 2.4,
+    "win_rate": 23.2,
+    "pf": 2.03,
+    "long_pnl": 1912.6,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -3.6,
+    "cagr": -2.5,
+    "max_dd": -40.2,
+    "trades": 174,
+    "per_week": 2.27,
+    "win_rate": 23.0,
+    "pf": 1.07,
+    "long_pnl": 126.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 1.5,
+    "cagr": 6.2,
+    "max_dd": -11.7,
+    "trades": 17,
+    "per_week": 1.35,
+    "win_rate": 64.7,
+    "pf": 5.44,
+    "long_pnl": 566.4,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum long top10 sma50 lb30 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 50,
+    "lookback": 30,
+    "n_coins": 10,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 328.4,
+    "cagr": 52.1,
+    "max_dd": -68.6,
+    "trades": 416,
+    "per_week": 2.3,
+    "win_rate": 23.1,
+    "pf": 1.24,
+    "long_pnl": 3283.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 482.9,
+    "cagr": 141.6,
+    "max_dd": -48.0,
+    "trades": 242,
+    "per_week": 2.32,
+    "win_rate": 23.1,
+    "pf": 1.61,
+    "long_pnl": 4019.2,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -26.9,
+    "cagr": -19.2,
+    "max_dd": -68.6,
+    "trades": 174,
+    "per_week": 2.27,
+    "win_rate": 23.0,
+    "pf": 0.89,
+    "long_pnl": -735.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -0.0,
+    "cagr": -0.0,
+    "max_dd": -18.2,
+    "trades": 17,
+    "per_week": 1.35,
+    "win_rate": 64.7,
+    "pf": 5.19,
+    "long_pnl": 1316.7,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum L/S top10 sma20 lb14 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 10,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 201.5,
+    "cagr": 37.4,
+    "max_dd": -42.3,
+    "trades": 1273,
+    "per_week": 7.03,
+    "win_rate": 31.7,
+    "pf": 1.16,
+    "long_pnl": 1801.4,
+    "short_pnl": -479.1
+   },
+   "train": {
+    "return": 171.3,
+    "cagr": 64.8,
+    "max_dd": -29.6,
+    "trades": 721,
+    "per_week": 6.91,
+    "win_rate": 33.1,
+    "pf": 1.36,
+    "long_pnl": 2026.1,
+    "short_pnl": -475.9
+   },
+   "test": {
+    "return": 11.7,
+    "cagr": 7.8,
+    "max_dd": -42.3,
+    "trades": 552,
+    "per_week": 7.2,
+    "win_rate": 29.7,
+    "pf": 0.94,
+    "long_pnl": -224.8,
+    "short_pnl": -3.1
+   },
+   "last_90d": {
+    "return": 19.4,
+    "cagr": 108.7,
+    "max_dd": -14.1,
+    "trades": 56,
+    "per_week": 4.45,
+    "win_rate": 44.6,
+    "pf": 1.49,
+    "long_pnl": 367.1,
+    "short_pnl": -167.1
+   }
+  },
+  {
+   "name": "A momentum L/S top10 sma20 lb14 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 10,
+    "shorts": true
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 355.2,
+    "cagr": 54.7,
+    "max_dd": -68.7,
+    "trades": 1259,
+    "per_week": 6.95,
+    "win_rate": 31.6,
+    "pf": 1.07,
+    "long_pnl": 3605.0,
+    "short_pnl": -1757.4
+   },
+   "train": {
+    "return": 397.5,
+    "cagr": 123.2,
+    "max_dd": -44.8,
+    "trades": 713,
+    "per_week": 6.84,
+    "win_rate": 33.1,
+    "pf": 1.26,
+    "long_pnl": 4543.7,
+    "short_pnl": -1135.4
+   },
+   "test": {
+    "return": -7.7,
+    "cagr": -5.3,
+    "max_dd": -68.7,
+    "trades": 546,
+    "per_week": 7.12,
+    "win_rate": 29.7,
+    "pf": 0.87,
+    "long_pnl": -938.7,
+    "short_pnl": -621.9
+   },
+   "last_90d": {
+    "return": 35.7,
+    "cagr": 254.7,
+    "max_dd": -25.7,
+    "trades": 56,
+    "per_week": 4.45,
+    "win_rate": 44.6,
+    "pf": 1.45,
+    "long_pnl": 892.3,
+    "short_pnl": -444.3
+   }
+  },
+  {
+   "name": "A momentum long top10 sma20 lb14 1x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 10,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 1,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 180.0,
+    "cagr": 34.5,
+    "max_dd": -45.1,
+    "trades": 693,
+    "per_week": 3.83,
+    "win_rate": 30.2,
+    "pf": 1.35,
+    "long_pnl": 1799.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 222.2,
+    "cagr": 79.6,
+    "max_dd": -35.7,
+    "trades": 401,
+    "per_week": 3.85,
+    "win_rate": 31.9,
+    "pf": 1.88,
+    "long_pnl": 2222.3,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -13.1,
+    "cagr": -9.1,
+    "max_dd": -45.1,
+    "trades": 292,
+    "per_week": 3.81,
+    "win_rate": 27.7,
+    "pf": 0.84,
+    "long_pnl": -422.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -2.8,
+    "cagr": -11.2,
+    "max_dd": -8.3,
+    "trades": 39,
+    "per_week": 3.1,
+    "win_rate": 56.4,
+    "pf": 2.6,
+    "long_pnl": 420.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "A momentum long top10 sma20 lb14 2x",
+   "kind": "momls",
+   "params": {
+    "sma": 20,
+    "lookback": 14,
+    "n_coins": 10,
+    "shorts": false
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "leverage": 2,
+    "max_open_positions": 10,
+    "funding_pct_8h": 0.01
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 266.4,
+    "cagr": 45.4,
+    "max_dd": -73.4,
+    "trades": 689,
+    "per_week": 3.8,
+    "win_rate": 30.0,
+    "pf": 1.15,
+    "long_pnl": 2664.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 503.0,
+    "cagr": 145.7,
+    "max_dd": -57.0,
+    "trades": 397,
+    "per_week": 3.81,
+    "win_rate": 31.7,
+    "pf": 1.57,
+    "long_pnl": 5030.3,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -39.2,
+    "cagr": -28.7,
+    "max_dd": -73.4,
+    "trades": 292,
+    "per_week": 3.81,
+    "win_rate": 27.7,
+    "pf": 0.75,
+    "long_pnl": -2366.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -4.9,
+    "cagr": -19.0,
+    "max_dd": -14.7,
+    "trades": 39,
+    "per_week": 3.1,
+    "win_rate": 56.4,
+    "pf": 2.5,
+    "long_pnl": 977.2,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "B futures 4h trend votes4 TP4.0/SL2.0 max12",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 4,
+    "tp_atr": 4.0,
+    "sl_atr": 2.0,
+    "max_bars": 12
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 24.8,
+    "cagr": 6.6,
+    "max_dd": -22.5,
+    "trades": 1409,
+    "per_week": 7.77,
+    "win_rate": 40.2,
+    "pf": 1.07,
+    "long_pnl": 279.4,
+    "short_pnl": -50.2
+   },
+   "train": {
+    "return": 24.8,
+    "cagr": 11.7,
+    "max_dd": -10.7,
+    "trades": 804,
+    "per_week": 7.7,
+    "win_rate": 41.9,
+    "pf": 1.13,
+    "long_pnl": 314.6,
+    "short_pnl": -58.1
+   },
+   "test": {
+    "return": -0.3,
+    "cagr": -0.2,
+    "max_dd": -22.5,
+    "trades": 605,
+    "per_week": 7.87,
+    "win_rate": 37.9,
+    "pf": 0.98,
+    "long_pnl": -35.2,
+    "short_pnl": 7.9
+   },
+   "last_90d": {
+    "return": -7.0,
+    "cagr": -25.6,
+    "max_dd": -15.6,
+    "trades": 107,
+    "per_week": 8.35,
+    "win_rate": 32.7,
+    "pf": 0.65,
+    "long_pnl": -126.8,
+    "short_pnl": 13.3
+   }
+  },
+  {
+   "name": "B futures 4h trend votes4 TP4.0/SL2.0 max30",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 4,
+    "tp_atr": 4.0,
+    "sl_atr": 2.0,
+    "max_bars": 30
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 44.7,
+    "cagr": 11.2,
+    "max_dd": -15.1,
+    "trades": 1268,
+    "per_week": 6.99,
+    "win_rate": 35.3,
+    "pf": 1.11,
+    "long_pnl": 408.3,
+    "short_pnl": 21.9
+   },
+   "train": {
+    "return": 35.1,
+    "cagr": 16.2,
+    "max_dd": -10.0,
+    "trades": 725,
+    "per_week": 6.94,
+    "win_rate": 36.3,
+    "pf": 1.17,
+    "long_pnl": 355.0,
+    "short_pnl": 5.3
+   },
+   "test": {
+    "return": 6.8,
+    "cagr": 4.6,
+    "max_dd": -15.1,
+    "trades": 543,
+    "per_week": 7.07,
+    "win_rate": 34.1,
+    "pf": 1.04,
+    "long_pnl": 53.3,
+    "short_pnl": 16.6
+   },
+   "last_90d": {
+    "return": 1.7,
+    "cagr": 7.2,
+    "max_dd": -11.9,
+    "trades": 98,
+    "per_week": 7.65,
+    "win_rate": 33.7,
+    "pf": 1.03,
+    "long_pnl": -80.6,
+    "short_pnl": 91.3
+   }
+  },
+  {
+   "name": "B futures 4h trend votes4 TP6.0/SL3.0 max12",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 4,
+    "tp_atr": 6.0,
+    "sl_atr": 3.0,
+    "max_bars": 12
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 26.0,
+    "cagr": 6.9,
+    "max_dd": -15.8,
+    "trades": 1267,
+    "per_week": 6.99,
+    "win_rate": 42.1,
+    "pf": 1.11,
+    "long_pnl": 290.9,
+    "short_pnl": -50.0
+   },
+   "train": {
+    "return": 19.8,
+    "cagr": 9.4,
+    "max_dd": -9.2,
+    "trades": 722,
+    "per_week": 6.92,
+    "win_rate": 43.2,
+    "pf": 1.17,
+    "long_pnl": 287.3,
+    "short_pnl": -84.2
+   },
+   "test": {
+    "return": 5.0,
+    "cagr": 3.4,
+    "max_dd": -15.8,
+    "trades": 545,
+    "per_week": 7.09,
+    "win_rate": 40.6,
+    "pf": 1.04,
+    "long_pnl": 3.6,
+    "short_pnl": 34.2
+   },
+   "last_90d": {
+    "return": -3.5,
+    "cagr": -13.4,
+    "max_dd": -11.4,
+    "trades": 99,
+    "per_week": 7.73,
+    "win_rate": 39.4,
+    "pf": 0.66,
+    "long_pnl": -90.3,
+    "short_pnl": 22.4
+   }
+  },
+  {
+   "name": "B futures 4h trend votes4 TP6.0/SL3.0 max30",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 4,
+    "tp_atr": 6.0,
+    "sl_atr": 3.0,
+    "max_bars": 30
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 39.8,
+    "cagr": 10.1,
+    "max_dd": -13.2,
+    "trades": 1029,
+    "per_week": 5.68,
+    "win_rate": 39.1,
+    "pf": 1.15,
+    "long_pnl": 400.8,
+    "short_pnl": -31.2
+   },
+   "train": {
+    "return": 28.1,
+    "cagr": 13.2,
+    "max_dd": -8.8,
+    "trades": 581,
+    "per_week": 5.56,
+    "win_rate": 40.3,
+    "pf": 1.21,
+    "long_pnl": 306.0,
+    "short_pnl": -26.3
+   },
+   "test": {
+    "return": 8.9,
+    "cagr": 6.0,
+    "max_dd": -13.2,
+    "trades": 448,
+    "per_week": 5.83,
+    "win_rate": 37.5,
+    "pf": 1.08,
+    "long_pnl": 94.9,
+    "short_pnl": -4.9
+   },
+   "last_90d": {
+    "return": 2.8,
+    "cagr": 11.8,
+    "max_dd": -8.6,
+    "trades": 78,
+    "per_week": 6.09,
+    "win_rate": 37.2,
+    "pf": 1.05,
+    "long_pnl": -43.9,
+    "short_pnl": 55.0
+   }
+  },
+  {
+   "name": "B futures 4h trend votes5 TP4.0/SL2.0 max12",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 5,
+    "tp_atr": 4.0,
+    "sl_atr": 2.0,
+    "max_bars": 12
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 34.0,
+    "cagr": 8.8,
+    "max_dd": -20.9,
+    "trades": 1018,
+    "per_week": 5.62,
+    "win_rate": 41.9,
+    "pf": 1.12,
+    "long_pnl": 296.9,
+    "short_pnl": 23.7
+   },
+   "train": {
+    "return": 25.4,
+    "cagr": 12.0,
+    "max_dd": -9.2,
+    "trades": 580,
+    "per_week": 5.56,
+    "win_rate": 43.3,
+    "pf": 1.18,
+    "long_pnl": 251.1,
+    "short_pnl": 6.7
+   },
+   "test": {
+    "return": 6.6,
+    "cagr": 4.4,
+    "max_dd": -20.9,
+    "trades": 438,
+    "per_week": 5.7,
+    "win_rate": 40.2,
+    "pf": 1.05,
+    "long_pnl": 45.8,
+    "short_pnl": 17.0
+   },
+   "last_90d": {
+    "return": -5.7,
+    "cagr": -21.3,
+    "max_dd": -14.8,
+    "trades": 84,
+    "per_week": 6.56,
+    "win_rate": 33.3,
+    "pf": 0.64,
+    "long_pnl": -100.0,
+    "short_pnl": -2.2
+   }
+  },
+  {
+   "name": "B futures 4h trend votes5 TP4.0/SL2.0 max30",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 5,
+    "tp_atr": 4.0,
+    "sl_atr": 2.0,
+    "max_bars": 30
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 46.0,
+    "cagr": 11.5,
+    "max_dd": -14.9,
+    "trades": 925,
+    "per_week": 5.1,
+    "win_rate": 36.9,
+    "pf": 1.15,
+    "long_pnl": 345.5,
+    "short_pnl": 97.9
+   },
+   "train": {
+    "return": 24.1,
+    "cagr": 11.4,
+    "max_dd": -10.3,
+    "trades": 532,
+    "per_week": 5.1,
+    "win_rate": 36.7,
+    "pf": 1.15,
+    "long_pnl": 212.0,
+    "short_pnl": 32.3
+   },
+   "test": {
+    "return": 17.4,
+    "cagr": 11.5,
+    "max_dd": -13.9,
+    "trades": 393,
+    "per_week": 5.11,
+    "win_rate": 37.2,
+    "pf": 1.15,
+    "long_pnl": 133.5,
+    "short_pnl": 65.6
+   },
+   "last_90d": {
+    "return": 2.4,
+    "cagr": 10.1,
+    "max_dd": -11.3,
+    "trades": 76,
+    "per_week": 5.93,
+    "win_rate": 36.8,
+    "pf": 1.08,
+    "long_pnl": -59.1,
+    "short_pnl": 79.4
+   }
+  },
+  {
+   "name": "B futures 4h trend votes5 TP6.0/SL3.0 max12",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 5,
+    "tp_atr": 6.0,
+    "sl_atr": 3.0,
+    "max_bars": 12
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 39.5,
+    "cagr": 10.1,
+    "max_dd": -12.3,
+    "trades": 909,
+    "per_week": 5.01,
+    "win_rate": 44.8,
+    "pf": 1.23,
+    "long_pnl": 327.0,
+    "short_pnl": 50.2
+   },
+   "train": {
+    "return": 25.7,
+    "cagr": 12.1,
+    "max_dd": -7.5,
+    "trades": 521,
+    "per_week": 4.99,
+    "win_rate": 45.9,
+    "pf": 1.3,
+    "long_pnl": 270.2,
+    "short_pnl": -10.7
+   },
+   "test": {
+    "return": 10.8,
+    "cagr": 7.2,
+    "max_dd": -12.3,
+    "trades": 388,
+    "per_week": 5.05,
+    "win_rate": 43.3,
+    "pf": 1.15,
+    "long_pnl": 56.8,
+    "short_pnl": 60.9
+   },
+   "last_90d": {
+    "return": 0.2,
+    "cagr": 0.8,
+    "max_dd": -9.2,
+    "trades": 78,
+    "per_week": 6.09,
+    "win_rate": 43.6,
+    "pf": 0.92,
+    "long_pnl": -27.8,
+    "short_pnl": 13.8
+   }
+  },
+  {
+   "name": "B futures 4h trend votes5 TP6.0/SL3.0 max30",
+   "kind": "scalp",
+   "params": {
+    "mode": "trend",
+    "min_votes": 5,
+    "tp_atr": 6.0,
+    "sl_atr": 3.0,
+    "max_bars": 30
+   },
+   "risk": {
+    "leverage": 5,
+    "funding_pct_8h": 0.01,
+    "risk_per_trade_pct": 0.5,
+    "max_position_pct": 100,
+    "max_open_positions": 5,
+    "min_cash_reserve_pct": 1,
+    "daily_loss_limit_pct": 6,
+    "max_drawdown_kill_pct": 100
+   },
+   "fee": 0.05,
+   "slip": 0.02,
+   "full": {
+    "return": 46.1,
+    "cagr": 11.5,
+    "max_dd": -11.7,
+    "trades": 750,
+    "per_week": 4.14,
+    "win_rate": 42.4,
+    "pf": 1.23,
+    "long_pnl": 416.0,
+    "short_pnl": 15.4
+   },
+   "train": {
+    "return": 26.5,
+    "cagr": 12.5,
+    "max_dd": -8.0,
+    "trades": 423,
+    "per_week": 4.05,
+    "win_rate": 43.0,
+    "pf": 1.26,
+    "long_pnl": 246.0,
+    "short_pnl": 21.4
+   },
+   "test": {
+    "return": 15.3,
+    "cagr": 10.2,
+    "max_dd": -11.7,
+    "trades": 327,
+    "per_week": 4.25,
+    "win_rate": 41.6,
+    "pf": 1.18,
+    "long_pnl": 170.0,
+    "short_pnl": -6.0
+   },
+   "last_90d": {
+    "return": 2.1,
+    "cagr": 8.9,
+    "max_dd": -9.4,
+    "trades": 63,
+    "per_week": 4.92,
+    "win_rate": 41.3,
+    "pf": 1.01,
+    "long_pnl": -36.2,
+    "short_pnl": 38.1
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP20 SL10 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -65.5,
+    "cagr": -26.4,
+    "max_dd": -74.2,
+    "trades": 543,
+    "per_week": 3.0,
+    "win_rate": 35.9,
+    "pf": 0.86,
+    "long_pnl": -655.0,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -42.9,
+    "cagr": -24.5,
+    "max_dd": -53.6,
+    "trades": 312,
+    "per_week": 2.99,
+    "win_rate": 35.3,
+    "pf": 0.88,
+    "long_pnl": -435.0,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -40.2,
+    "cagr": -29.5,
+    "max_dd": -51.7,
+    "trades": 231,
+    "per_week": 3.01,
+    "win_rate": 36.8,
+    "pf": 0.82,
+    "long_pnl": -220.0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -4.1,
+    "cagr": -15.9,
+    "max_dd": -14.3,
+    "trades": 45,
+    "per_week": 3.58,
+    "win_rate": 40.0,
+    "pf": 0.88,
+    "long_pnl": -22.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP20 SL10 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -41.5,
+    "cagr": -14.3,
+    "max_dd": -66.0,
+    "trades": 461,
+    "per_week": 2.54,
+    "win_rate": 37.3,
+    "pf": 0.91,
+    "long_pnl": -414.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -37.3,
+    "cagr": -20.8,
+    "max_dd": -57.4,
+    "trades": 279,
+    "per_week": 2.68,
+    "win_rate": 35.1,
+    "pf": 0.89,
+    "long_pnl": -379.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -7.6,
+    "cagr": -5.2,
+    "max_dd": -33.0,
+    "trades": 182,
+    "per_week": 2.37,
+    "win_rate": 40.7,
+    "pf": 0.97,
+    "long_pnl": -35.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 2.5,
+    "cagr": 10.8,
+    "max_dd": -12.7,
+    "trades": 40,
+    "per_week": 3.18,
+    "win_rate": 45.0,
+    "pf": 1.1,
+    "long_pnl": 23.7,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP20 SL10 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -66.0,
+    "cagr": -26.7,
+    "max_dd": -71.6,
+    "trades": 483,
+    "per_week": 2.67,
+    "win_rate": 34.0,
+    "pf": 0.83,
+    "long_pnl": -658.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -57.4,
+    "cagr": -34.8,
+    "max_dd": -63.3,
+    "trades": 278,
+    "per_week": 2.67,
+    "win_rate": 32.7,
+    "pf": 0.8,
+    "long_pnl": -570.6,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -21.2,
+    "cagr": -15.0,
+    "max_dd": -40.2,
+    "trades": 205,
+    "per_week": 2.67,
+    "win_rate": 35.6,
+    "pf": 0.91,
+    "long_pnl": -88.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -6.3,
+    "cagr": -23.7,
+    "max_dd": -17.7,
+    "trades": 40,
+    "per_week": 3.18,
+    "win_rate": 35.0,
+    "pf": 0.84,
+    "long_pnl": -29.4,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP20 SL10 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -57.3,
+    "cagr": -21.7,
+    "max_dd": -72.1,
+    "trades": 410,
+    "per_week": 2.26,
+    "win_rate": 34.1,
+    "pf": 0.85,
+    "long_pnl": -572.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -57.3,
+    "cagr": -34.7,
+    "max_dd": -67.7,
+    "trades": 249,
+    "per_week": 2.39,
+    "win_rate": 31.7,
+    "pf": 0.81,
+    "long_pnl": -568.9,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -1.4,
+    "cagr": -1.0,
+    "max_dd": -29.3,
+    "trades": 161,
+    "per_week": 2.1,
+    "win_rate": 37.9,
+    "pf": 1.0,
+    "long_pnl": -3.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -8.3,
+    "cagr": -30.2,
+    "max_dd": -21.7,
+    "trades": 36,
+    "per_week": 2.86,
+    "win_rate": 36.1,
+    "pf": 0.89,
+    "long_pnl": -22.0,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP30 SL12 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -66.4,
+    "cagr": -27.0,
+    "max_dd": -77.7,
+    "trades": 458,
+    "per_week": 2.53,
+    "win_rate": 34.1,
+    "pf": 0.84,
+    "long_pnl": -664.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -50.8,
+    "cagr": -29.9,
+    "max_dd": -70.6,
+    "trades": 256,
+    "per_week": 2.45,
+    "win_rate": 32.4,
+    "pf": 0.83,
+    "long_pnl": -505.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -32.6,
+    "cagr": -23.5,
+    "max_dd": -45.5,
+    "trades": 202,
+    "per_week": 2.63,
+    "win_rate": 36.1,
+    "pf": 0.86,
+    "long_pnl": -158.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -2.0,
+    "cagr": -8.2,
+    "max_dd": -14.7,
+    "trades": 39,
+    "per_week": 3.1,
+    "win_rate": 41.0,
+    "pf": 0.91,
+    "long_pnl": -14.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP30 SL12 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -40.8,
+    "cagr": -14.0,
+    "max_dd": -71.6,
+    "trades": 380,
+    "per_week": 2.1,
+    "win_rate": 35.5,
+    "pf": 0.9,
+    "long_pnl": -407.8,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -38.9,
+    "cagr": -21.8,
+    "max_dd": -70.2,
+    "trades": 226,
+    "per_week": 2.17,
+    "win_rate": 32.7,
+    "pf": 0.87,
+    "long_pnl": -385.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -4.3,
+    "cagr": -2.9,
+    "max_dd": -32.7,
+    "trades": 154,
+    "per_week": 2.01,
+    "win_rate": 39.6,
+    "pf": 0.98,
+    "long_pnl": -22.0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 11.3,
+    "cagr": 56.0,
+    "max_dd": -14.0,
+    "trades": 33,
+    "per_week": 2.62,
+    "win_rate": 51.5,
+    "pf": 1.52,
+    "long_pnl": 91.6,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP30 SL12 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -64.2,
+    "cagr": -25.6,
+    "max_dd": -75.5,
+    "trades": 382,
+    "per_week": 2.11,
+    "win_rate": 31.2,
+    "pf": 0.83,
+    "long_pnl": -641.6,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -58.9,
+    "cagr": -35.9,
+    "max_dd": -71.1,
+    "trades": 218,
+    "per_week": 2.09,
+    "win_rate": 29.4,
+    "pf": 0.78,
+    "long_pnl": -590.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -14.2,
+    "cagr": -9.9,
+    "max_dd": -39.3,
+    "trades": 164,
+    "per_week": 2.14,
+    "win_rate": 33.5,
+    "pf": 0.95,
+    "long_pnl": -50.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 7.5,
+    "cagr": 35.0,
+    "max_dd": -20.1,
+    "trades": 32,
+    "per_week": 2.55,
+    "win_rate": 37.5,
+    "pf": 1.15,
+    "long_pnl": 24.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP30 SL12 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -46.8,
+    "cagr": -16.6,
+    "max_dd": -71.9,
+    "trades": 315,
+    "per_week": 1.74,
+    "win_rate": 31.7,
+    "pf": 0.87,
+    "long_pnl": -467.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -48.0,
+    "cagr": -27.9,
+    "max_dd": -70.2,
+    "trades": 189,
+    "per_week": 1.81,
+    "win_rate": 29.1,
+    "pf": 0.83,
+    "long_pnl": -469.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 0.2,
+    "cagr": 0.1,
+    "max_dd": -37.4,
+    "trades": 126,
+    "per_week": 1.64,
+    "win_rate": 35.7,
+    "pf": 1.0,
+    "long_pnl": 1.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 12.8,
+    "cagr": 64.6,
+    "max_dd": -19.2,
+    "trades": 26,
+    "per_week": 2.07,
+    "win_rate": 46.2,
+    "pf": 1.63,
+    "long_pnl": 97.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP50 SL15 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -50.3,
+    "cagr": -18.3,
+    "max_dd": -59.7,
+    "trades": 403,
+    "per_week": 2.22,
+    "win_rate": 35.2,
+    "pf": 0.88,
+    "long_pnl": -503.5,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -46.4,
+    "cagr": -26.8,
+    "max_dd": -59.7,
+    "trades": 226,
+    "per_week": 2.17,
+    "win_rate": 31.9,
+    "pf": 0.83,
+    "long_pnl": -464.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -8.3,
+    "cagr": -5.7,
+    "max_dd": -46.6,
+    "trades": 177,
+    "per_week": 2.31,
+    "win_rate": 39.5,
+    "pf": 0.98,
+    "long_pnl": -39.4,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -14.4,
+    "cagr": -47.6,
+    "max_dd": -21.5,
+    "trades": 33,
+    "per_week": 2.62,
+    "win_rate": 51.5,
+    "pf": 0.86,
+    "long_pnl": -29.9,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP50 SL15 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -44.8,
+    "cagr": -15.7,
+    "max_dd": -68.3,
+    "trades": 328,
+    "per_week": 1.81,
+    "win_rate": 35.4,
+    "pf": 0.87,
+    "long_pnl": -447.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -49.9,
+    "cagr": -29.2,
+    "max_dd": -68.3,
+    "trades": 198,
+    "per_week": 1.9,
+    "win_rate": 30.3,
+    "pf": 0.79,
+    "long_pnl": -499.0,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 9.1,
+    "cagr": 6.1,
+    "max_dd": -38.7,
+    "trades": 130,
+    "per_week": 1.69,
+    "win_rate": 43.1,
+    "pf": 1.05,
+    "long_pnl": 51.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -10.2,
+    "cagr": -36.0,
+    "max_dd": -20.1,
+    "trades": 30,
+    "per_week": 2.39,
+    "win_rate": 53.3,
+    "pf": 0.97,
+    "long_pnl": -5.6,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP50 SL15 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -35.1,
+    "cagr": -11.7,
+    "max_dd": -64.1,
+    "trades": 306,
+    "per_week": 1.69,
+    "win_rate": 34.3,
+    "pf": 0.92,
+    "long_pnl": -349.3,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -40.1,
+    "cagr": -22.6,
+    "max_dd": -63.7,
+    "trades": 169,
+    "per_week": 1.62,
+    "win_rate": 32.0,
+    "pf": 0.87,
+    "long_pnl": -386.3,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 4.4,
+    "cagr": 3.0,
+    "max_dd": -43.3,
+    "trades": 137,
+    "per_week": 1.79,
+    "win_rate": 37.2,
+    "pf": 1.02,
+    "long_pnl": 36.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -2.7,
+    "cagr": -10.6,
+    "max_dd": -19.6,
+    "trades": 28,
+    "per_week": 2.23,
+    "win_rate": 46.4,
+    "pf": 1.22,
+    "long_pnl": 59.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider quiet TP50 SL15 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "quiet",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": 6.1,
+    "cagr": 1.7,
+    "max_dd": -60.7,
+    "trades": 252,
+    "per_week": 1.39,
+    "win_rate": 35.7,
+    "pf": 1.02,
+    "long_pnl": 60.8,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -42.4,
+    "cagr": -24.1,
+    "max_dd": -60.7,
+    "trades": 146,
+    "per_week": 1.4,
+    "win_rate": 30.1,
+    "pf": 0.84,
+    "long_pnl": -407.2,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": 79.0,
+    "cagr": 48.6,
+    "max_dd": -31.3,
+    "trades": 106,
+    "per_week": 1.38,
+    "win_rate": 43.4,
+    "pf": 1.36,
+    "long_pnl": 468.0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 12.8,
+    "cagr": 64.8,
+    "max_dd": -16.9,
+    "trades": 25,
+    "per_week": 1.99,
+    "win_rate": 52.0,
+    "pf": 1.79,
+    "long_pnl": 254.9,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP20 SL10 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -96.7,
+    "cagr": -62.7,
+    "max_dd": -97.2,
+    "trades": 983,
+    "per_week": 5.43,
+    "win_rate": 30.0,
+    "pf": 0.84,
+    "long_pnl": -967.8,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -71.3,
+    "cagr": -46.4,
+    "max_dd": -74.4,
+    "trades": 545,
+    "per_week": 5.23,
+    "win_rate": 32.3,
+    "pf": 0.86,
+    "long_pnl": -710.6,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -88.6,
+    "cagr": -77.2,
+    "max_dd": -90.8,
+    "trades": 438,
+    "per_week": 5.71,
+    "win_rate": 27.2,
+    "pf": 0.72,
+    "long_pnl": -257.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -37.4,
+    "cagr": -85.7,
+    "max_dd": -39.9,
+    "trades": 104,
+    "per_week": 8.27,
+    "win_rate": 27.9,
+    "pf": 0.7,
+    "long_pnl": -20.4,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP20 SL10 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -86.2,
+    "cagr": -43.5,
+    "max_dd": -88.4,
+    "trades": 798,
+    "per_week": 4.41,
+    "win_rate": 32.0,
+    "pf": 0.87,
+    "long_pnl": -862.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -64.3,
+    "cagr": -40.3,
+    "max_dd": -70.0,
+    "trades": 488,
+    "per_week": 4.68,
+    "win_rate": 32.6,
+    "pf": 0.88,
+    "long_pnl": -640.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -61.3,
+    "cagr": -47.6,
+    "max_dd": -67.8,
+    "trades": 310,
+    "per_week": 4.04,
+    "win_rate": 31.0,
+    "pf": 0.8,
+    "long_pnl": -221.7,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -23.4,
+    "cagr": -67.0,
+    "max_dd": -28.4,
+    "trades": 91,
+    "per_week": 7.24,
+    "win_rate": 31.9,
+    "pf": 0.81,
+    "long_pnl": -39.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP20 SL10 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -96.7,
+    "cagr": -62.4,
+    "max_dd": -97.3,
+    "trades": 947,
+    "per_week": 5.23,
+    "win_rate": 29.5,
+    "pf": 0.85,
+    "long_pnl": -966.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -70.9,
+    "cagr": -46.1,
+    "max_dd": -76.2,
+    "trades": 525,
+    "per_week": 5.03,
+    "win_rate": 32.0,
+    "pf": 0.87,
+    "long_pnl": -705.9,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -88.5,
+    "cagr": -77.0,
+    "max_dd": -91.3,
+    "trades": 422,
+    "per_week": 5.5,
+    "win_rate": 26.3,
+    "pf": 0.71,
+    "long_pnl": -261.0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -30.7,
+    "cagr": -78.2,
+    "max_dd": -35.7,
+    "trades": 101,
+    "per_week": 8.03,
+    "win_rate": 28.7,
+    "pf": 0.75,
+    "long_pnl": -15.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP20 SL10 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -87.8,
+    "cagr": -45.5,
+    "max_dd": -91.0,
+    "trades": 764,
+    "per_week": 4.22,
+    "win_rate": 31.0,
+    "pf": 0.86,
+    "long_pnl": -878.4,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -70.6,
+    "cagr": -45.8,
+    "max_dd": -78.5,
+    "trades": 470,
+    "per_week": 4.51,
+    "win_rate": 31.5,
+    "pf": 0.87,
+    "long_pnl": -703.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -58.6,
+    "cagr": -45.1,
+    "max_dd": -67.1,
+    "trades": 294,
+    "per_week": 3.83,
+    "win_rate": 30.3,
+    "pf": 0.8,
+    "long_pnl": -175.0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -14.4,
+    "cagr": -47.7,
+    "max_dd": -23.8,
+    "trades": 88,
+    "per_week": 7.0,
+    "win_rate": 33.0,
+    "pf": 0.89,
+    "long_pnl": -18.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP30 SL12 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -94.1,
+    "cagr": -55.8,
+    "max_dd": -95.6,
+    "trades": 793,
+    "per_week": 4.38,
+    "win_rate": 28.4,
+    "pf": 0.87,
+    "long_pnl": -941.8,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -52.7,
+    "cagr": -31.2,
+    "max_dd": -67.7,
+    "trades": 439,
+    "per_week": 4.21,
+    "win_rate": 30.8,
+    "pf": 0.91,
+    "long_pnl": -526.6,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -87.6,
+    "cagr": -75.8,
+    "max_dd": -88.8,
+    "trades": 354,
+    "per_week": 4.61,
+    "win_rate": 25.4,
+    "pf": 0.71,
+    "long_pnl": -415.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -37.3,
+    "cagr": -85.6,
+    "max_dd": -49.5,
+    "trades": 73,
+    "per_week": 5.81,
+    "win_rate": 27.4,
+    "pf": 0.71,
+    "long_pnl": -30.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP30 SL12 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -82.2,
+    "cagr": -39.2,
+    "max_dd": -87.0,
+    "trades": 628,
+    "per_week": 3.47,
+    "win_rate": 29.8,
+    "pf": 0.88,
+    "long_pnl": -822.3,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -53.6,
+    "cagr": -31.9,
+    "max_dd": -69.7,
+    "trades": 392,
+    "per_week": 3.76,
+    "win_rate": 30.4,
+    "pf": 0.9,
+    "long_pnl": -535.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -61.7,
+    "cagr": -48.0,
+    "max_dd": -65.4,
+    "trades": 236,
+    "per_week": 3.08,
+    "win_rate": 28.8,
+    "pf": 0.78,
+    "long_pnl": -286.5,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -22.7,
+    "cagr": -65.7,
+    "max_dd": -38.4,
+    "trades": 61,
+    "per_week": 4.85,
+    "win_rate": 32.8,
+    "pf": 0.85,
+    "long_pnl": -32.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP30 SL12 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -94.7,
+    "cagr": -57.0,
+    "max_dd": -95.8,
+    "trades": 722,
+    "per_week": 3.99,
+    "win_rate": 26.3,
+    "pf": 0.85,
+    "long_pnl": -947.4,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -56.0,
+    "cagr": -33.7,
+    "max_dd": -67.2,
+    "trades": 393,
+    "per_week": 3.77,
+    "win_rate": 29.0,
+    "pf": 0.89,
+    "long_pnl": -555.6,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -87.9,
+    "cagr": -76.2,
+    "max_dd": -89.6,
+    "trades": 329,
+    "per_week": 4.29,
+    "win_rate": 23.1,
+    "pf": 0.7,
+    "long_pnl": -391.7,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -41.2,
+    "cagr": -88.9,
+    "max_dd": -49.2,
+    "trades": 65,
+    "per_week": 5.17,
+    "win_rate": 23.1,
+    "pf": 0.65,
+    "long_pnl": -32.5,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP30 SL12 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -81.6,
+    "cagr": -38.6,
+    "max_dd": -85.3,
+    "trades": 563,
+    "per_week": 3.11,
+    "win_rate": 27.7,
+    "pf": 0.86,
+    "long_pnl": -816.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -57.6,
+    "cagr": -34.9,
+    "max_dd": -68.5,
+    "trades": 346,
+    "per_week": 3.32,
+    "win_rate": 28.3,
+    "pf": 0.87,
+    "long_pnl": -572.3,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -56.6,
+    "cagr": -43.3,
+    "max_dd": -63.3,
+    "trades": 217,
+    "per_week": 2.83,
+    "win_rate": 26.7,
+    "pf": 0.8,
+    "long_pnl": -243.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -24.9,
+    "cagr": -69.5,
+    "max_dd": -37.8,
+    "trades": 52,
+    "per_week": 4.14,
+    "win_rate": 28.8,
+    "pf": 0.81,
+    "long_pnl": -39.5,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP50 SL15 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -86.9,
+    "cagr": -44.4,
+    "max_dd": -94.4,
+    "trades": 632,
+    "per_week": 3.49,
+    "win_rate": 28.8,
+    "pf": 0.92,
+    "long_pnl": -870.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -18.3,
+    "cagr": -9.6,
+    "max_dd": -64.6,
+    "trades": 328,
+    "per_week": 3.15,
+    "win_rate": 32.0,
+    "pf": 0.98,
+    "long_pnl": -176.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -84.0,
+    "cagr": -71.2,
+    "max_dd": -87.1,
+    "trades": 304,
+    "per_week": 3.96,
+    "win_rate": 25.3,
+    "pf": 0.74,
+    "long_pnl": -694.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -24.3,
+    "cagr": -68.5,
+    "max_dd": -36.4,
+    "trades": 61,
+    "per_week": 4.85,
+    "win_rate": 31.1,
+    "pf": 0.86,
+    "long_pnl": -26.7,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP50 SL15 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -73.8,
+    "cagr": -32.0,
+    "max_dd": -87.0,
+    "trades": 483,
+    "per_week": 2.67,
+    "win_rate": 29.4,
+    "pf": 0.91,
+    "long_pnl": -737.6,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -50.2,
+    "cagr": -29.5,
+    "max_dd": -75.1,
+    "trades": 286,
+    "per_week": 2.74,
+    "win_rate": 30.1,
+    "pf": 0.92,
+    "long_pnl": -498.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -47.2,
+    "cagr": -35.2,
+    "max_dd": -57.8,
+    "trades": 197,
+    "per_week": 2.57,
+    "win_rate": 28.4,
+    "pf": 0.85,
+    "long_pnl": -239.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -13.0,
+    "cagr": -43.9,
+    "max_dd": -29.4,
+    "trades": 50,
+    "per_week": 3.98,
+    "win_rate": 34.0,
+    "pf": 0.94,
+    "long_pnl": -16.7,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP50 SL15 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -84.4,
+    "cagr": -41.5,
+    "max_dd": -93.9,
+    "trades": 536,
+    "per_week": 2.96,
+    "win_rate": 25.9,
+    "pf": 0.93,
+    "long_pnl": -846.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 14.8,
+    "cagr": 7.2,
+    "max_dd": -58.7,
+    "trades": 272,
+    "per_week": 2.61,
+    "win_rate": 29.8,
+    "pf": 1.02,
+    "long_pnl": 167.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -86.8,
+    "cagr": -74.7,
+    "max_dd": -90.2,
+    "trades": 264,
+    "per_week": 3.44,
+    "win_rate": 22.0,
+    "pf": 0.72,
+    "long_pnl": -1013.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -32.4,
+    "cagr": -80.3,
+    "max_dd": -44.3,
+    "trades": 52,
+    "per_week": 4.14,
+    "win_rate": 28.8,
+    "pf": 0.81,
+    "long_pnl": -45.0,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider spike TP50 SL15 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "spike",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -59.0,
+    "cagr": -22.7,
+    "max_dd": -78.2,
+    "trades": 392,
+    "per_week": 2.16,
+    "win_rate": 28.6,
+    "pf": 0.92,
+    "long_pnl": -590.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -36.1,
+    "cagr": -20.1,
+    "max_dd": -66.4,
+    "trades": 225,
+    "per_week": 2.16,
+    "win_rate": 28.9,
+    "pf": 0.94,
+    "long_pnl": -350.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -37.3,
+    "cagr": -27.2,
+    "max_dd": -60.1,
+    "trades": 167,
+    "per_week": 2.18,
+    "win_rate": 28.1,
+    "pf": 0.9,
+    "long_pnl": -239.7,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -25.5,
+    "cagr": -70.5,
+    "max_dd": -35.5,
+    "trades": 39,
+    "per_week": 3.1,
+    "win_rate": 33.3,
+    "pf": 0.81,
+    "long_pnl": -75.6,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP20 SL10 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -97.5,
+    "cagr": -65.5,
+    "max_dd": -97.8,
+    "trades": 1001,
+    "per_week": 5.53,
+    "win_rate": 30.2,
+    "pf": 0.82,
+    "long_pnl": -975.3,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -77.8,
+    "cagr": -52.9,
+    "max_dd": -79.8,
+    "trades": 563,
+    "per_week": 5.4,
+    "win_rate": 32.0,
+    "pf": 0.84,
+    "long_pnl": -778.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -88.9,
+    "cagr": -77.5,
+    "max_dd": -90.8,
+    "trades": 438,
+    "per_week": 5.71,
+    "win_rate": 27.9,
+    "pf": 0.7,
+    "long_pnl": -196.4,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -31.2,
+    "cagr": -78.8,
+    "max_dd": -33.0,
+    "trades": 89,
+    "per_week": 7.08,
+    "win_rate": 28.1,
+    "pf": 0.71,
+    "long_pnl": -11.4,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP20 SL10 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -90.7,
+    "cagr": -49.5,
+    "max_dd": -92.2,
+    "trades": 811,
+    "per_week": 4.48,
+    "win_rate": 31.4,
+    "pf": 0.84,
+    "long_pnl": -906.6,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -73.0,
+    "cagr": -48.1,
+    "max_dd": -76.4,
+    "trades": 493,
+    "per_week": 4.73,
+    "win_rate": 31.6,
+    "pf": 0.85,
+    "long_pnl": -731.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -65.3,
+    "cagr": -51.3,
+    "max_dd": -71.3,
+    "trades": 318,
+    "per_week": 4.15,
+    "win_rate": 31.1,
+    "pf": 0.77,
+    "long_pnl": -174.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -28.0,
+    "cagr": -74.5,
+    "max_dd": -33.5,
+    "trades": 91,
+    "per_week": 7.24,
+    "win_rate": 29.7,
+    "pf": 0.76,
+    "long_pnl": -34.2,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP20 SL10 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -95.5,
+    "cagr": -59.0,
+    "max_dd": -95.9,
+    "trades": 949,
+    "per_week": 5.24,
+    "win_rate": 30.3,
+    "pf": 0.84,
+    "long_pnl": -955.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -71.0,
+    "cagr": -46.2,
+    "max_dd": -73.8,
+    "trades": 535,
+    "per_week": 5.13,
+    "win_rate": 32.3,
+    "pf": 0.86,
+    "long_pnl": -709.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -84.4,
+    "cagr": -71.7,
+    "max_dd": -88.7,
+    "trades": 414,
+    "per_week": 5.4,
+    "win_rate": 27.8,
+    "pf": 0.75,
+    "long_pnl": -246.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -33.1,
+    "cagr": -81.2,
+    "max_dd": -34.2,
+    "trades": 101,
+    "per_week": 8.03,
+    "win_rate": 27.7,
+    "pf": 0.74,
+    "long_pnl": -22.2,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP20 SL10 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.2,
+    "stop_pct": 0.1,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -84.3,
+    "cagr": -41.4,
+    "max_dd": -88.2,
+    "trades": 767,
+    "per_week": 4.23,
+    "win_rate": 31.9,
+    "pf": 0.87,
+    "long_pnl": -843.4,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -67.2,
+    "cagr": -42.8,
+    "max_dd": -74.6,
+    "trades": 473,
+    "per_week": 4.54,
+    "win_rate": 32.1,
+    "pf": 0.87,
+    "long_pnl": -670.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -52.1,
+    "cagr": -39.4,
+    "max_dd": -65.4,
+    "trades": 294,
+    "per_week": 3.83,
+    "win_rate": 31.6,
+    "pf": 0.83,
+    "long_pnl": -172.6,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -21.6,
+    "cagr": -63.5,
+    "max_dd": -24.6,
+    "trades": 89,
+    "per_week": 7.08,
+    "win_rate": 30.3,
+    "pf": 0.82,
+    "long_pnl": -39.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP30 SL12 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -95.5,
+    "cagr": -59.0,
+    "max_dd": -96.2,
+    "trades": 836,
+    "per_week": 4.62,
+    "win_rate": 28.9,
+    "pf": 0.82,
+    "long_pnl": -955.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -69.0,
+    "cagr": -44.3,
+    "max_dd": -74.0,
+    "trades": 451,
+    "per_week": 4.32,
+    "win_rate": 30.2,
+    "pf": 0.84,
+    "long_pnl": -691.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -85.4,
+    "cagr": -73.0,
+    "max_dd": -86.8,
+    "trades": 385,
+    "per_week": 5.02,
+    "win_rate": 27.5,
+    "pf": 0.73,
+    "long_pnl": -263.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -36.4,
+    "cagr": -84.7,
+    "max_dd": -44.0,
+    "trades": 78,
+    "per_week": 6.2,
+    "win_rate": 25.6,
+    "pf": 0.67,
+    "long_pnl": -26.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP30 SL12 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -86.1,
+    "cagr": -43.4,
+    "max_dd": -89.4,
+    "trades": 650,
+    "per_week": 3.59,
+    "win_rate": 30.0,
+    "pf": 0.83,
+    "long_pnl": -861.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -71.9,
+    "cagr": -47.0,
+    "max_dd": -77.3,
+    "trades": 398,
+    "per_week": 3.82,
+    "win_rate": 28.9,
+    "pf": 0.83,
+    "long_pnl": -720.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -50.5,
+    "cagr": -38.0,
+    "max_dd": -59.4,
+    "trades": 252,
+    "per_week": 3.28,
+    "win_rate": 31.7,
+    "pf": 0.83,
+    "long_pnl": -140.5,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -19.3,
+    "cagr": -58.9,
+    "max_dd": -37.0,
+    "trades": 63,
+    "per_week": 5.01,
+    "win_rate": 31.7,
+    "pf": 0.88,
+    "long_pnl": -19.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP30 SL12 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -92.7,
+    "cagr": -53.0,
+    "max_dd": -94.0,
+    "trades": 724,
+    "per_week": 4.0,
+    "win_rate": 27.5,
+    "pf": 0.82,
+    "long_pnl": -927.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -61.3,
+    "cagr": -37.8,
+    "max_dd": -71.8,
+    "trades": 389,
+    "per_week": 3.73,
+    "win_rate": 29.3,
+    "pf": 0.85,
+    "long_pnl": -611.7,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -81.1,
+    "cagr": -67.8,
+    "max_dd": -83.6,
+    "trades": 335,
+    "per_week": 4.37,
+    "win_rate": 25.4,
+    "pf": 0.74,
+    "long_pnl": -315.9,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -36.8,
+    "cagr": -85.1,
+    "max_dd": -43.5,
+    "trades": 70,
+    "per_week": 5.57,
+    "win_rate": 22.9,
+    "pf": 0.66,
+    "long_pnl": -43.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP30 SL12 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.3,
+    "stop_pct": 0.12,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -84.4,
+    "cagr": -41.5,
+    "max_dd": -88.1,
+    "trades": 559,
+    "per_week": 3.09,
+    "win_rate": 27.5,
+    "pf": 0.82,
+    "long_pnl": -844.2,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -66.0,
+    "cagr": -41.7,
+    "max_dd": -72.5,
+    "trades": 330,
+    "per_week": 3.16,
+    "win_rate": 27.6,
+    "pf": 0.83,
+    "long_pnl": -655.0,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -54.3,
+    "cagr": -41.3,
+    "max_dd": -61.5,
+    "trades": 229,
+    "per_week": 2.99,
+    "win_rate": 27.5,
+    "pf": 0.8,
+    "long_pnl": -189.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -15.8,
+    "cagr": -51.0,
+    "max_dd": -33.9,
+    "trades": 56,
+    "per_week": 4.45,
+    "win_rate": 30.4,
+    "pf": 0.92,
+    "long_pnl": -13.1,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP50 SL15 10d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -90.5,
+    "cagr": -49.3,
+    "max_dd": -93.1,
+    "trades": 671,
+    "per_week": 3.7,
+    "win_rate": 30.0,
+    "pf": 0.88,
+    "long_pnl": -906.5,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -34.8,
+    "cagr": -19.2,
+    "max_dd": -59.1,
+    "trades": 346,
+    "per_week": 3.32,
+    "win_rate": 32.1,
+    "pf": 0.94,
+    "long_pnl": -351.4,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -85.5,
+    "cagr": -73.1,
+    "max_dd": -88.3,
+    "trades": 325,
+    "per_week": 4.24,
+    "win_rate": 27.7,
+    "pf": 0.73,
+    "long_pnl": -555.1,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -29.1,
+    "cagr": -76.0,
+    "max_dd": -37.9,
+    "trades": 65,
+    "per_week": 5.17,
+    "win_rate": 32.3,
+    "pf": 0.81,
+    "long_pnl": -28.8,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP50 SL15 10d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 10,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -71.9,
+    "cagr": -30.6,
+    "max_dd": -82.5,
+    "trades": 505,
+    "per_week": 2.79,
+    "win_rate": 31.3,
+    "pf": 0.9,
+    "long_pnl": -719.1,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -51.4,
+    "cagr": -30.3,
+    "max_dd": -72.1,
+    "trades": 297,
+    "per_week": 2.85,
+    "win_rate": 30.3,
+    "pf": 0.9,
+    "long_pnl": -516.9,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -42.0,
+    "cagr": -31.0,
+    "max_dd": -54.8,
+    "trades": 208,
+    "per_week": 2.71,
+    "win_rate": 32.7,
+    "pf": 0.87,
+    "long_pnl": -202.1,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -12.0,
+    "cagr": -41.1,
+    "max_dd": -28.4,
+    "trades": 52,
+    "per_week": 4.14,
+    "win_rate": 36.5,
+    "pf": 0.94,
+    "long_pnl": -18.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP50 SL15 20d",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -79.4,
+    "cagr": -36.6,
+    "max_dd": -90.2,
+    "trades": 553,
+    "per_week": 3.05,
+    "win_rate": 26.8,
+    "pf": 0.93,
+    "long_pnl": -796.0,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 0.1,
+    "cagr": 0.0,
+    "max_dd": -58.0,
+    "trades": 283,
+    "per_week": 2.71,
+    "win_rate": 29.7,
+    "pf": 1.0,
+    "long_pnl": -4.8,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -79.4,
+    "cagr": -65.8,
+    "max_dd": -84.8,
+    "trades": 270,
+    "per_week": 3.52,
+    "win_rate": 23.7,
+    "pf": 0.78,
+    "long_pnl": -791.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -29.3,
+    "cagr": -76.3,
+    "max_dd": -37.7,
+    "trades": 53,
+    "per_week": 4.22,
+    "win_rate": 28.3,
+    "pf": 0.8,
+    "long_pnl": -56.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "C pump-rider either TP50 SL15 20d +BTCfilter",
+   "kind": "breakout",
+   "params": {
+    "signal": "either",
+    "take_profit_pct": 0.5,
+    "stop_pct": 0.15,
+    "max_bars": 20,
+    "k": 5
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 5
+   },
+   "fee": 0.1,
+   "slip": 0.1,
+   "full": {
+    "return": -58.6,
+    "cagr": -22.5,
+    "max_dd": -81.6,
+    "trades": 406,
+    "per_week": 2.24,
+    "win_rate": 28.1,
+    "pf": 0.93,
+    "long_pnl": -586.5,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": -39.9,
+    "cagr": -22.5,
+    "max_dd": -73.1,
+    "trades": 233,
+    "per_week": 2.23,
+    "win_rate": 27.0,
+    "pf": 0.94,
+    "long_pnl": -392.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -32.6,
+    "cagr": -23.5,
+    "max_dd": -60.0,
+    "trades": 173,
+    "per_week": 2.26,
+    "win_rate": 29.5,
+    "pf": 0.92,
+    "long_pnl": -194.4,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -27.3,
+    "cagr": -73.3,
+    "max_dd": -39.1,
+    "trades": 44,
+    "per_week": 3.5,
+    "win_rate": 29.5,
+    "pf": 0.84,
+    "long_pnl": -73.7,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "D dip rsi<25 TP8 SL8",
+   "kind": "dip",
+   "params": {
+    "rsi_buy": 25,
+    "take_profit_pct": 0.08,
+    "stop_pct": 0.08,
+    "max_bars": 10,
+    "k": 3
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 3
+   },
+   "fee": 0.1,
+   "slip": 0.05,
+   "full": {
+    "return": -14.7,
+    "cagr": -4.5,
+    "max_dd": -31.0,
+    "trades": 105,
+    "per_week": 0.58,
+    "win_rate": 49.5,
+    "pf": 0.9,
+    "long_pnl": -140.7,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 12.8,
+    "cagr": 6.2,
+    "max_dd": -13.3,
+    "trades": 67,
+    "per_week": 0.64,
+    "win_rate": 55.2,
+    "pf": 1.16,
+    "long_pnl": 128.0,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -24.4,
+    "cagr": -17.3,
+    "max_dd": -28.7,
+    "trades": 38,
+    "per_week": 0.5,
+    "win_rate": 39.5,
+    "pf": 0.54,
+    "long_pnl": -268.8,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -11.3,
+    "cagr": -39.1,
+    "max_dd": -11.3,
+    "trades": 6,
+    "per_week": 0.48,
+    "win_rate": 16.7,
+    "pf": 0.18,
+    "long_pnl": -102.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "D dip rsi<25 TP12 SL8",
+   "kind": "dip",
+   "params": {
+    "rsi_buy": 25,
+    "take_profit_pct": 0.12,
+    "stop_pct": 0.08,
+    "max_bars": 10,
+    "k": 3
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 3
+   },
+   "fee": 0.1,
+   "slip": 0.05,
+   "full": {
+    "return": 14.4,
+    "cagr": 4.0,
+    "max_dd": -26.6,
+    "trades": 90,
+    "per_week": 0.5,
+    "win_rate": 46.7,
+    "pf": 1.11,
+    "long_pnl": 154.8,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 38.7,
+    "cagr": 17.8,
+    "max_dd": -14.4,
+    "trades": 59,
+    "per_week": 0.57,
+    "win_rate": 50.8,
+    "pf": 1.49,
+    "long_pnl": 387.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -17.5,
+    "cagr": -12.3,
+    "max_dd": -26.6,
+    "trades": 31,
+    "per_week": 0.4,
+    "win_rate": 38.7,
+    "pf": 0.63,
+    "long_pnl": -232.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -11.2,
+    "cagr": -38.8,
+    "max_dd": -11.2,
+    "trades": 4,
+    "per_week": 0.32,
+    "win_rate": 0.0,
+    "pf": 0.0,
+    "long_pnl": -133.3,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "D dip rsi<25 TP8 SL8 +BTCfilter",
+   "kind": "dip",
+   "params": {
+    "rsi_buy": 25,
+    "take_profit_pct": 0.08,
+    "stop_pct": 0.08,
+    "max_bars": 10,
+    "k": 3
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 3
+   },
+   "fee": 0.1,
+   "slip": 0.05,
+   "full": {
+    "return": 11.0,
+    "cagr": 3.0,
+    "max_dd": -6.1,
+    "trades": 16,
+    "per_week": 0.09,
+    "win_rate": 62.5,
+    "pf": 1.71,
+    "long_pnl": 109.9,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 11.7,
+    "cagr": 5.7,
+    "max_dd": -5.5,
+    "trades": 13,
+    "per_week": 0.12,
+    "win_rate": 69.2,
+    "pf": 1.97,
+    "long_pnl": 117.1,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -0.6,
+    "cagr": -0.4,
+    "max_dd": -4.0,
+    "trades": 3,
+    "per_week": 0.04,
+    "win_rate": 33.3,
+    "pf": 0.79,
+    "long_pnl": -7.2,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 0.0,
+    "cagr": 0.0,
+    "max_dd": 0.0,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "D dip rsi<25 TP12 SL8 +BTCfilter",
+   "kind": "dip",
+   "params": {
+    "rsi_buy": 25,
+    "take_profit_pct": 0.12,
+    "stop_pct": 0.08,
+    "max_bars": 10,
+    "k": 3
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 3
+   },
+   "fee": 0.1,
+   "slip": 0.05,
+   "full": {
+    "return": 16.9,
+    "cagr": 4.6,
+    "max_dd": -6.2,
+    "trades": 16,
+    "per_week": 0.09,
+    "win_rate": 56.2,
+    "pf": 1.99,
+    "long_pnl": 168.6,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 19.8,
+    "cagr": 9.5,
+    "max_dd": -6.2,
+    "trades": 13,
+    "per_week": 0.12,
+    "win_rate": 61.5,
+    "pf": 2.49,
+    "long_pnl": 197.9,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -2.4,
+    "cagr": -1.7,
+    "max_dd": -4.0,
+    "trades": 3,
+    "per_week": 0.04,
+    "win_rate": 33.3,
+    "pf": 0.2,
+    "long_pnl": -29.3,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": 0.0,
+    "cagr": 0.0,
+    "max_dd": 0.0,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   }
+  },
+  {
+   "name": "BENCH hold BTC/ETH/SOL",
+   "kind": "hold",
+   "params": {
+    "n_coins": 3
+   },
+   "risk": {
+    "max_drawdown_kill_pct": 100,
+    "daily_loss_limit_pct": 100,
+    "min_cash_reserve_pct": 1,
+    "max_open_positions": 3
+   },
+   "fee": 0.1,
+   "slip": 0.05,
+   "full": {
+    "return": 112.8,
+    "cagr": 24.3,
+    "max_dd": -67.4,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   },
+   "train": {
+    "return": 325.6,
+    "cagr": 106.4,
+    "max_dd": -52.3,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   },
+   "test": {
+    "return": -50.4,
+    "cagr": -37.9,
+    "max_dd": -67.4,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   },
+   "last_90d": {
+    "return": -29.3,
+    "cagr": -76.3,
+    "max_dd": -39.4,
+    "trades": 0,
+    "per_week": 0.0,
+    "win_rate": null,
+    "pf": null,
+    "long_pnl": 0,
+    "short_pnl": 0
+   }
+  }
+ ]
+}
