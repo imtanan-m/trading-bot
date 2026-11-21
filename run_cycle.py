@@ -91,6 +91,8 @@ def run_bot(b, cfg, news, cache):
     p = Portfolio(strat, b.get("risk", {}), float(b["capital"]), b.get("fee_pct", cfg.get("fee_pct", 0.1)),
                   b.get("slippage_pct", cfg.get("slippage_pct", 0.05)), state)
     prepared, raw = {}, {}
+    if b["kind"] == "breakout":
+        strat.btc = get_klines(cache, "BTC/USDT", "1d")
     for sym in bot_symbols(b, state):
         try:
             raw[sym] = get_klines(cache, sym, b["timeframe"], int(b.get("bars", 1000)))
@@ -187,7 +189,8 @@ def bot_summary(b, p, live):
         "scanner": "universe" in b, "btc_filter": bool(b.get("btc_filter")),
         "market_ok": getattr(p, "regime_now", None),
         "universe": b.get("universe"),
-        "futures": b["kind"] == "scalp", "leverage": b.get("risk", {}).get("leverage", 1),
+        "futures": bool(getattr(build(b["kind"], b.get("params")), "futures", False)),
+        "leverage": b.get("risk", {}).get("leverage", 1),
     }
 
 

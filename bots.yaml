@@ -6,6 +6,47 @@ fee_pct: 0.10        # Binance spot fee har taraf
 slippage_pct: 0.05
 
 bots:
+  - id: momentum_ls
+    name: "Momentum Long/Short"
+    tag: "Upgrade"
+    color: "#0ea5e9"
+    kind: momls
+    timeframe: 1d
+    symbols: [BTC/USDT, ETH/USDT, SOL/USDT, XRP/USDT, BNB/USDT, DOGE/USDT, ADA/USDT, LINK/USDT, AVAX/USDT, SUI/USDT]
+    capital: 1000
+    news_filter: false
+    fee_pct: 0.05
+    slippage_pct: 0.02
+    params: {sma: 50, lookback: 30, n_coins: 10, shorts: true}
+    risk: {leverage: 1, funding_pct_8h: 0.01, max_open_positions: 10, min_cash_reserve_pct: 1,
+           daily_loss_limit_pct: 100, max_drawdown_kill_pct: 50}
+    about: >
+      Upgrade bot (futures, 1x, koi leverage nahi): 10 bade coins mein har coin ko 1/10 paisa. Jis coin ka
+      trend upar ho (price 50-din average se upar aur 30 din ka return positive) us mein LONG, jis ka
+      trend neeche ho us mein SHORT, warna kuch nahi. Is liye girte market mein bhi kama sakta hai.
+      Roz ek baar faisla. Backtest (2023-ab): +274%, giraav -37%. Test period +23%/saal, pichhle 90 din +28.5%.
+
+  - id: futures_swing
+    name: "Futures Swing 4h"
+    tag: "Upgrade"
+    color: "#f97316"
+    kind: scalp
+    timeframe: 4h
+    bars: 1800
+    symbols: [BTC/USDT, ETH/USDT, SOL/USDT, XRP/USDT, BNB/USDT, DOGE/USDT, ADA/USDT, LINK/USDT, AVAX/USDT, SUI/USDT]
+    capital: 1000
+    news_filter: false
+    fee_pct: 0.05
+    slippage_pct: 0.02
+    params: {mode: trend, min_votes: 5, tp_atr: 6.0, sl_atr: 3.0, max_bars: 30}
+    risk: {leverage: 5, funding_pct_8h: 0.01, risk_per_trade_pct: 0.5, max_position_pct: 100,
+           max_open_positions: 5, min_cash_reserve_pct: 1, daily_loss_limit_pct: 6, max_drawdown_kill_pct: 40}
+    about: >
+      Upgrade bot: wahi 6-angle futures strategy, lekin 4 ghante ke chart pe. Kam trades, is liye kam fees,
+      aur har trade ko bada move milta hai. LONG ya SHORT, 5x leverage, har trade mein 0.5% risk, target
+      6 ATR, stop 3 ATR, 5 din ki limit. Backtest (2023-ab): +46%, giraav sirf -12%, 8 mein se 8 settings
+      profit mein. Haftay mein ~4 trades.
+
   - id: futures_scalper
     name: "Futures Scalper"
     tag: "Experiment"
@@ -77,6 +118,7 @@ bots:
     kind: dip
     timeframe: 1d
     universe: {pool: 100, top: 30}
+    btc_filter: true
     capital: 1000
     news_filter: true
     params: {rsi_buy: 25, take_profit_pct: 0.12, stop_pct: 0.08, max_bars: 10, k: 3}
@@ -85,7 +127,8 @@ bots:
       Agent jo top coins mein se sab se zyada gire hue (oversold, RSI-14 25 se neeche) coin dhoondta hai
       aur khareedta hai. +12% pe profit book, -8% pe stop-loss, ya 10 din baad bech deta hai. Har trade
       ka anjaam pehle se tay hai. Backtest: +13%/saal, giraav -28%, aadhi se zyada trades jeet.
-      Girte market mein bhi mauqe dhoondta hai.
+      Upgrade (21 Nov): ab sirf tab khareedta hai jab BTC apne 50-din average se upar ho. Girte market mein
+      dip khareedna nuqsan de raha tha (backtest: is filter ke saath giraav -27% se ghat ke -6% raha).
 
   - id: momentum_daily
     name: "Momentum Daily"
@@ -117,37 +160,6 @@ bots:
     about: >
       Aap ka pehla bot. Uptrend mein 20 candles ka high toote to khareedta hai, aur har trade pe
       stop-loss lagata hai (sirf 0.75% risk). Profit kam, lekin giraav sab se kam (-15%).
-
-  - id: trend_1h
-    name: "Trend Rider 1h"
-    tag: "Experiment"
-    color: "#f59e0b"
-    kind: trend
-    timeframe: 1h
-    symbols: [BTC/USDT, ETH/USDT, SOL/USDT]
-    capital: 1000
-    news_filter: true
-    params: {ema_fast: 100, ema_slow: 400, breakout_lookback: 20, adx_min: 25, initial_stop_atr: 2.5, trail_stop_atr: 5.0}
-    risk: {risk_per_trade_pct: 0.75, max_position_pct: 33, max_open_positions: 3, min_cash_reserve_pct: 2, daily_loss_limit_pct: 3, max_drawdown_kill_pct: 25}
-    about: >
-      Wahi trend strategy, lekin ghante ki candles pe. Trades zyada aur jaldi hoti hain. Backtest mein
-      profit kam tha (+5%/saal), kyunke fees zyada lagti hain.
-
-  - id: scalper_1h
-    name: "Fast Scalper (Day Trading)"
-    tag: "Warning"
-    color: "#ef4444"
-    kind: rsi2
-    timeframe: 1h
-    symbols: [BTC/USDT, ETH/USDT, SOL/USDT]
-    capital: 1000
-    news_filter: false
-    params: {ema_trend: 200, rsi_buy: 10, exit_ema: 5, max_bars: 24, stop_atr: 2.0}
-    risk: {risk_per_trade_pct: 0.75, max_position_pct: 33, max_open_positions: 3, min_cash_reserve_pct: 2, daily_loss_limit_pct: 100, max_drawdown_kill_pct: 30}
-    about: >
-      Asli day trading: din mein kai trades, chhoti girawat pe khareed ke uchaal pe bechna. Ye
-      bot sirf dikhane ke liye hai ke tez trading mein fees kaise profit kha jaati hain.
-      Backtest mein -43%/saal tha. Isse asli paise pe kabhi na chalayein.
 
   - id: hold
     name: "Buy & Hold (Benchmark)"

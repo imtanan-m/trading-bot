@@ -281,7 +281,7 @@ dl.gl dt{font-weight:650} dl.gl dd{margin:0;color:var(--mute);font-size:14px}
     <h2>Madad</h2>
     <div class="panel pad">
       <details open><summary>Ye app kya hai?</summary>
-        <p><b>Trade</b> button se exchange jaisa terminal khulta hai: live chart, order book, aur aap khud $10,000 paper USDT se spot ya futures (long/short, leverage) trade kar sakte hain. Bots ki trades bhi wahan chart pe dikhti hain.</p><p>7 trading bots GitHub ke cloud pe har ~15 minute mein chalte hain (in mein 2 agents hain jo Binance ke top 100 coins scan karte hain), chahe aap ka PC band ho. Sab <b>paper trading</b> karte hain: har bot ke paas $1000 nakli paisa hai, lekin prices Binance ki asli live prices hain. Yahan aap dekh sakte hain kaun si strategy asal mein kaam karti hai, bina asli paisa lagaye.</p></details>
+        <p><b>Trade</b> button se exchange jaisa terminal khulta hai: live chart, order book, aur aap khud $10,000 paper USDT se spot ya futures (long/short, leverage) trade kar sakte hain. Bots ki trades bhi wahan chart pe dikhti hain.</p><p>Trading bots GitHub ke cloud pe har ~15 minute mein chalte hain (in mein 2 agents hain jo Binance ke top 100 coins scan karte hain), chahe aap ka PC band ho. Sab <b>paper trading</b> karte hain: har bot ke paas $1000 nakli paisa hai, lekin prices Binance ki asli live prices hain. Yahan aap dekh sakte hain kaun si strategy asal mein kaam karti hai, bina asli paisa lagaye.</p></details>
       <details><summary>Bot trade kyun nahi kar raha?</summary>
         <p>Zyada tar bots sirf uptrend mein khareedte hain. Market neeche ho to wo cash mein rehte hain, aur yahi unki hifazat hai. Market tab mein "Bot radar" dekhein: wahan dikhta hai ke har bot ki kitni sharten poori hain.</p></details>
       <details><summary>Telegram pe alerts kaise on karein?</summary>
@@ -335,9 +335,9 @@ function applyTheme(t){document.documentElement.dataset.theme=t==='light'?'light
 applyTheme(store.get('theme','auto'));
 if(window.Chart){Chart.defaults.font.family='Archivo, system-ui, -apple-system, Segoe UI, sans-serif';Chart.defaults.color='#66728A';}
 /* pen colours for bot lines, tuned per theme */
-const PENS={light:['#BE123C','#4D7C0F','#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#FDA4AF','#BEF264','#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
+const PENS={light:['#0284C7','#EA580C','#BE123C','#4D7C0F','#7C3AED','#A16207','#2F6FDE','#0E9384','#D9822B','#B0368A','#6B7A99'],dark:['#7DD3FC','#FDBA74','#FDA4AF','#BEF264','#C4B5FD','#E9D58A','#8BB8FF','#4FE0C9','#FFB35C','#FF8AD8','#B7C6DE']};
 const isDark=()=>css('--paper').toLowerCase()==='#0f2340';
-const ORDER=['futures_active','futures_scalper','hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
+const ORDER=['momentum_ls','futures_swing','futures_active','futures_scalper','hunter_daily','dip_catcher','momentum_daily','trend_4h','trend_1h','scalper_1h','hold'];
 const pen=id=>{const i=ORDER.indexOf(id);return PENS[isDark()?'dark':'light'][i<0?0:i]};
 const sideTag=x=>x.side?`<span class="badge ${x.side==='short'?'ghost':''}" style="${x.side==='short'?'color:var(--down);border-color:var(--down)':'background:var(--up);color:var(--paper)'}">${x.side==='long'?'LONG':'SHORT'}${x.lev?' '+x.lev+'x':''}</span>`:'';
 const coinsLabel=b=>b.scanner?`Top ${b.universe?.top||30} coins scan`:b.symbols.map(coin).join(', ');
@@ -546,7 +546,7 @@ function renderSheet(){
         ${years.map(y=>`<div class="h" style="text-align:left">${y}</div>`+Array.from({length:12},(_,i)=>cell(mon[`${y}-${String(i+1).padStart(2,'0')}`])).join('')).join('')}</div></div>
         <h2>Saal ba saal</h2><div class="stats">${Object.entries(bt.yearly||{}).map(([y,v])=>`<div><b class="${tone(v)}">${pct(v,1)}</b><span>${y}</span></div>`).join('')}</div>`;}
   }else if(openTab==='settings'){
-    const NAMES={sma:'Average (din)',lookback:'Return dekhne ke din',n_coins:'Coins',ema_fast:'Chhota EMA',ema_slow:'Bara EMA',breakout_lookback:'Breakout candles',adx_min:'Min ADX',initial_stop_atr:'Pehla stop (ATR)',trail_stop_atr:'Trailing stop (ATR)',ema_trend:'Trend EMA',rsi_buy:'RSI khareed level',exit_ema:'Exit EMA',max_bars:'Max candles rakhna',stop_atr:'Stop (ATR)',
+    const NAMES={sma:'Average (din)',shorts:'Short bhi karta hai',lookback:'Return dekhne ke din',n_coins:'Coins',ema_fast:'Chhota EMA',ema_slow:'Bara EMA',breakout_lookback:'Breakout candles',adx_min:'Min ADX',initial_stop_atr:'Pehla stop (ATR)',trail_stop_atr:'Trailing stop (ATR)',ema_trend:'Trend EMA',rsi_buy:'RSI khareed level',exit_ema:'Exit EMA',max_bars:'Max candles rakhna',stop_atr:'Stop (ATR)',
       lookback:'Momentum ke din',mode:'Tareeqa',min_votes:'Kam se kam votes (6 mein se)',adx_trend:'Trend mode ADX',adx_range:'Range mode ADX',sl_atr:'Stop (ATR)',tp_atr:'Target (ATR)',range_sl_atr:'Range stop (ATR)',range_tp_atr:'Range target (ATR)',be_r:'Break-even after (R)',breakout:'Breakout candles',leverage:'Leverage',funding_pct_8h:'Funding fee (% / 8h)',k:'Ek waqt mein coins',take_profit_pct:'Profit target',stop_pct:'Stop-loss',rsi_buy:'RSI khareed level',trend_sma:'Trend filter',rsi_n:'RSI period',risk_per_trade_pct:'Risk har trade (%)',max_position_pct:'Max ek coin mein (%)',max_open_positions:'Max positions',min_cash_reserve_pct:'Cash reserve (%)',daily_loss_limit_pct:'Din ka loss limit (%)',max_drawdown_kill_pct:'Kill switch giraav (%)'};
     const row=(k,v)=>`<tr><td>${esc(NAMES[k]||k)}</td><td class="r"><b>${esc(['take_profit_pct','stop_pct'].includes(k)?'+'.repeat(k==='take_profit_pct')+(k==='stop_pct'?'−':'')+Math.round(v*100)+'%':(k==='trend_sma'&&!v?'Off':v))}</b></td></tr>`;
     h=`<p class="lede">Ye bot in settings pe chal raha hai. Tabdeeli chahiye to Claude ko batayein, wo cloud bot aur ye app dono update kar dega.</p>

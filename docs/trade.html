@@ -523,7 +523,7 @@ function drawBots(){
   if(!S.ind.bots||!S.bots||!S.kl.length){markers.setMarkers([]);return}
   const sym=pretty(S.sym),tf=TFMS[S.tf],first=S.kl[0].t,mk=[];
   const snap=ms=>T(Math.floor(ms/tf)*tf);
-  const SHORT={futures_active:'Active',momentum_daily:'Momentum',trend_4h:'Trend4h',trend_1h:'Trend1h',scalper_1h:'Scalper',hold:'Hold',hunter_daily:'Hunter',dip_catcher:'Dip',futures_scalper:'Futures'};
+  const SHORT={momentum_ls:'MomLS',futures_swing:'Swing4h',futures_active:'Active',momentum_daily:'Momentum',trend_4h:'Trend4h',trend_1h:'Trend1h',scalper_1h:'Scalper',hold:'Hold',hunter_daily:'Hunter',dip_catcher:'Dip',futures_scalper:'Futures'};
   for(const b of S.bots.bots){
     const nm=SHORT[b.id]||b.name.split(' ')[0];
     for(const t of b.trades.filter(t=>t.symbol===sym)){

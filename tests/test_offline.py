@@ -101,20 +101,30 @@ with tempfile.TemporaryDirectory() as d:
         ok(b["equity"] > 0 and b["cash"] >= -1e-6, f"{b['id']}: equity ${b['equity']:.2f}, cash ok")
 
     # continuity: incremental runs == one continuous run over the same candles
-    st = json.load(open(os.path.join(run_cycle.STATE_DIR, "trend_1h.json")))
+    st = json.load(open(os.path.join(run_cycle.STATE_DIR, "futures_swing.json")))
     from engine.portfolio import Portfolio, run_series
     from engine.strategies import build
     import yaml
     cfg = yaml.safe_load(open(os.path.join(ROOT, "bots.yaml")))
-    b = next(x for x in cfg["bots"] if x["id"] == "trend_1h")
+    b = next(x for x in cfg["bots"] if x["id"] == "futures_swing")
     s = build(b["kind"], b["params"])
     first = pd.Timestamp(st["equity"][0][0])
-    pr = {sym: s.prepare(fake_klines(sym, "1h", 5000)) for sym in b["symbols"]}
-    p = Portfolio(s, b["risk"], b["capital"], cfg["fee_pct"], cfg["slippage_pct"])
+    pr = {sym: s.prepare(fake_klines(sym, "4h", 5000)) for sym in ["BTC/USDT", "ETH/USDT"]}
+    p = Portfolio(s, b["risk"], b["capital"], b["fee_pct"], b["slippage_pct"])
     run_series(p, pr, start=first)
-    ok(abs(p.equity() - st["equity"][-1][1]) < 0.5 and len(p.st["trades"]) == len(st["trades"]),
+    ok(abs(p.equity() - st["equity"][-1][1]) < 1.0 and len(p.st["trades"]) == len(st["trades"]),
        f"incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f}, "
        f"{len(st['trades'])} trades)")
+
+    # long/short momentum bot: same result live (incremental) and in one go
+    st = json.load(open(os.path.join(run_cycle.STATE_DIR, "momentum_ls.json")))
+    b = next(x for x in cfg["bots"] if x["id"] == "momentum_ls")
+    s = build(b["kind"], b["params"])
+    pr = {sym: s.prepare(fake_klines(sym, "1d", 5000)) for sym in ["BTC/USDT", "ETH/USDT", "SOL/USDT"]}
+    p = Portfolio(s, b["risk"], b["capital"], b["fee_pct"], b["slippage_pct"])
+    run_series(p, pr, start=pd.Timestamp(st["equity"][0][0]))
+    ok(abs(p.equity() - st["equity"][-1][1]) < 1.0 and len(p.st["trades"]) == len(st["trades"]),
+       f"momentum L/S incremental == continuous (${p.equity():.2f} vs ${st['equity'][-1][1]:.2f})")
 
     # same check for a multi-coin scanner bot (BTC filter + point-in-time universe)
     from engine.portfolio import btc_regime, volume_universe

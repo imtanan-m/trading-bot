@@ -47,6 +47,8 @@ def main():
     out = {"start": START, "generated": pd.Timestamp.now(tz="UTC").isoformat(), "bots": {}}
     for b in cfg["bots"]:
         s = build(b["kind"], b.get("params"))
+        if b["kind"] == "breakout":
+            s.btc = load("BTC/USDT", "1d")
         syms = b.get("symbols") or (["BTC/USDT"] + [c for c in market.top_coins(int(b["universe"]["pool"])) if c != "BTC/USDT"])
         raw = {}
         for sym in syms:
