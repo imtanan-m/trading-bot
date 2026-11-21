@@ -1,0 +1,99 @@
+396 coins
+  0/396 loaded, 3s
+  50/396 loaded, 77s
+  100/396 loaded, 151s
+  150/396 loaded, 225s
+  200/396 loaded, 298s
+  250/396 loaded, 353s
+  300/396 loaded, 387s
+  350/396 loaded, 421s
+rows 352327; 449s
+BASE RATE (random coin-day): {'p50': 15.64, 'p100': 4.78, 'p30_7d': 8.58, 'avg_close30': -0.89}
+{'rule': 'volume spike 3x', 'signals': 16142, 'hit50_30d': 23.74, 'hit100_30d': 9.21, 'avg_close30': 0.32, 'median_close30': -6.7}
+{'rule': 'volume 7d/30d >= 2', 'signals': 23575, 'hit50_30d': 23.87, 'hit100_30d': 9.33, 'avg_close30': 0.47, 'median_close30': -6.88}
+{'rule': '60-day breakout', 'signals': 5336, 'hit50_30d': 24.33, 'hit100_30d': 9.3, 'avg_close30': 0.86, 'median_close30': -7.14}
+{'rule': 'spike 3x + breakout', 'signals': 2789, 'hit50_30d': 29.4, 'hit100_30d': 12.41, 'avg_close30': 1.16, 'median_close30': -8.84}
+{'rule': 'quiet base then breakout', 'signals': 2337, 'hit50_30d': 23.45, 'hit100_30d': 8.43, 'avg_close30': 6.86, 'median_close30': 0.54}
+{'rule': 'big day +20%', 'signals': 2298, 'hit50_30d': 28.07, 'hit100_30d': 12.66, 'avg_close30': -9.46, 'median_close30': -18.55}
+{'rule': 'strong vs BTC (7d +30%)', 'signals': 7569, 'hit50_30d': 26.17, 'hit100_30d': 11.07, 'avg_close30': -7.12, 'median_close30': -17.13}
+MODEL (test period, never seen in training): {
+ "auc_test": 0.5566177720223854,
+ "auc_train": 0.6339662164871177,
+ "test_base_p50": 13.98,
+ "top10_hit50": 19.94,
+ "top10_hit100": 8.43,
+ "top10_avg_close30": -9.21,
+ "top10_median_close30": -13.2,
+ "top10_avg_max30": 41.01,
+ "deciles": [
+  {
+   "decile": 1,
+   "hit50": 8.18,
+   "avg_close30": -6.27
+  },
+  {
+   "decile": 2,
+   "hit50": 12.21,
+   "avg_close30": -4.66
+  },
+  {
+   "decile": 3,
+   "hit50": 13.41,
+   "avg_close30": -3.13
+  },
+  {
+   "decile": 4,
+   "hit50": 13.54,
+   "avg_close30": -3.43
+  },
+  {
+   "decile": 5,
+   "hit50": 13.73,
+   "avg_close30": -3.53
+  },
+  {
+   "decile": 6,
+   "hit50": 14.38,
+   "avg_close30": -3.49
+  },
+  {
+   "decile": 7,
+   "hit50": 14.74,
+   "avg_close30": -4.06
+  },
+  {
+   "decile": 8,
+   "hit50": 14.7,
+   "avg_close30": -5.34
+  },
+  {
+   "decile": 9,
+   "hit50": 16.0,
+   "avg_close30": -5.31
+  },
+  {
+   "decile": 10,
+   "hit50": 18.87,
+   "avg_close30": -1.82
+  }
+ ],
+ "weekly_top3_trades": 219,
+ "weekly_top3_avg_trade": -3.59,
+ "weekly_top3_win_rate": 26.94,
+ "weights": {
+  "vspike": 0.066,
+  "vtrend": 0.236,
+  "ret1": 0.012,
+  "ret7": 0.718,
+  "ret30": 0.04,
+  "rs7": -0.838,
+  "dd90": 0.108,
+  "range30": 0.065,
+  "brk60": -0.012,
+  "green": 0.023,
+  "lqvol": -0.172,
+  "age": -0.137
+ }
+}
+BIG PUMPS: [{'coin': 'STO/USDT', 'date': '2026-03-07', 'max30': 3124, 'score_pct': 66}, {'coin': 'LSK/USDT', 'date': '2026-08-15', 'max30': 2539, 'score_pct': 92}, {'coin': 'TUT/USDT', 'date': '2026-07-10', 'max30': 2537, 'score_pct': 88}, {'coin': 'SYN/USDT', 'date': '2026-06-10', 'max30': 2438, 'score_pct': 96}, {'coin': 'BANK/USDT', 'date': '2026-07-08', 'max30': 1620, 'score_pct': 92}, {'coin': 'BROCCOLI714/USDT', 'date': '2025-12-18', 'max30': 1331, 'score_pct': 71}, {'coin': '币安人生/USDT', 'date': '2026-03-28', 'max30': 1269, 'score_pct': 90}, {'coin': 'BANANAS31/USDT', 'date': '2025-06-20', 'max30': 1240, 'score_pct': 91}, {'coin': 'TNSR/USDT', 'date': '2025-11-18', 'max30': 964, 'score_pct': 96}, {'coin': 'ALPINE/USDT', 'date': '2025-09-03', 'max30': 765, 'score_pct': 25}, {'coin': 'DUSK/USDT', 'date': '2025-12-21', 'max30': 733, 'score_pct': 20}, {'coin': 'ONE/USDT', 'date': '2026-09-10', 'max30': 711, 'score_pct': 17}, {'coin': 'BICO/USDT', 'date': '2026-07-29', 'max30': 686, 'score_pct': 10}, {'coin': 'HYPER/USDT', 'date': '2025-06-26', 'max30': 651, 'score_pct': 94}, {'coin': 'NOM/USDT', 'date': '2026-03-27', 'max30': 576, 'score_pct': 98}]
+done 450s
