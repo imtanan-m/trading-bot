@@ -34,6 +34,7 @@ NEWS_CFG = {
     "danger_keywords": ["hack", "hacked", "exploit", "stolen", "drained", "delist", "halt", "suspend",
                         "insolvent", "bankrupt", "lawsuit", "sues", "ban", "banned", "emergency"],
 }
+LATE_FILL_MIN = 30
 log = logging.getLogger("cycle")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -122,7 +123,12 @@ def run_bot(b, cfg, news, cache):
         try:
             f = market.forming(sym, b["timeframe"])
             if f and sym in p.st["last_ts"] and f[0] > pd.Timestamp(p.st["last_ts"][sym]):
-                p.fill_at_open(sym, f[0], f[1])
+                price = f[1]
+                if pd.Timestamp.now(tz="UTC") - f[0] > pd.Timedelta(minutes=LATE_FILL_MIN):
+                    # the candle opened long ago (e.g. a bot that was just switched on): use today's real price,
+                    # never an old price the bot could not actually have traded at
+                    price = market.prices([sym]).get(sym, f[1])
+                p.fill_at_open(sym, f[0], price)
         except Exception as e:  # noqa: BLE001
             log.warning(f"{b['id']}: early fill {sym} failed ({e}); will fill at candle close")
     p.st["events"] = p.st.get("events", [])[-50:]

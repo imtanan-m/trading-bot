@@ -70,6 +70,7 @@ def _no_net(*a, **k):
 market.history = _no_net
 market._get = _no_net
 run_cycle.NewsGuard = NoNews
+run_cycle.LATE_FILL_MIN = 10 ** 9  # simulated clock: always fill at the open like the backtest
 ok_count = 0
 
 
