@@ -68,6 +68,7 @@ def _no_net(*a, **k):
 
 
 market.history = _no_net
+market._get = _no_net
 run_cycle.NewsGuard = NoNews
 ok_count = 0
 
